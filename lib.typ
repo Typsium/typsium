@@ -2,11 +2,12 @@
 #let regex_patterns = (
   element: regex("^\s?([A-Z][a-z]?|[a-z])(\d*)"),
   bracket: regex("^\s?([\(\[\]\)])(\d*)"),
-  charge: regex("^\^?\(?([0-9|+-]+)\)?"),
-  arrow: regex("^\s?(<->|->)"),
+  charge: regex("^\^\(?([0-9|+-]+)\)?"),
+  arrow: regex("^\s?(<->|->|=)"),
   coef: regex("^\s?(\d+)"),
   plus: regex("^\s?\+"),
 )
+
 #let config = (
   arrow: (arrow_size: 120%, reversible_size: 150%),
   conditions: (
@@ -24,7 +25,7 @@
 #let process_charge(input, charge) = context {
   show "+": math.plus
   show "-": math.minus
-  $input #block(height: measure(input.children.last()).height)^charge$
+  $#block(height: measure(input.children.last()).height)^charge$
 }
 
 // === Formula Parser ===
@@ -69,6 +70,8 @@
 #let process_arrow(arrow_text, condition: none) = {
   let arrow = if arrow_text.contains("<-") {
     $stretch(#sym.harpoons.rtlb, size: #config.arrow.reversible_size)$
+  } else if arrow_text.contains("=") {
+    $stretch(=, size: #config.arrow.arrow_size)$
   } else {
     $stretch(->, size: #config.arrow.arrow_size)$
   }
@@ -106,14 +109,8 @@
       }
     }
     if not matched {
-      panic(
-        "Parse error at position "
-          + str(formula.len() - remaining.len())
-          + ": '"
-          + remaining.first()
-          + "' in formula: "
-          + formula,
-      )
+      result += text(remaining.first())
+      remaining = remaining.slice(1)
     }
   }
   $upright(display(result))$
