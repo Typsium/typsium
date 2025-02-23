@@ -1,6 +1,6 @@
 // === Declarations & Configurations ===
 #let regex_patterns = (
-  element: regex("^\s?([A-Z][a-z]?|[a-z])(\d*)"),
+  element: regex("^\s?([A-Z][a-z]?|[a-z])\s?(\d*x?|[a-z])"),
   bracket: regex("^\s?([\(\[\]\)])(\d*)"),
   charge: regex("^\^\(?([0-9|+-]+)\)?"),
   arrow: regex("^\s?(<->|->|=)"),
@@ -12,10 +12,14 @@
   arrow: (arrow_size: 120%, reversible_size: 150%),
   conditions: (
     bottom: (
-      symbols: ("Delta", "delta", "Δ", "δ", "heat", "hot"),
+      symbols: (heating: ("Delta", "delta", "Δ", "δ", "fire", "heat", "hot", "heating")),
       identifiers: (("T=", "t="), ("P=", "p=")),
       units: ("°C", "K", "atm", "bar"),
     ),
+  ),
+  match_order: (
+    basic: ("coef", "element", "bracket", "charge"),
+    full: ("coef", "element", "bracket", "plus", "charge", "arrow"),
   ),
 )
 
@@ -25,7 +29,7 @@
 #let process_charge(input, charge) = context {
   show "+": math.plus
   show "-": math.minus
-  $#block(height: measure(input.children.last()).height)^charge$
+  $#block(height: measure(input).height)^charge$
 }
 
 // === Formula Parser ===
@@ -34,7 +38,7 @@
   let result = none
   while remaining.len() > 0 {
     let matched = false
-    for pattern in ("coef", "element", "bracket") {
+    for pattern in config.match_order.basic {
       let match = remaining.match(regex_patterns.at(pattern))
       if match != none {
         result += if pattern == "coef" { $#match.text$ } else if pattern == "element" {
@@ -56,8 +60,8 @@
 // === Condition Processing ===
 #let process_condition(cond) = {
   let cond = cond.trim()
-  if cond in config.conditions.bottom.symbols {
-    return (none, if cond in ("heat", "hot") { sym.Delta } else { sym.Delta })
+  if cond in config.conditions.bottom.symbols.heating {
+    return (none, { sym.Delta })
   }
   let is_bottom = (
     config.conditions.bottom.identifiers.any(ids => ids.any(id => cond.starts-with(id)))
@@ -93,7 +97,7 @@
   let result = none
   while remaining.len() > 0 {
     let matched = false
-    for pattern in ("coef", "element", "arrow", "bracket", "plus", "charge") {
+    for pattern in config.match_order.full {
       let match = remaining.match(regex_patterns.at(pattern))
       if match != none {
         result += if pattern == "plus" { $+$ } else if pattern == "coef" { $#match.text$ } else if (
