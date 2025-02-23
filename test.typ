@@ -2,41 +2,43 @@
 
 #set page(margin: 1em, width: auto, height: auto)
 
-// 1. 普通燃烧反应（带热条件）
-#ce("2H2 + O2 -> 2H2O", condition: "heat")
+// 1. Test long formula with multiple large coefficients
+#ce("114Fe2(SO4)3 + 514H2O -> 1919Fe(OH)3 + 810H2SO4")
 #v(1em)
 
-// 2. 带电荷的氧化还原反应
-#ce("Zn + Cu^(2+) = Zn^(2+) + Cu")
+// 2. Test complex charges with multiple digits
+// result in error: equation does not have filed "children"
+#ce("Fe^(3+) + PO4^(3-) + OH^(1-) -> Fe(OH)2^(1+) + PO4^(3-)")
 #v(1em)
 
-// 3. 复杂的离子反应（带多个生成物）
-#ce("2KMnO4 + 8HCl -> KCl + MnCl2 + 4H2O + 2Cl2")
+// 3. Test nested brackets with multiple coefficients
+#ce("2[Fe(CN)6]^4- + 3[Co(NH3)4]^2+ -> [FeCo(CN)4(NH3)2]^5-")
 #v(1em)
 
-// 4. 可逆反应（带温度压力条件）
-#ce("N2 + 3H2 <-> 2NH3", condition: "450°C, 200atm")
+// 4. Test multiple conditions with special characters
+#ce("A^+ + B^+ <-> C^+ + D^+", condition: "T=1000K, P=500atm, catalyst=Pt, δ, Al2O3")
 #v(1em)
 
-// 5. 带复杂条件的分解反应
-#ce("2KClO3 -> 2KCl + 3O2", condition: "MnO2,Delta")
+// 5. Test empty components and spaces
+#ce(" H2 + O2  ->  H2O ", condition: " ")
 #v(1em)
 
-// 6. 复杂离子带括号反应
-#ce("3Ca^(2+) + 2PO4^(3-) -> Ca3(PO4)2")
+// 6. Test single character elements and numbers
+#ce("H + 2H -> H3")
 #v(1em)
 
-// 7. 带温度的热分解反应
-#ce("CaCO3 -> CaO + CO2", condition: "900°C")
+// 7. Test mixed arrow types in same document
+#ce("A + B = C -> D + (E <-> F)")
 #v(1em)
 
-// 8. 带催化剂的气相反应
-#ce("2SO2 + O2 -> 2SO3", condition: "V2O5,450°C")
+// 8. Test special symbols in conditions
+// need to add check for special symbols in conditions, do not need to show multiple times
+#ce("X -> Y", condition: "Δ,δ,heat,Delta")
 #v(1em)
 
-// 9. 电离反应
-#ce("H2SO4 -> 2H^+ + SO4^(2-)")
+// 9. Test maximum length element symbols
+#ce("Uuu + Zzz -> UuuZzz")
 #v(1em)
 
-// 10. 简单的沉淀反应
-#ce("AgNO3 + NaCl -> AgCl + NaNO3")
+// 10. need to add support for x in number of elements
+#ce("CaH2xOx")
