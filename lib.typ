@@ -1,3 +1,4 @@
+#import "data-model.typ": get-element-counts, get-element, get-weight, define-molecule, define-hydrate, reaction, get-shell-configuration, get-electron-configuration, display-electron-configuration
 // === 化学方程式解析与排版库 ===
 #import "regex.typ": patterns
 
