@@ -1,13 +1,7 @@
-// === Declarations & Configurations ===
-#let regex_patterns = (
-  element: regex("^\s?([A-Z][a-z]?|[a-z])\s?(\d*x?|[a-z])"),
-  bracket: regex("^\s?([\(\[\]\)])(\d*)"),
-  charge: regex("^\^\(?([0-9|+-]+)\)?"),
-  arrow: regex("^\s?(<->|->|=)"),
-  coef: regex("^\s?(\d+)"),
-  plus: regex("^\s?\+"),
-)
+// === 化学方程式解析与排版库 ===
+#import "regex.typ": patterns
 
+// === 配置设置 ===
 #let config = (
   arrow: (arrow_size: 120%, reversible_size: 150%),
   conditions: (
@@ -18,59 +12,81 @@
     ),
   ),
   match_order: (
-    basic: ("coef", "element", "bracket", "charge"),
-    full: ("coef", "element", "bracket", "plus", "charge", "arrow"),
+    // 使用regex.typ中的模式名称
+    basic: ("bracket","coefficient", "element",  "charge"),
+    full: ("bracket", "coefficient", "element", "plus", "charge", "arrow"),
   ),
 )
 
-// === Basic Processing Functions ===
-#let process_element(element, count) = { $element_count$ }
-#let process_bracket(bracket, count) = { $bracket_count$ }
+// === 基本处理函数 ===
+#let process_element(element, count) = { 
+$#element _count$
+}
+
+#let process_bracket(bracket, count) = { 
+  $#bracket _count$
+}
+
 #let process_charge(input, charge) = context {
   show "+": math.plus
   show "-": math.minus
-  $#block(height: measure(input).height)^charge$
+  $#block(height: measure(input).height)^#charge$
 }
 
-// === Formula Parser ===
+// === 公式解析函数 ===
 #let parse_formula(formula) = {
   let remaining = formula.trim()
   let result = none
+  
   while remaining.len() > 0 {
     let matched = false
     for pattern in config.match_order.basic {
-      let match = remaining.match(regex_patterns.at(pattern))
+      let match = remaining.match(patterns.at(pattern))
       if match != none {
-        result += if pattern == "coef" { $#match.text$ } else if pattern == "element" {
+        result += if pattern == "coefficient" { 
+          $#match.captures.at(0)$ 
+        } else if pattern == "element" {
           process_element(match.captures.at(0), match.captures.at(1))
-        } else { process_bracket(match.captures.at(0), match.captures.at(1)) }
+        } else if pattern == "bracket" { 
+          process_bracket(match.captures.at(0), match.captures.at(1))
+        } else if pattern == "charge" {
+          process_charge(result, match.captures.at(0))
+        }
+        
         remaining = remaining.slice(match.end)
         matched = true
         break
       }
     }
+    
     if not matched {
       result += text(remaining.first())
       remaining = remaining.slice(1)
     }
   }
+  
   return if result == none { formula } else { result }
 }
 
-// === Condition Processing ===
+// === 条件处理函数 ===
 #let process_condition(cond) = {
   let cond = cond.trim()
-  if cond in config.conditions.bottom.symbols.heating {
+  
+  // 处理加热符号条件
+  if cond.match(patterns.heating) != none {
     return (none, { sym.Delta })
   }
+  
+  // 检查是否是底部条件
   let is_bottom = (
     config.conditions.bottom.identifiers.any(ids => ids.any(id => cond.starts-with(id)))
       or config.conditions.bottom.units.any(unit => cond.ends-with(unit))
   )
+  
   return if is_bottom { (none, cond) } else { (parse_formula(cond), none) }
 }
 
-// === Arrow Processing ===
+// === 箭头处理函数 ===
 #let process_arrow(arrow_text, condition: none) = {
   let arrow = if arrow_text.contains("<-") {
     $stretch(#sym.harpoons.rtlb, size: #config.arrow.reversible_size)$
@@ -79,8 +95,10 @@
   } else {
     $stretch(->, size: #config.arrow.arrow_size)$
   }
+  
   let top = ()
   let bottom = ()
+  
   if condition != none {
     for cond in condition.split(",") {
       let (t, b) = process_condition(cond)
@@ -88,34 +106,45 @@
       if b != none { bottom.push(b) }
     }
   }
-  $arrow^top.join(",")_bottom.join(",")$
+  
+  $arrow^#top.join(",")_#bottom.join(",")$
 }
 
-// === Main Function ===
+// === 主解析函数 ===
 #let ce = (formula, condition: none) => {
   let remaining = formula.trim()
   let result = none
+  
   while remaining.len() > 0 {
     let matched = false
     for pattern in config.match_order.full {
-      let match = remaining.match(regex_patterns.at(pattern))
+      let match = remaining.match(patterns.at(pattern))
       if match != none {
-        result += if pattern == "plus" { $+$ } else if pattern == "coef" { $#match.text$ } else if (
-          pattern == "element"
-        ) { process_element(match.captures.at(0), match.captures.at(1)) } else if pattern == "bracket" {
+        result += if pattern == "plus" { 
+          $+$ 
+        } else if pattern == "coefficient" { 
+          $#match.captures.at(0)$ 
+        } else if pattern == "element" {
+          process_element(match.captures.at(0), match.captures.at(1))
+        } else if pattern == "bracket" {
           process_bracket(match.captures.at(0), match.captures.at(1))
-        } else if pattern == "charge" { process_charge(result, match.captures.at(0)) } else {
+        } else if pattern == "charge" { 
+          process_charge(result, match.captures.at(0)) 
+        } else {
           process_arrow(match.text, condition: condition)
         }
+        
         remaining = remaining.slice(match.end)
         matched = true
         break
       }
     }
+    
     if not matched {
       result += text(remaining.first())
       remaining = remaining.slice(1)
     }
   }
+  
   $upright(display(result))$
 }
