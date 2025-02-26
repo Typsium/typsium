@@ -42,3 +42,48 @@
 
 // 10. need to add support for x in number of elements
 #ce("CaH2xOx")
+#v(1em)
+
+// 11. Plus should indicate charge instead of adding educts: this should be a proton
+#ce("H+")
+#v(1em)
+
+// 12. the 4 should be directly below the 2-, instead of appearing next to each other
+#ce("CrO4^2-")
+#v(1em)
+
+// 13. oxidation states for metals should be shown on the top right. normal underscore numbers should still work
+#ce("Fe^II Fe^III_2O4")
+#v(1em)
+
+//14. unpaired electrons and radical dots. they should not be the '.' character
+#ce("OCO^.-")
+#ce("NO^2.-")
+#v(1em)
+
+//15. brackets should automatically size to the content and get larger to encompass everything
+#ce("[{(X2)3}2]^3+"
+#v(1em)
+
+// Add text on top of brackets or on top and bottom
+#ce("A ->[some text] B")
+#ce("A ->[some text][other text] B")
+#v(1em)
+
+// states of aggregation
+#ce("H2(aq)")
+#ce("H2O(s)")
+#ce("H2O(g)")
+#v(1em)
+
+// math mode and aligning multiple equations:
+$
+#ce("H2SO4 (aq) &<-> H+ (aq) + HSO4^- (aq)")\
+#ce("H+ (aq) + HSO4^- (aq) &<-> H2SO4 (aq)")
+$
+#v(1em)
+
+// using in combination with other methods 
+$
+K_a = (#h(1.3em) [#ce("H+")] overbrace(#ce("[A-]"), "conjugate acid"))/ underbrace(#ce("[HA]"), "acid")
+$
