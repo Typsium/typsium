@@ -1,11 +1,11 @@
 [package]
 name = "typsium"
 version = "0.1.0"
-repository = "https://github.com/Typsium/typsium/"
+repository = "https://github.com/Typsium/typsium"
 license = "MIT"
 entrypoint = "lib.typ"
 authors = ["β-吲哚基丙氨酸 <https://github.com/tryptophawa>"]
 description = "Typeset chemical formulas and reactions."
 categories = [ "layout", "text", "paper" ]
 disciplines = [ "education", "chemistry" ]
-keywords = ["chemistry", "chemical", "reaction", "formula", "stochiometry", "oxidation", "equation", "electron", "isotope", "molecule", "hazard", "precaution", "h and p", "mhchem"]
+keywords = ["chemistry", "chemical", "reaction", "formula", "stochiometry", "oxidation", "equation", "electron", "isotope", "molecule","atom", "hazard", "precaution", "h and p", "mhchem"]
