@@ -1,9 +1,10 @@
 // === Declarations & Configurations ===
-#let regex_patterns = (
-  element: regex("^\s?([A-Z][a-z]?|[a-z])(\d*)"),
+
+#let regex-patterns = (
+  element: regex("^\s?([A-Z][a-z]?|[a-z])\s?(\d*x?|[a-z])"),
   bracket: regex("^\s?([\(\[\]\)])(\d*)"),
-  charge: regex("^\^?\(?([0-9|+-]+)\)?"),
-  arrow: regex("^\s?(<->|->)"),
+  charge: regex("^\^\(?([0-9|+-]+)\)?"),
+  arrow: regex("^\s?(<->|->|=)"),
   coef: regex("^\s?(\d+)"),
   plus: regex("^\s?\+"),
 )
@@ -12,14 +13,16 @@
   arrow: (arrow_size: 120%, reversible_size: 150%),
   conditions: (
     bottom: (
-      symbols: ("Delta", "delta", "Δ", "δ", "heat", "hot"),
+      symbols: (heating: ("Delta", "delta", "Δ", "δ", "fire", "heat", "hot", "heating")),
       identifiers: (("T=", "t="), ("P=", "p=")),
       units: ("°C", "K", "atm", "bar"),
     ),
   ),
+  match-order: (
+    basic: ("coef", "element", "bracket", "charge"),
+    full: ("coef", "element", "bracket", "plus", "charge", "arrow"),
+  ),
 )
-
-
 
 // Following utility methods are from:
 // https://github.com/touying-typ/touying/blob/6316aa90553f5d5d719150709aec1396e750da63/src/utils.typ#L157C1-L166C2
