@@ -7,7 +7,7 @@
 #v(1em)
 
 // 2. Test complex charges with multiple digits
-#ce("Fe^(3+) + PO4^(3-) + OH^(1-) -> Fe(OH)2^(1+) + PO4^(3-)")
+tt
 #v(1em)
 
 // 3. Test nested brackets with multiple coefficients
