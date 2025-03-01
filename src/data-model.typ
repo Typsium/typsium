@@ -1,4 +1,4 @@
-#import "utils.typ": is-sequence, is-kind, is-heading, is-metadata, padright, get-all-children, regex_patterns, hydrates, elements, shell-capacities, orbital-capacities
+#import "utils.typ": is-sequence, is-kind, is-heading, is-metadata, padright, get-all-children, regex-patterns, hydrates, elements, shell-capacities, orbital-capacities
 
 //TODO: properly parse bracket contents
 // maybe recursively with a bracket regex, passing in the bracket content and multiplier(?)
