@@ -18,4 +18,4 @@ To use Typsium, you need to include the package in your document:
 #ce("[Cu(H2O)4] 2+ + 4NH3 -> [Cu(NH3)4] 2+ + 4H2O")
 ```
 
-![result](https://raw.githubusercontent.com/Typsium/typsium/main/tests/README-graphic1/ref/1.png)
+![result](https://raw.githubusercontent.com/Typsium/typsium/main/tests/README-graphic1/ref/formula-parser.svg)
