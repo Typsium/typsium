@@ -135,7 +135,7 @@ $#element _count$
     
     if not matched {
       result += text(remaining.first())
-      remaining = remaining.slice(1)
+      remaining = remaining.slice(remaining.at(0).len())
     }
   }
   
