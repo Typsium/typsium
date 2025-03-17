@@ -1,15 +1,12 @@
 #let patterns = (
   // Match chemical elements with optional numbers (e.g., H2, Na, Fe3)
-  element: regex("^\s*?([A-Z][a-z]?)\s?(\d+[a-z]*|[a-z])?"),
-  
-  // Match numerical coefficients before chemical formulas (e.g., 2H2O)
-  coefficient: regex("^2\s*(\d+\.?\d*)"),
+  element: regex("^\s*?([A-Z][a-z]?)\s?(\d+(?:|[^\+|\-])[a-z]*|[a-z])?"),
   
   // Match brackets [] {} () with optional subscripts
   bracket: regex("^\s*([\(\[\{\}\]\)])\s*(\d*|[a-z]+)?"),
   
   // Match ion charges (e.g., 2+, 3-, +)
-  charge: regex("^\(?([0-9]*(\+|\-)+|\+|\-[0-9]*)\)?"),
+  charge: regex("^\s?\(?([0-9]*(\+|\-)+|\+|\-[0-9]*)\)?"),
   
   // Match physical states (s/l/g/aq)
   state: regex("^\((s|l|g|aq|solid|liquid|gas|aqueous)\)"),
@@ -18,7 +15,7 @@
   arrow: regex("^\s*(?:(<->|<==?>|-->|->|=|⇌|⇒|⇔)(?:\[([^\]]+)\])?|\[\])"),
   
   // Match plus signs between reactants/products
-  plus: regex("^\s\+"),
+  plus: regex("^\s\+\s?"),
   
   // Match heating conditions (Δ, heat, etc.)
   heating: regex("^\s*(Δ|δ|Delta|delta|heat|fire|hot|heating)\s*"),

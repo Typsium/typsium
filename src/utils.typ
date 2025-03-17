@@ -77,8 +77,8 @@
     ),
   ),
   match_order: (
-    basic: ("bracket","coefficient", "element",  "charge"),
-    full: ("bracket", "coefficient", "element", "plus", "charge", "arrow"),
+    basic: ("bracket", "element",  "charge"),
+    full: ("bracket", "element", "plus", "charge", "arrow"),
   ),
 )
 

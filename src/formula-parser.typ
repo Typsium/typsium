@@ -14,8 +14,8 @@ $#element _count$
 
 // Process ion charges, converting + and - to proper math symbols
 #let process_charge(input, charge) = context {
-  show "+": math.plus
-  show "-": math.minus
+  show "+": text(size:0.8em, baseline: -0.15em)[#math.plus]
+  show "-": text(size:0.75em, baseline: -0.15em)[#math.minus]
   $#block(height: measure(input).height)^#charge$
 }
 
@@ -116,9 +116,7 @@ $#element _count$
       let match = remaining.match(patterns.at(pattern))
       if match != none {
         result += if pattern == "plus" { 
-          $+$ 
-        } else if pattern == "coefficient" { 
-          $#match.captures.at(0)$ 
+          $+$
         } else if pattern == "element" {
           process_element(match.captures.at(0), match.captures.at(1))
         } else if pattern == "bracket" {
@@ -149,4 +147,4 @@ $#element _count$
 
 #set page(margin: 0.3em, width: auto, height: auto)
 
-#shadowed(inset: 0.7em, radius: 6pt)[#ce("NH4 + + 2SO4 2-  ->[awa] 2NH3 + H2SO4")]
+#shadowed(inset: 0.7em, radius: 6pt)[#ce("NH4 4+ +2SO4 4-  ->[awa] 2NH3 + H2SO4")]
