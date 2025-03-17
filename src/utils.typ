@@ -68,7 +68,7 @@
 )
 
 #let config = (
-  arrow: (arrow_size: 120%, reversible_size: 150%),
+  arrow: (arrow_size: 120%, reversible_size: 120%),
   conditions: (
     bottom: (
       symbols: (heating: ("Delta", "delta", "Δ", "δ", "fire", "heat", "hot", "heating")),

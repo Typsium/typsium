@@ -1,4 +1,4 @@
-#import "lib.typ": ce
+#import "../src/lib.typ": ce
 
 #set page(margin: 1em, width: auto, height: auto)
 
@@ -7,7 +7,6 @@
 #v(1em)
 
 // 2. Test complex charges with multiple digits
-tt
 #v(1em)
 
 // 3. Test nested brackets with multiple coefficients
@@ -15,11 +14,11 @@ tt
 #v(1em)
 
 // 4. Test multiple conditions with special characters
-#ce("A^+ + B^+ <-> C^+ + D^+", condition: "T=1000K, P=500atm, catalyst=Pt, δ, Al2O3")
+#ce("A^+ + B^+ <->[T=1000K, P=500atm, catalyst=Pt, δ, Al2O3] C^+ + D^+")
 #v(1em)
 
 // 5. Test empty components and spaces
-#ce(" H2 + O2  ->  H2O ", condition: " ")
+#ce(" H2 + O2  ->[ ]  H2O ")
 #v(1em)
 
 // 6. Test single character elements and numbers
@@ -32,7 +31,7 @@ tt
 
 // 8. Test special symbols in conditions
 // need to add check for special symbols in conditions, do not need to show multiple times
-#ce("X -> Y", condition: "Δ,δ,heat,Delta")
+#ce("X ->[Δ,δ,heat,Delta] Y")
 #v(1em)
 
 // 9. Test maximum length element symbols
