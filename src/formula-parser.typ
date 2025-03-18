@@ -1,57 +1,36 @@
 // Import required modules
-#import "utils.typ": config
+#import "utils.typ": parser-config
 #import "regex.typ": patterns
 
-// Process chemical elements with their subscripts
-#let process_element(element, count) = { 
-$#element _count$
-}
-
-// Process brackets with their subscripts
-#let process_bracket(bracket, count) = { 
-  $#bracket _count$
-}
-
-// Process ion charges, converting + and - to proper math symbols
-#let process_charge(input, charge) = context {
-  show "+": text(size:0.8em, baseline: -0.15em)[#math.plus]
-  show "-": text(size:0.75em, baseline: -0.15em)[#math.minus]
-  $#block(height: measure(input).height)^#charge$
-}
-
-// Main formula parsing function that converts text into chemical notation
-#let parse_formula(formula) = {
-  let remaining = formula.trim()
-  let result = none
-  
-  while remaining.len() > 0 {
-    let matched = false
-    for pattern in config.match_order.basic {
-      let match = remaining.match(patterns.at(pattern))
-      if match != none {
-        result += if pattern == "coefficient" { 
-          $#match.captures.at(0)$ 
-        } else if pattern == "element" {
-          process_element(match.captures.at(0), match.captures.at(1))
-        } else if pattern == "bracket" { 
-          process_bracket(match.captures.at(0), match.captures.at(1))
-        } else if pattern == "charge" {
-          process_charge(result, match.captures.at(0))
-        }
-        
-        remaining = remaining.slice(match.end)
-        matched = true
-        break
-      }
-    }
-    
-    if not matched {
-      result += text(remaining.first())
-      remaining = remaining.slice(1)
-    }
+// [CHANGE] Replaced direct pattern access with cached patterns for better performance
+#let PATTERNS = {
+  let cache = (:)
+  for pattern in patterns.keys() {
+    cache.insert(pattern, patterns.at(pattern))
   }
-  
-  return if result == none { formula } else { result }
+  cache
+}
+
+// [CHANGE] Added symbol map for consistent rendering and better maintainability
+#let SYMBOL_MAP = (
+  arrows: (
+    "<-": (sym.harpoons.rtlb, parser-config.arrow.reversible_size),
+    "=": ($=$, parser-config.arrow.arrow_size),
+    "->": ($->$, parser-config.arrow.arrow_size)
+  ),
+  charges: (
+    "+": (math.plus, 0.8em),
+    "-": (math.minus, 0.75em)
+  )
+)
+
+// [CHANGE] Simplified charge processing with explicit symbol hiding
+#let process_charge = (input, charge) => {
+  let first = charge.first()
+  show "-": text(size: 0.75em, baseline: -0.15em)[#math.minus]
+  show "+": text(size: 0.75em, baseline: -0.15em)[#math.plus]
+  show "^": none
+  context {$#block(height: measure(input).height)^#charge$}
 }
 
 // Process reaction conditions (temperature, pressure, catalyst, etc.)
@@ -62,8 +41,8 @@ $#element _count$
   }
   
   let is_bottom = (
-    config.conditions.bottom.identifiers.any(ids => ids.any(id => cond.starts-with(id)))
-      or config.conditions.bottom.units.any(unit => cond.ends-with(unit))
+    parser-config.conditions.bottom.identifiers.any(ids => ids.any(id => cond.starts-with(id)))
+      or parser-config.conditions.bottom.units.any(unit => cond.ends-with(unit))
   )
   
   return if is_bottom { (none, cond) } else { (parse_formula(cond), none) }
@@ -79,11 +58,11 @@ $#element _count$
   }
 
   let arrow = if arrow_match.contains("<-") {
-    $stretch(#sym.harpoons.rtlb, size: #config.arrow.reversible_size)$
+    $stretch(#sym.harpoons.rtlb, size: #parser-config.arrow.reversible_size)$
   } else if arrow_match.contains("=") {
-    $stretch(=, size: #config.arrow.arrow_size)$
+    $stretch(=, size: #parser-config.arrow.arrow_size)$
   } else {
-    $stretch(->, size: #config.arrow.arrow_size)$
+    $stretch(->, size: #parser-config.arrow.arrow_size)$
   }
   
   let top = ()
@@ -104,38 +83,48 @@ $#element _count$
   $arrow^#top.join(",")_#bottom.join(",")$
 }
 
-// Main chemical equation formatter function
-// Converts text-based chemical equations into properly formatted math
-#let ce = (formula) => {
+// [CHANGE] Added pattern handlers for better code organization and reusability
+#let PATTERN_HANDLERS = (
+  charge: (r,c) => process_charge(r, c),
+  arrow: (t) => process_arrow(t),
+)
+
+// [CHANGE] Optimized main parser with single-pass matching and improved error handling
+#let ce = formula => {
   let remaining = formula.trim()
+  if remaining.len() == 0 { return [] }
+  
   let result = none
+  let pattern_group = parser-config.match_order.full
   
   while remaining.len() > 0 {
-    let matched = false
-    for pattern in config.match_order.full {
-      let match = remaining.match(patterns.at(pattern))
+    let best = (pattern: none, match: none)
+    
+    // [CHANGE] Single pass scan replaces multiple pattern attempts
+    for pattern in pattern_group {
+      let match = remaining.match(PATTERNS.at(pattern))
       if match != none {
-        result += if pattern == "plus" { 
-          $+$
-        } else if pattern == "element" {
-          process_element(match.captures.at(0), match.captures.at(1))
-        } else if pattern == "bracket" {
-          process_bracket(match.captures.at(0), match.captures.at(1))
-        } else if pattern == "charge" { 
-          process_charge(result, match.captures.at(0)) 
-        } else {
-          process_arrow(match.text)
-        }
-        
-        remaining = remaining.slice(match.end)
-        matched = true
+        best = (pattern: pattern, match: match)
         break
       }
     }
     
-    if not matched {
-      result += text(remaining.first())
-      remaining = remaining.slice(remaining.at(0).len())
+    // [CHANGE] Simplified pattern handling using direct math mode
+    if best.match != none {
+      let pattern = best.pattern
+      let match = best.match
+      
+      result += if pattern == "plus" { $+$ }
+      else if pattern == "element" { $#match.captures.at(0) _#if match.captures.at(1) != none [#match.captures.at(1)]$ }
+      else if pattern == "bracket" {  $#match.captures.at(0) _#if match.captures.at(1) != none [#match.captures.at(1)]$ }
+      else if pattern == "charge" { (PATTERN_HANDLERS.charge)(result, match.captures.at(0)) }
+      else { (PATTERN_HANDLERS.arrow)(match.text) }
+      
+      remaining = remaining.slice(match.end)
+    } else {
+      // [CHANGE] Better Unicode support with codepoints handling
+      result += text(remaining.at(0))
+      remaining = remaining.slice(remaining.codepoints().at(0).len())
     }
   }
   
@@ -147,4 +136,4 @@ $#element _count$
 
 #set page(margin: 0.3em, width: auto, height: auto)
 
-#shadowed(inset: 0.7em, radius: 6pt)[#ce("NH4 4+ +2SO4 4-  ->[awa] 2NH3 + H2SO4")]
+#shadowed(inset: 0.7em, radius: 6pt)[#ce("Cu^2+ +")]

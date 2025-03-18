@@ -67,7 +67,7 @@
   "7p": 6,
 )
 
-#let config = (
+#let parser-config = (
   arrow: (arrow_size: 120%, reversible_size: 120%),
   conditions: (
     bottom: (
@@ -78,7 +78,7 @@
   ),
   match_order: (
     basic: ("bracket", "element",  "charge"),
-    full: ("bracket", "element", "plus", "charge", "arrow"),
+    full: ("bracket", "element", "plus","arrow", "charge", ),
   ),
 )
 
