@@ -16,12 +16,12 @@
   arrows: (
     "<-": (sym.harpoons.rtlb, parser-config.arrow.reversible_size),
     "=": ($=$, parser-config.arrow.arrow_size),
-    "->": ($->$, parser-config.arrow.arrow_size)
+    "->": ($->$, parser-config.arrow.arrow_size),
   ),
   charges: (
     "+": (math.plus, 0.8em),
-    "-": (math.minus, 0.75em)
-  )
+    "-": (math.minus, 0.75em),
+  ),
 )
 
 // [CHANGE] Simplified charge processing with explicit symbol hiding
@@ -30,7 +30,7 @@
   show "-": text(size: 0.75em, baseline: -0.15em)[#math.minus]
   show "+": text(size: 0.75em, baseline: -0.15em)[#math.plus]
   show "^": none
-  context {$#block(height: measure(input).height)^#charge$}
+  context { $#block(height: measure(input).height)^#charge$ }
 }
 
 // Process reaction conditions (temperature, pressure, catalyst, etc.)
@@ -39,12 +39,12 @@
   if cond.match(patterns.heating) != none {
     return (none, { sym.Delta })
   }
-  
+
   let is_bottom = (
     parser-config.conditions.bottom.identifiers.any(ids => ids.any(id => cond.starts-with(id)))
       or parser-config.conditions.bottom.units.any(unit => cond.ends-with(unit))
   )
-  
+
   return if is_bottom { (none, cond) } else { (parse_formula(cond), none) }
 }
 
@@ -64,14 +64,14 @@
   } else {
     $stretch(->, size: #parser-config.arrow.arrow_size)$
   }
-  
+
   let top = ()
   let bottom = ()
-  
+
   if bracket_content != none {
     top.push(bracket_content)
   }
-  
+
   if condition != none {
     for cond in condition.split(",") {
       let (t, b) = process_condition(cond)
@@ -79,27 +79,27 @@
       if b != none { bottom.push(b) }
     }
   }
-  
+
   $arrow^#top.join(",")_#bottom.join(",")$
 }
 
 // [CHANGE] Added pattern handlers for better code organization and reusability
 #let PATTERN_HANDLERS = (
-  charge: (r,c) => process_charge(r, c),
-  arrow: (t) => process_arrow(t),
+  charge: (r, c) => process_charge(r, c),
+  arrow: t => process_arrow(t),
 )
 
 // [CHANGE] Optimized main parser with single-pass matching and improved error handling
 #let ce = formula => {
   let remaining = formula.trim()
   if remaining.len() == 0 { return [] }
-  
+
   let result = none
   let pattern_group = parser-config.match_order.full
-  
+
   while remaining.len() > 0 {
     let best = (pattern: none, match: none)
-    
+
     // [CHANGE] Single pass scan replaces multiple pattern attempts
     for pattern in pattern_group {
       let match = remaining.match(PATTERNS.at(pattern))
@@ -108,18 +108,21 @@
         break
       }
     }
-    
+
     // [CHANGE] Simplified pattern handling using direct math mode
     if best.match != none {
       let pattern = best.pattern
       let match = best.match
-      
-      result += if pattern == "plus" { $+$ }
-      else if pattern == "element" { $#match.captures.at(0) _#if match.captures.at(1) != none [#match.captures.at(1)]$ }
-      else if pattern == "bracket" {  $#match.captures.at(0) _#if match.captures.at(1) != none [#match.captures.at(1)]$ }
-      else if pattern == "charge" { (PATTERN_HANDLERS.charge)(result, match.captures.at(0)) }
-      else { (PATTERN_HANDLERS.arrow)(match.text) }
-      
+
+      result += if pattern == "plus" { $+$ } else if pattern == "element" {
+        // [CHANGE] reduce some $$ used, need attention
+        match.captures.at(0) + if match.captures.at(1) != none [$#h(0em)_#match.captures.at(1)$]
+      } else if pattern == "bracket" {
+        match.captures.at(0) + if match.captures.at(1) != none [$#h(0em)_#match.captures.at(1)$]
+      } else if pattern == "charge" { (PATTERN_HANDLERS.charge)(result, match.captures.at(0)) } else if (
+        pattern == "arrow"
+      ) { (PATTERN_HANDLERS.arrow)(match.text) }
+
       remaining = remaining.slice(match.end)
     } else {
       // [CHANGE] Better Unicode support with codepoints handling
@@ -127,13 +130,6 @@
       remaining = remaining.slice(remaining.codepoints().at(0).len())
     }
   }
-  
+
   $upright(display(result))$
 }
-
-// Test section for previewing the output
-#import "@preview/shadowed:0.2.0": shadowed
-
-#set page(margin: 0.3em, width: auto, height: auto)
-
-#shadowed(inset: 0.7em, radius: 6pt)[#ce("Cu^2+ +")]

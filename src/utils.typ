@@ -1,14 +1,14 @@
 // === Declarations & Configurations ===
 // source: https://en.wikipedia.org/wiki/List_of_chemical_elements
 // source: https://github.com/BlueObelisk/bodr/blob/master/bodr/elements/elements.xml
-#let elements = csv("resources/elements.csv", row-type: dictionary).map(x=> (
+#let elements = csv("resources/elements.csv", row-type: dictionary).map(x => (
   kind: "element",
   atomic-number: int(x.atomic-number),
   symbol: x.symbol,
   common-name: x.common-name,
   group: int(x.group),
   period: int(x.period),
-  block:x.block,
+  block: x.block,
   atomic-weight: float(x.atomic-weight),
   covalent-radius: float(x.covalent-radius),
   van-der-waal-radius: float(x.van-der-waal-radius),
@@ -20,7 +20,7 @@
   electronegativity: float(x.electronegativity),
   phase: x.phase,
   cas: x.cas,
-  ))
+))
 
 #let hydrates = (
   "anhydrous",
@@ -71,14 +71,43 @@
   arrow: (arrow_size: 120%, reversible_size: 120%),
   conditions: (
     bottom: (
-      symbols: (heating: ("Delta", "delta", "Δ", "δ", "fire", "heat", "hot", "heating")),
-      identifiers: (("T=", "t="), ("P=", "p=")),
-      units: ("°C", "K", "atm", "bar"),
+      symbols: (
+        heating: (
+          "Delta",
+          "delta",
+          "Δ",
+          "δ",
+          "fire",
+          "heat",
+          "hot",
+          "heating",
+        ),
+      ),
+      identifiers: (
+        ("T=", "t="),
+        ("P=", "p="),
+      ),
+      units: (
+        "°C",
+        "K",
+        "atm",
+        "bar",
+      ),
     ),
   ),
   match_order: (
-    basic: ("bracket", "element",  "charge"),
-    full: ("bracket", "element", "plus","arrow", "charge", ),
+    basic: (
+      "bracket",
+      "element",
+      "charge",
+    ),
+    full: (
+      "element",
+      "plus",
+      "arrow",
+      "charge",
+      "bracket",
+    ),
   ),
 )
 
@@ -109,18 +138,18 @@
 
 // Following utility methods are from:
 // https://github.com/typst-community/linguify/blob/b220a5993c7926b1d2edcc155cda00d2050da9ba/lib/utils.typ#L3
-#let if-auto-then(val,ret) = {
-  if (val == auto){
+#let if-auto-then(val, ret) = {
+  if (val == auto) {
     ret
-  } else { 
-    val 
+  } else {
+    val
   }
 }
 
 
 // own utils
 
-#let padright(array, targetLength)={
+#let padright(array, targetLength) = {
   for value in range(array.len(), targetLength) {
     array.insert(value, none)
   }
@@ -138,7 +167,7 @@
   if it == none {
     return none
   }
-  
+
   let children = if is-sequence(it) { it.children } else { (it,) }
 
   return children.map(sequence-to-array).flatten()
@@ -159,13 +188,13 @@
   }
 }
 
-#let get-molecule-dict(molecule)={
-  if is-metadata(molecule) and is-kind(molecule, "molecule"){
+#let get-molecule-dict(molecule) = {
+  if is-metadata(molecule) and is-kind(molecule, "molecule") {
     return molecule.value
   }
 }
-#let get-element-dict(element)={
-  if is-metadata(element) and is-kind(element, "element"){
+#let get-element-dict(element) = {
+  if is-metadata(element) and is-kind(element, "element") {
     return element.value
   }
 }
