@@ -15,8 +15,8 @@
 #let SYMBOL_MAP = (
   arrows: (
     "<-": (sym.harpoons.rtlb, parser-config.arrow.reversible_size),
-    "=": ($=$, parser-config.arrow.arrow_size),
-    "->": ($->$, parser-config.arrow.arrow_size),
+    "=": (math.eq, parser-config.arrow.arrow_size),
+    "->": (math.arrow.r, parser-config.arrow.arrow_size),
   ),
   charges: (
     "+": (math.plus, 0.8em),
@@ -27,10 +27,12 @@
 // [CHANGE] Simplified charge processing with explicit symbol hiding
 #let process_charge = (input, charge) => {
   let first = charge.first()
-  show "-": text(size: 0.75em, baseline: -0.15em)[#math.minus]
-  show "+": text(size: 0.75em, baseline: -0.15em)[#math.plus]
-  show "^": none
-  context { $#block(height: measure(input).height)^#charge$ }
+  context { 
+    math.attach(
+      block(height: measure(input).height),
+      t: charge.slice(1)
+    )
+  }
 }
 
 // Process reaction conditions (temperature, pressure, catalyst, etc.)
@@ -56,7 +58,6 @@
   } else {
     (arrow_text, none)
   }
-
   let arrow = if arrow_match.contains("<-") {
     $stretch(#sym.harpoons.rtlb, size: #parser-config.arrow.reversible_size)$
   } else if arrow_match.contains("=") {
@@ -64,14 +65,11 @@
   } else {
     $stretch(->, size: #parser-config.arrow.arrow_size)$
   }
-
   let top = ()
   let bottom = ()
-
   if bracket_content != none {
     top.push(bracket_content)
   }
-
   if condition != none {
     for cond in condition.split(",") {
       let (t, b) = process_condition(cond)
@@ -79,7 +77,6 @@
       if b != none { bottom.push(b) }
     }
   }
-
   $arrow^#top.join(",")_#bottom.join(",")$
 }
 
@@ -96,6 +93,8 @@
 
   let result = none
   let pattern_group = parser-config.match_order.full
+
+  show "-": sym.minus
 
   while remaining.len() > 0 {
     let best = (pattern: none, match: none)
@@ -114,14 +113,29 @@
       let pattern = best.pattern
       let match = best.match
 
-      result += if pattern == "plus" { $+$ } else if pattern == "element" {
-        // [CHANGE] reduce some $$ used, need attention
-        match.captures.at(0) + if match.captures.at(1) != none [$#h(0em)_#match.captures.at(1)$]
+      result += if pattern == "plus" { 
+        math.plus 
+      } else if pattern == "element" {
+        let main = match.captures.at(0)
+        let sub = match.captures.at(1)
+        if sub != none {
+          math.attach(main, b: sub)
+        } else {
+          main
+        }
       } else if pattern == "bracket" {
-        match.captures.at(0) + if match.captures.at(1) != none [$#h(0em)_#match.captures.at(1)$]
-      } else if pattern == "charge" { (PATTERN_HANDLERS.charge)(result, match.captures.at(0)) } else if (
-        pattern == "arrow"
-      ) { (PATTERN_HANDLERS.arrow)(match.text) }
+        let main = match.captures.at(0)
+        let sub = match.captures.at(1)
+        if sub != none {
+          math.attach(main, b: sub)
+        } else {
+          main
+        }
+      } else if pattern == "charge" { 
+        (PATTERN_HANDLERS.charge)(result, match.captures.at(0)) 
+      } else if pattern == "arrow" { 
+        (PATTERN_HANDLERS.arrow)(match.text) 
+      }
 
       remaining = remaining.slice(match.end)
     } else {

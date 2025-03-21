@@ -1,12 +1,12 @@
 #let patterns = (
   // Match chemical elements with optional numbers (e.g., H2, Na, Fe3)
-  element: regex("^\s*?([A-Z][a-z]?)\s??(\d+(?:|[^\+|\-])*)?"),
+  element: regex("^\s*?([A-Z][a-z]?)\s??(\d+(?:|[^\+|\-])*|\(\s*(\d+)?n(?:[+-]\d+)?\s*\))?"),
   
   // Match brackets [] {} () with optional subscripts
-  bracket: regex("^\s*([\(\[\{\}\]\)])\s*?(\d+)?"),
+  bracket: regex("^\s*(\}\]\)])\s*?(\d+)?"),
   
   // Match ion charges (e.g., 2+, 3-, +)
-  charge: regex("^\s?\(?(\^?[0-9]?(\+|\-)|\^[0-9])\)?"),
+  charge: regex("^(\s?\(?\^?[0-9](\+|\-)|\^[0-9]|\^[+-])\)?"),
   
   // Match physical states (s/l/g/aq)
   state: regex("^\((s|l|g|aq|solid|liquid|gas|aqueous)\)"),

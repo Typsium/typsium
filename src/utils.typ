@@ -1,6 +1,50 @@
 // === Declarations & Configurations ===
 // source: https://en.wikipedia.org/wiki/List_of_chemical_elements
 // source: https://github.com/BlueObelisk/bodr/blob/master/bodr/elements/elements.xml
+#let parser-config = (
+  arrow: (arrow_size: 120%, reversible_size: 120%),
+  conditions: (
+    bottom: (
+      symbols: (
+        heating: (
+          "Delta",
+          "delta",
+          "Δ",
+          "δ",
+          "fire",
+          "heat",
+          "hot",
+          "heating",
+        ),
+      ),
+      identifiers: (
+        ("T=", "t="),
+        ("P=", "p="),
+      ),
+      units: (
+        "°C",
+        "K",
+        "atm",
+        "bar",
+      ),
+    ),
+  ),
+  match_order: (
+    basic: (
+      "bracket",
+      "element",
+      "charge",
+    ),
+    full: (
+      "element",
+      "plus",
+      "arrow",
+      "charge",
+      "bracket",
+    ),
+  ),
+)
+
 #let elements = csv("resources/elements.csv", row-type: dictionary).map(x => (
   kind: "element",
   atomic-number: int(x.atomic-number),
@@ -67,51 +111,7 @@
   "7p": 6,
 )
 
-#let parser-config = (
-  arrow: (arrow_size: 120%, reversible_size: 120%),
-  conditions: (
-    bottom: (
-      symbols: (
-        heating: (
-          "Delta",
-          "delta",
-          "Δ",
-          "δ",
-          "fire",
-          "heat",
-          "hot",
-          "heating",
-        ),
-      ),
-      identifiers: (
-        ("T=", "t="),
-        ("P=", "p="),
-      ),
-      units: (
-        "°C",
-        "K",
-        "atm",
-        "bar",
-      ),
-    ),
-  ),
-  match_order: (
-    basic: (
-      "bracket",
-      "element",
-      "charge",
-    ),
-    full: (
-      "element",
-      "plus",
-      "arrow",
-      "charge",
-      "bracket",
-    ),
-  ),
-)
-
-
+// === Utility Methods ===
 // Following utility methods are from:
 // https://github.com/touying-typ/touying/blob/6316aa90553f5d5d719150709aec1396e750da63/src/utils.typ#L157C1-L166C2
 
@@ -155,6 +155,7 @@
   }
   return array
 }
+
 #let sequence-to-array(it) = {
   if is-sequence(it) {
     it.children.map(sequence-to-array)
