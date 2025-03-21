@@ -1,0 +1,26 @@
+name: Test with TinyMist
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install tinymist
+        env:
+          TINYMIST_VERSION: 0.13.x  # Update version as needed for different Typst versions
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf \
+          https://github.com/Myriad-Dreamin/tinymist/releases/download/${TINYMIST_VERSION}/tinymist-installer.sh | sh
+          
+      - name: Run tests (Typst)
+        run: tinymist test tests/main.typ --root . --ppi 144 --ignore-system-fonts
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: refs
+          path: refs
