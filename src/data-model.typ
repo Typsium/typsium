@@ -8,8 +8,7 @@
 //TODO: Properly apply stochiometry
 #let get-element-counts(molecule)={
   
-  // how the f do you create an empty dictionary?
-  let elements = (H:0)
+  let found-elements = (:)
   let remaining = molecule.trim()
   while remaining.len() > 0 {
     let match = remaining.match(regex_patterns.at("element"))
@@ -17,8 +16,8 @@
       remaining = remaining.slice(match.end)
       let element = match.captures.at(0)
       let count = int(if match.captures.at(1, default: "") == "" {1} else{match.captures.at(1)})
-      let current = elements.at(element, default: 0)
-      elements.insert(element, count)
+      let current = found-elements.at(element, default: 0)
+      found-elements.insert(element, count)
     }
     else{
       let char-len = remaining.codepoints().at(0).len()
@@ -26,11 +25,7 @@
       remaining = remaining.slice(char-len)
     }
   }
-  //hack because no empty dict
-  if elements.H == 0{
-    elements.remove("H")
-  }
-  return elements
+  return found-elements
 }
 
 #let get-weight(molecule)={
@@ -141,16 +136,83 @@
   return metadata(element)
 }
 
+#let validate-element(element)={
+  let type = type(element)
+  if type == str{
+    if element.len() > 2{
+      return get-element(common-name:element)
+    } else {
+      return get-element(symbol:element)
+    }
+  } else if type == int{
+    return get-element(atomic-number:element)
+  } else if type == content{
+    return get-element-dict(element)
+  } else if type == dictionary{
+    return element
+  }
+}
+
 #let define-ion(
   element,
   charge: 0,
   delta: 0,
+  override-common-name:none,
+  override-iupac-name:none,
+  override-CAS:none,
+  override-h-p:none,
+  override-ghs:none,
+  validate: true,
 )={
-  if charge != 0{
-    return element.charge = charge
+  if validate{
+    element = validate-element(element)
+  }
+  element = if charge != 0{
+    element.charge = charge
   } else {
     element.charge = element.at("charge", default:0) + delta
   }
+  return element
+}
+
+#let define-isotope(
+  element,
+  mass-number,
+  override-atomic-weight: none,
+  override-common-name:none,
+  override-iupac-name:none,
+  override-cas:none,
+  override-h-p:none,
+  override-ghs:none,
+  validate: true,
+)={
+  if validate{
+    element = validate-element(element)
+  }
+
+  element.mass-number = mass-number
+  if override-atomic-weight != none{
+    element.atomic-weight = override-atomic-weight
+  }
+  if override-common-name != none{
+    element.common-name = override-common-name
+  }
+  if override-iupac-name != none{
+    element.iupac-name = override-iupac-name
+  }
+  if override-cas != none{
+    element.override-cas = override-cas
+  }
+  if override-common-name != none{
+    element.common-name = override-common-name
+  }
+  if override-common-name != none{
+    element.common-name = override-common-name
+  }
+  if override-common-name != none{
+    element.common-name = override-common-name
+  }
+  return element
 }
 
 #let define-molecule(
@@ -162,32 +224,36 @@
   cas:"",
   h-p:(),
   ghs:(),
+  validate: true,
 )={
-  // TODO: continue to add more validation as we go
-  // things should fail here instead of causing errors down the line
-  if common-name == none{
-    common-name = formula
-  }
+  let found-elements
+  if validate {
+    // TODO: continue to add more validation as we go
+    // things should fail here instead of causing errors down the line
+    if common-name == none{
+      common-name = formula
+    }
+    
+    if smiles == ""{
+      smiles == none
+    } else if formula == ""{
+      //TODO: actually calculate the formula based on the smiles code (don't forget to add H on Carbon atoms)
+      formula = smiles
+    }
+    
+    if CAS == ""{
+      CAS = none
+    }
+    
+    found-elements = get-element-counts(formula)
   
-  if smiles == ""{
-    smiles == none
-  } else if formula == ""{
-    //TODO: actually calculate the formula based on the smiles code (don't forget to add H on Carbon atoms)
-    formula = smiles
-  }
-  
-  if cas == ""{
-    cas = none
-  }
-  
-  let elements = get-element-counts(formula)
-
-  if inchi != ""{
-    // TODO: create inchi keys from provided inchi:
-    // https://typst.app/universe/package/jumble
-    // https://www.inchi-trust.org/download/104/inchi_TechMan.pdf
-  }else{
-    inchi = none
+    if InChI != ""{
+      // TODO: create InChI keys from provided InChI:
+      // https://typst.app/universe/package/jumble
+      // https://www.inchi-trust.org/download/104/InChI_TechMan.pdf
+    }else{
+      InChI = none
+    }
   }
   
   return metadata((kind: "molecule",
@@ -199,7 +265,7 @@
     cas: cas, 
     h-p: h-p, 
     ghs: ghs, 
-    elements: elements
+    elements: found-elements
   ))
 }
 
