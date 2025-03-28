@@ -67,6 +67,70 @@
   "7p": 6,
 )
 
+#let brackets = (
+  math.paren.l,
+  math.bracket.l,
+  math.brace.l,
+  math.bar.v,
+  math.paren.r,
+  math.bracket.r,
+  math.brace.r,
+  math.bar.v,
+)
+#let arrows = (
+  sym.arrow.r.l,
+  sym.arrow.r,
+  sym.arrow.l,
+  sym.arrow.r.double,
+  sym.arrow.l.double,
+  sym.arrow.r.not,
+  sym.arrow.l.not,
+  sym.harpoons.rtlb
+)
+
+#let get-bracket(kind, open: true) = {
+  if not open{
+    kind += 4
+  }
+  brackets.at(kind, default:none)
+}
+#let get-arrow(kind) = {
+  arrows.at(kind, default:sym.arrow.r)
+}
+
+#let phase-to-content(phase) = {
+  if phase == none{
+    none
+  } else if type(phase) == str{
+    "(" + phase + ")"
+  }
+}
+
+#let count-to-content(factor) = {
+  if factor == none{
+    none
+  } else if type(factor) == int{
+    if factor > 1{
+      str(factor)
+    }
+  }
+}
+#let charge-to-content(charge) = {
+  if charge == none{
+    none
+  } else if type(charge) == int{
+    if charge < 0{
+      str(calc.abs(charge)) + "-"
+    }
+    else if charge > 0{
+      str(calc.abs(charge)) + "+"
+    }
+    else {
+      none
+    }
+  }
+}
+
 #let parser-config = (
   arrow: (arrow_size: 120%, reversible_size: 120%),
   conditions: (
@@ -107,7 +171,7 @@
   type(it) == content and it.func() == heading and it.depth <= depth
 }
 
-// Following utility methods are from:
+// Following utility method is from:
 // https://github.com/typst-community/linguify/blob/b220a5993c7926b1d2edcc155cda00d2050da9ba/lib/utils.typ#L3
 #let if-auto-then(val,ret) = {
   if (val == auto){
@@ -117,6 +181,13 @@
   }
 }
 
+#let try-at(value, field, default:none) = {
+  if (value == none){
+    none
+  } else { 
+    value.at(field, default: default) 
+  }
+}
 
 // own utils
 
