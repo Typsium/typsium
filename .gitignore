@@ -1,2 +1,8 @@
 # Ignore PDF files
 *.pdf
+
+# Rust
+src/typsium-rs/target
+
+# Mac OS
+.DS_Store
