@@ -2,11 +2,6 @@
 
 #let _bail(msg) = assert(false, message: msg)
 
-#let _brackets = (
-  round: ("(", ")"),
-  square: ("[", "]"),
-)
-
 #let _construct_arrow(arr) = {
   if arr.type == "special" {
     return sym.harpoons.rtlb
@@ -38,14 +33,13 @@
 #let _construct_component(c) = {
   let _construct_grouped(g) = {
     if g.type == "parenthesized" {
-      let (open, close) = _brackets.at(g.bracket)
-      math.lr({
-        open
-        for c in g.children {
-          _construct_component(c)
-        }
-        close
-      })
+      if g.bracket == "round" {
+        $lr((#(g.children.map(_construct_component).join())))$.body
+      } else if g.bracket == "square" {
+        $lr([#(g.children.map(_construct_component).join())])$.body
+      } else {
+        _bail("Unknown bracket type")
+      }
     } else if g.type == "single" {
       $#g.symbol$.body
     } else {
