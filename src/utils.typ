@@ -77,6 +77,7 @@
   math.brace.r,
   math.bar.v,
 )
+
 #let arrows = (
   sym.arrow.r.l,
   sym.arrow.r,
@@ -86,6 +87,16 @@
   sym.arrow.r.not,
   sym.arrow.l.not,
   sym.harpoons.rtlb
+)
+#let arrow-kinds = (
+  "<->":0,
+  "->":1,
+  "<-":2,
+  "=>":3,
+  "<+":4,
+  "-/>":5,
+  "</-":6,
+  "<=>":7,
 )
 
 #let get-bracket(kind, open: true) = {
@@ -115,19 +126,36 @@
     }
   }
 }
-#let charge-to-content(charge) = {
+#let arrow-string-to-kind(arrow) = {
+  arrow = arrow.trim()
+  arrow-kinds.at(arrow, default: 1)
+}
+#let charge-to-content(charge, radical: false) = {
   if charge == none{
     none
-  } else if type(charge) == int{
-    if charge < 0{
-      str(calc.abs(charge)) + "-"
+  } else if type(charge) == int {
+    if radical{
+      sym.bullet
     }
-    else if charge > 0{
-      str(calc.abs(charge)) + "+"
+    if charge < 0 {
+      if calc.abs(charge) > 1{
+        str(calc.abs(charge))
+      }
+      math.minus
+    }
+    else if charge > 0 {
+      if charge > 1{
+        str(charge)
+      }
+      math.plus
     }
     else {
       none
     }
+  } else if type(charge) == str{
+    charge.replace(".", sym.bullet)
+      .replace("-", math.minus)
+      .replace("+", math.plus)
   }
 }
 

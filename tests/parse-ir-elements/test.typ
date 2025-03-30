@@ -1,4 +1,6 @@
 #import "../../src/parse-formula-intermediate-representation.typ" : molecule-string-to-ir
+#import "../../src/lib.typ" : display-ir
+#set page(width: auto, height: auto, margin: 0.5em)
 
 #let co2 = (
              type: "molecule",
@@ -56,8 +58,19 @@
               ),
             ),
           )
-#let ir-fe = molecule-string-to-ir("Fe2^III)")
+#let ir-fe = molecule-string-to-ir("Fe2^III")
 
+#display-ir(ir-co2)
+#display-ir(ir-no)
+#display-ir(ir-cl)
+#display-ir(ir-fe)
+#display-ir(ir-na1)
+#display-ir(ir-na2)\
+#display-ir(co2)
+#display-ir(no)
+#display-ir(cl)
+#display-ir(fe)
+#display-ir(na)
 #assert(co2 == ir-co2)
 #assert(no == ir-no)
 #assert(na == ir-na1)

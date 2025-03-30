@@ -34,12 +34,12 @@
       ),
     )
   ),
+  (type: "align"),
   (
     type: "arrow",
     kind: 1,
     top: none,
     bottom: none,
-    align: 1
   ),
   (
     type: "molecule",
@@ -142,6 +142,7 @@
       ),
     )
   ),
+  (type: "align"),
   (
     type: "arrow",
     kind: 1,
@@ -171,7 +172,6 @@
         body:$Delta H^0$
       ),
     ),
-    align: 1
   ),
   (
     type: "molecule",
