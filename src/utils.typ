@@ -1,14 +1,15 @@
+
 // === Declarations & Configurations ===
 // source: https://en.wikipedia.org/wiki/List_of_chemical_elements
 // source: https://github.com/BlueObelisk/bodr/blob/master/bodr/elements/elements.xml
-#let elements = csv("resources/elements.csv", row-type: dictionary).map(x=> (
+#let elements = csv("resources/elements.csv", row-type: dictionary).map(x => (
   kind: "element",
   atomic-number: int(x.atomic-number),
   symbol: x.symbol,
   common-name: x.common-name,
   group: int(x.group),
   period: int(x.period),
-  block:x.block,
+  block: x.block,
   atomic-weight: float(x.atomic-weight),
   covalent-radius: float(x.covalent-radius),
   van-der-waal-radius: float(x.van-der-waal-radius),
@@ -20,7 +21,7 @@
   electronegativity: float(x.electronegativity),
   phase: x.phase,
   cas: x.cas,
-  ))
+))
 
 #let hydrates = (
   "anhydrous",
@@ -86,42 +87,42 @@
   sym.arrow.l.double,
   sym.arrow.r.not,
   sym.arrow.l.not,
-  sym.harpoons.rtlb
+  sym.harpoons.rtlb,
 )
 #let arrow-kinds = (
-  "<->":0,
-  "->":1,
-  "<-":2,
-  "=>":3,
-  "<+":4,
-  "-/>":5,
-  "</-":6,
-  "<=>":7,
+  "<->": 0,
+  "->": 1,
+  "<-": 2,
+  "=>": 3,
+  "<+": 4,
+  "-/>": 5,
+  "</-": 6,
+  "<=>": 7,
 )
 
 #let get-bracket(kind, open: true) = {
-  if not open{
+  if not open {
     kind += 4
   }
-  brackets.at(kind, default:none)
+  brackets.at(kind, default: none)
 }
 #let get-arrow(kind) = {
-  arrows.at(kind, default:sym.arrow.r)
+  arrows.at(kind, default: sym.arrow.r)
 }
 
 #let phase-to-content(phase) = {
-  if phase == none{
+  if phase == none {
     none
-  } else if type(phase) == str{
+  } else if type(phase) == str {
     "(" + phase + ")"
   }
 }
 
 #let count-to-content(factor) = {
-  if factor == none{
+  if factor == none {
     none
-  } else if type(factor) == int{
-    if factor > 1{
+  } else if type(factor) == int {
+    if factor > 1 {
       str(factor)
     }
   }
@@ -131,31 +132,27 @@
   arrow-kinds.at(arrow, default: 1)
 }
 #let charge-to-content(charge, radical: false) = {
-  if charge == none{
+  if charge == none {
     none
   } else if type(charge) == int {
-    if radical{
+    if radical {
       sym.bullet
     }
     if charge < 0 {
-      if calc.abs(charge) > 1{
+      if calc.abs(charge) > 1 {
         str(calc.abs(charge))
       }
       math.minus
-    }
-    else if charge > 0 {
-      if charge > 1{
+    } else if charge > 0 {
+      if charge > 1 {
         str(charge)
       }
       math.plus
-    }
-    else {
+    } else {
       none
     }
-  } else if type(charge) == str{
-    charge.replace(".", sym.bullet)
-      .replace("-", math.minus)
-      .replace("+", math.plus)
+  } else if type(charge) == str {
+    charge.replace(".", sym.bullet).replace("-", math.minus).replace("+", math.plus)
   }
 }
 
@@ -169,8 +166,8 @@
     ),
   ),
   match_order: (
-    basic: ("bracket", "element",  "charge"),
-    full: ("bracket", "element", "plus","arrow", "charge", ),
+    basic: ("bracket", "element", "charge"),
+    full: ("bracket", "element", "plus", "arrow", "charge"),
   ),
 )
 
@@ -201,25 +198,25 @@
 
 // Following utility method is from:
 // https://github.com/typst-community/linguify/blob/b220a5993c7926b1d2edcc155cda00d2050da9ba/lib/utils.typ#L3
-#let if-auto-then(val,ret) = {
-  if (val == auto){
+#let if-auto-then(val, ret) = {
+  if (val == auto) {
     ret
-  } else { 
-    val 
+  } else {
+    val
   }
 }
 
-#let try-at(value, field, default:none) = {
-  if (value == none){
+#let try-at(value, field, default: none) = {
+  if (value == none) {
     none
-  } else { 
-    value.at(field, default: default) 
+  } else {
+    value.at(field, default: default)
   }
 }
 
 // own utils
 
-#let padright(array, targetLength)={
+#let padright(array, targetLength) = {
   for value in range(array.len(), targetLength) {
     array.insert(value, none)
   }
@@ -237,7 +234,7 @@
   if it == none {
     return none
   }
-  
+
   let children = if is-sequence(it) { it.children } else { (it,) }
 
   return children.map(sequence-to-array).flatten()
@@ -258,13 +255,13 @@
   }
 }
 
-#let get-molecule-dict(molecule)={
-  if is-metadata(molecule) and is-kind(molecule, "molecule"){
+#let get-molecule-dict(molecule) = {
+  if is-metadata(molecule) and is-kind(molecule, "molecule") {
     return molecule.value
   }
 }
-#let get-element-dict(element)={
-  if is-metadata(element) and is-kind(element, "element"){
+#let get-element-dict(element) = {
+  if is-metadata(element) and is-kind(element, "element") {
     return element.value
   }
 }
