@@ -230,24 +230,3 @@
     ghs: if override-ghs != none { override-ghs } else { molecule.ghs },
   )
 }
-
-#let reaction(body) = {
-  let children = get-all-children(body)
-
-  // repr(body)
-
-  // linebreak()
-  let result = ""
-  for child in children {
-    if is-metadata(child) {
-      if is-kind(child, "molecule") {
-        result += child.value.formula
-      } else if is-kind(child, "element") {
-        result += child.value.symbol
-      }
-    } else {
-      result += child
-    }
-  }
-  ce(to-string(result))
-}

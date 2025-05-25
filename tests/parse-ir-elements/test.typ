@@ -1,63 +1,63 @@
-#import "../../src/parse-formula-intermediate-representation.typ" : molecule-string-to-ir
-#import "../../src/lib.typ" : display-ir
+#import "../../src/parse-formula-intermediate-representation.typ": molecule-string-to-ir
+#import "../../src/lib.typ": display-ir
 #set page(width: auto, height: auto, margin: 0.5em)
 
 #let co2 = (
-             type: "molecule",
-             children: (
-               (type: "element", symbol: "C"),
-               (type: "element", symbol: "O", count: 2),
-             ),
-           )
+  type: "molecule",
+  children: (
+    (type: "element", symbol: "C"),
+    (type: "element", symbol: "O", count: 2),
+  ),
+)
 #let ir-co2 = molecule-string-to-ir("CO2")
 
 #let no = (
-           type: "molecule",
-           children: (
-             (type: "element", symbol: "N"),
-             (
-               type: "element",
-               symbol: "O",
-               charge: -2,
-               radical: true,
-             ),
-           ),
-         )
+  type: "molecule",
+  children: (
+    (type: "element", symbol: "N"),
+    (
+      type: "element",
+      symbol: "O",
+      charge: -2,
+      radical: true,
+    ),
+  ),
+)
 #let ir-no = molecule-string-to-ir("NO^2.-")
 
 #let na = (
-            type: "molecule",
-            children: (
-              (type: "element", symbol: "Na", count: 3, charge: 1),
-            ),
-          )
+  type: "molecule",
+  children: (
+    (type: "element", symbol: "Na", count: 3, charge: 1),
+  ),
+)
 #let ir-na1 = molecule-string-to-ir("Na_3^+")
 #let ir-na2 = molecule-string-to-ir("Na_3^+")
 
 #let cl = (
-            type: "molecule",
-            children: (
-              (
-                type: "element",
-                symbol: "Cl",
-                count: 2,
-                charge: -1,
-              ),
-            ),
-          )
+  type: "molecule",
+  children: (
+    (
+      type: "element",
+      symbol: "Cl",
+      count: 2,
+      charge: -1,
+    ),
+  ),
+)
 #let ir-cl = molecule-string-to-ir("Cl2-1")
 
 #let fe = (
-            type: "molecule",
-            children: (
-              (
-                type: "element",
-                symbol: "Fe",
-                count: 2,
-                charge: "III",
-              ),
-            ),
-          )
+  type: "molecule",
+  children: (
+    (
+      type: "element",
+      symbol: "Fe",
+      count: 2,
+      charge: "III",
+    ),
+  ),
+)
 #let ir-fe = molecule-string-to-ir("Fe2^III")
 
 #display-ir(ir-co2)

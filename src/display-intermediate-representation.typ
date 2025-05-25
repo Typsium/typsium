@@ -1,21 +1,47 @@
-#import "utils.typ": try-at, count-to-content, charge-to-content, get-bracket, get-arrow, phase-to-content
-
+#import "utils.typ": (
+  try-at,
+  count-to-content,
+  charge-to-content,
+  get-bracket,
+  get-arrow,
+  phase-to-content,
+  typst-builtin-styled,
+  none-coalesce,
+  reconstruct-content,
+)
 #let display-element(data) = {
   let isotope = data.at("isotope", default: none)
+  let symbol = data.symbol
+  let t = data.at("oxidation-number", default: none)
+  let tr = charge-to-content(data.at("charge", default: none), radical: data.at("radical", default: false))
+  let br = count-to-content(data.at("count", default: none))
+  let tl = try-at(isotope, "mass-number")
+  let bl = try-at(isotope, "atomic-number")
+
+  symbol = reconstruct-content(data.at("symbol-body", default: none), symbol)
+  tr = reconstruct-content(data.at("charge-body", default: none), tr)
+  br = reconstruct-content(data.at("count-body", default: none), br)
+
   math.attach(
-    data.symbol,
-    t: data.at("oxidation-number", default: none),
-    tr: charge-to-content(data.at("charge", default: none), radical: data.at("radical", default: false)),
-    br: count-to-content(data.at("count", default: none)),
-    tl: try-at(isotope, "mass-number"),
-    bl: try-at(isotope, "atomic-number"),
+    symbol,
+    t: t,
+    tr: tr,
+    br: br,
+    tl: tl,
+    bl: bl,
   )
 }
 
 #let display-group(data) = {
   let children = data.at("children", default: ())
   let kind = data.at("kind", default: 1)
-  math.attach(
+  let tr = charge-to-content(data.at("charge", default: none))
+  let br = count-to-content(data.at("count", default: none))
+
+  tr = reconstruct-content(data.at("charge-body", default: none), tr)
+  br = reconstruct-content(data.at("count-body", default: none), br)
+
+  let result = math.attach(
     math.lr({
       get-bracket(kind, open: true)
       for child in children {
@@ -31,14 +57,17 @@
       }
       get-bracket(kind, open: false)
     }),
-    tr: charge-to-content(data.at("charge", default: none)),
-    br: count-to-content(data.at("count", default: none)),
+    tr: tr,
+    br: br,
   )
+
+  return reconstruct-content(data.at("body", default: none), result)
 }
 
 #let display-molecule(data) = {
   count-to-content(data.at("count", default: none))
-  math.attach(
+
+  let result = math.attach(
     [
       #let children = data.at("children", default: ())
       #for child in children {
@@ -56,9 +85,13 @@
     tr: charge-to-content(data.at("charge", default: none)),
     // br: phase-to-content(data.at("phase", default:none)),
   )
-  context {
-    text(phase-to-content(data.at("phase", default: none)), size: text.size * 0.75)
+  if data.at("phase", default: none) != none {
+    result += context {
+      text(phase-to-content(data.at("phase", default: none)), size: text.size * 0.75)
+    }
   }
+
+  return reconstruct-content(data.at("body", default: none), result)
 }
 
 #let display-ir(data) = {

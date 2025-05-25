@@ -91,13 +91,19 @@
 )
 #let arrow-kinds = (
   "<->": 0,
+  "↔": 0,
   "->": 1,
+  "→": 1,
   "<-": 2,
+  "←": 2,
   "=>": 3,
-  "<+": 4,
+  "⇒": 3,
+  "<=": 4,
+  "⇐": 4,
   "-/>": 5,
   "</-": 6,
   "<=>": 7,
+  "⇔": 7,
 )
 
 #let get-bracket(kind, open: true) = {
@@ -176,8 +182,20 @@
 // https://github.com/touying-typ/touying/blob/6316aa90553f5d5d719150709aec1396e750da63/src/utils.typ#L157C1-L166C2
 
 #let typst-builtin-sequence = ([A] + [ ] + [B]).func()
+#let typst-builtin-styled = [#set text(fill: red)].func()
+#let typst-builtin-context = [#context { }].func()
+#let typst-builtin-space = [ ].func()
+
 #let is-sequence(it) = {
   type(it) == content and it.func() == typst-builtin-sequence
+}
+
+#let is-empty-content(it) = {
+  it in ([ ], parbreak(), linebreak())
+}
+
+#let is-styled(it) = {
+  type(it) == content and it.func() == typst-builtin-styled
 }
 
 #let is-metadata(it) = {
@@ -196,6 +214,8 @@
   type(it) == content and it.func() == heading and it.depth <= depth
 }
 
+
+
 // Following utility method is from:
 // https://github.com/typst-community/linguify/blob/b220a5993c7926b1d2edcc155cda00d2050da9ba/lib/utils.typ#L3
 #let if-auto-then(val, ret) = {
@@ -211,6 +231,14 @@
     none
   } else {
     value.at(field, default: default)
+  }
+}
+
+#let none-coalesce(value, default) = {
+  if value == none {
+    return default
+  } else {
+    return value
   }
 }
 
@@ -263,5 +291,75 @@
 #let get-element-dict(element) = {
   if is-metadata(element) and is-kind(element, "element") {
     return element.value
+  }
+}
+
+#let reconstruct-content(template, body) = {
+  if template == none or template == auto {
+    return body
+  }
+
+  let func = template.func()
+
+  if func == typst-builtin-styled {
+    return template.func()(body, template.styles)
+  } // else if func in (emph, smallcaps, sub, super, box, block, hide, heading) {
+   //   return template.func()(body)
+   // }
+  else if (
+    func
+      in (
+        math.overbrace,
+        math.underbrace,
+        math.underbracket,
+        math.overbracket,
+        math.underparen,
+        math.overparen,
+        math.undershell,
+        math.overshell,
+      )
+  ) {
+    return template.func()(body, template.at("annotation", default: none))
+  } else if func == pad {
+    return template.func()(
+      body,
+      bottom: template.at("bottom", default: 0%),
+      top: template.at("top", default: 0%),
+      left: template.at("left", default: 0%),
+      right: template.at("right", default: 0%),
+      rest: template.at("rest", default: 0%),
+    )
+  } else if func == strong {
+    return template.func()(
+      body,
+      delta: template.at("delta", default: 300),
+    )
+  } else if func == highlight {
+    return template.func()(
+      body,
+      extent: template.at("extent", default: 0pt),
+      fill: template.at("fill", default: rgb("#fffd11a1")),
+      radius: template.at("radius", default: (:)),
+      stroke: template.at("stroke", default: (:)),
+    )
+  } else if func in (overline, underline, strike) {
+    return template.func()(
+      body,
+      background: template.at("background", default: false),
+      extent: template.at("extent", default: 0pt),
+      offset: template.at("offset", default: auto),
+      stroke: template.at("stroke", default: auto),
+    )
+  } else if func == math.cancel {
+    return template.func()(
+      body,
+      angle: template.at("angle", default: auto),
+      cross: template.at("cross", default: false),
+      inverted: template.at("inverted", default: false),
+      length: template.at("length", default: 100% + 3pt),
+      stroke: template.at("stroke", default: 0.5pt),
+    )
+  } else {
+    return template.func()(body)
   }
 }
