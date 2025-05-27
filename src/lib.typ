@@ -4,9 +4,9 @@
   get-shell-configuration,
   display-electron-configuration,
 )
-#import "display-intermediate-representation.typ": display-ir
-#import "parse-formula-intermediate-representation.typ": string-to-ir
+#import "model/reaction.typ": reaction
+#import "parse-formula-intermediate-representation.typ": string-to-reaction
 
 #let ce(formula) = {
-  display-ir(string-to-ir(formula))
+  reaction(string-to-reaction(formula))
 }

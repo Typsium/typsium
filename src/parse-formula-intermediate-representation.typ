@@ -1,4 +1,10 @@
-#import "utils.typ": arrow-string-to-kind
+#import "utils.typ": arrow-string-to-kind, is-default
+#import "model/molecule.typ": molecule
+#import "model/reaction.typ": reaction
+#import "model/element.typ": element
+#import "model/group.typ": group
+#import "model/arrow.typ": arrow
+
 #let patterns = (
   // element: regex("^(?P<element>[A-Z][a-z]?)(?:(?P<count>_?\d+)|(?P<charge>\^?[+-]?\d*\.?-?))?(?:(?P<count2>_?\d+)|(?P<charge2>\^?[+-]?\d*\.?-?))?"),
   element: regex("^(?P<element>[A-Z][a-z]?)(?:(?P<count>_?\d+)|(?P<charge>(?:\^[+-]?[IV]+|\^?[+-]?\d?)\.?-?))?(?:(?P<count2>_?\d+)|(?P<charge2>(?:\^[+-]?[IV]+|\^?[+-]?\d?)\.?-?))?"),
@@ -51,227 +57,59 @@
 #let string-to-element(formula) = {
   let element-match = formula.match(patterns.element)
 
-  if element-match != none {
-    let element = (
-      type: "element",
-      symbol: element-match.captures.at(0),
-    )
-    let x = get-count-and-charge(
-      element-match.captures.at(1),
-      element-match.captures.at(3),
-      element-match.captures.at(2),
-      element-match.captures.at(4),
-    )
-    if x.at(0) != none {
-      element.count = x.at(0)
-    }
-    if x.at(1) != none {
-      element.charge = x.at(1)
-    }
-    if x.at(2) {
-      element.radical = x.at(2)
-    }
-    return (true, element, element-match.end)
+  if element-match == none {
+    return (false,)
   }
-  return (false,)
+  let x = get-count-and-charge(
+    element-match.captures.at(1),
+    element-match.captures.at(3),
+    element-match.captures.at(2),
+    element-match.captures.at(4),
+  )
+  return (
+    true,
+    element(element-match.captures.at(0), count: x.at(0), charge: x.at(1), radical: x.at(2)),
+    element-match.end,
+  )
 }
 
 #let string-to-math(formula) = {
   let match = formula.match(patterns.math)
-
-  if match != none {
-    let math-content = (
-      type: "content",
-      body: eval(match.text),
-    )
-    return (true, math-content, match.end)
+  if match == none {
+    return (false,)
   }
-  return (false,)
+  return (true, eval(match.text), match.end)
 }
 
-#let string-to-group(formula) = {
-  let group-match = formula.match(patterns.group)
-  if group-match != none {
-    let group-content = group-match.captures.at(0)
-    let kind = if group-content.at(0) == "(" {
-      group-content = group-content.trim(regex("[()]"), repeat: false)
-      0
-    } else if group-content.at(0) == "[" {
-      group-content = group-content.trim(regex("[\[\]]"), repeat: false)
-      1
-    } else if group-content.at(0) == "{" {
-      group-content = group-content.trim(regex("[{}]"), repeat: false)
-      2
-    }
-    let x = get-count-and-charge(
-      group-match.captures.at(1),
-      group-match.captures.at(3),
-      group-match.captures.at(2),
-      group-match.captures.at(4),
-    )
-
-    let group = (
-      type: "group",
-      kind: kind,
-      children: (),
-    )
-    if x.at(0) != none {
-      group.count = x.at(0)
-    }
-    if x.at(1) != none {
-      group.charge = x.at(1)
-    }
-    if x.at(2) {
-      group.radical = x.at(2)
-    }
-
-    let random-content = ""
-
-    let remaining = group-content
-    while remaining.len() > 0 {
-      if remaining.at(0) == "&" {
-        group.children.push((type: "align"))
-        remaining = remaining.slice(1)
-        continue
-      }
-      let math-result = string-to-math(remaining)
-      if math-result.at(0) {
-        if random-content != none and random-content != "" {
-          group.children.push((type: "content", body: [#random-content]))
-        }
-        random-content = ""
-        group.children.push(math-result.at(1))
-        remaining = remaining.slice(math-result.at(2))
-        continue
-      }
-
-      let element = string-to-element(remaining)
-      if element.at(0) {
-        if random-content != none and random-content != "" {
-          group.children.push((type: "content", body: [#random-content]))
-        }
-        random-content = ""
-        group.children.push(element.at(1))
-        remaining = remaining.slice(element.at(2))
-        continue
-      }
-
-      let result = string-to-group(remaining)
-      if result.at(0) {
-        if random-content != none and random-content != "" {
-          group.children.push((type: "content", body: [#random-content]))
-        }
-        random-content = ""
-        group.children.push(result.at(1))
-        remaining = remaining.slice(result.at(2))
-        continue
-      }
-
-      random-content += remaining.codepoints().at(0)
-      remaining = remaining.slice(remaining.codepoints().at(0).len())
-    }
-
-    if random-content != none and random-content != "" {
-      group.children.push((type: "content", body: [#random-content]))
-    }
-    return (true, group, group-match.end)
-  }
-  return (false,)
-}
-
-
-//this will assume that the string is a molecule for performance reasons
-#let molecule-string-to-ir(formula) = {
-  let remaining = formula.trim()
-  if remaining.len() == 0 {
-    return none
-  }
-
-  let molecule = (
-    type: "molecule",
-    children: (),
-  )
-
-  let random-content = ""
-
-  while remaining.len() > 0 {
-    if remaining.at(0) == "&" {
-      molecule.children.push((type: "align"))
-      remaining = remaining.slice(1)
-      continue
-    }
-
-    let math-result = string-to-math(remaining)
-    if math-result.at(0) {
-      if random-content != none and random-content != "" {
-        molecule.children.push((type: "content", body: [#random-content]))
-      }
-      random-content = ""
-      molecule.children.push(math-result.at(1))
-      remaining = remaining.slice(math-result.at(2))
-      continue
-    }
-
-    let element = string-to-element(remaining)
-
-    if element.at(0) {
-      if random-content != none and random-content != "" {
-        molecule.children.push((type: "content", body: [#random-content]))
-      }
-      random-content = ""
-      molecule.children.push(element.at(1))
-      remaining = remaining.slice(element.at(2))
-      continue
-    }
-
-    let group = string-to-group(remaining)
-    if group.at(0) {
-      if random-content != none and random-content != "" {
-        molecule.children.push((type: "content", body: [#random-content]))
-      }
-      random-content = ""
-      molecule.children.push(group.at(1))
-      remaining = remaining.slice(group.at(2))
-      continue
-    }
-
-    random-content += remaining.codepoints().at(0)
-    remaining = remaining.slice(remaining.codepoints().at(0).len())
-  }
-
-  if random-content != none and random-content != "" {
-    molecule.children.push((type: "content", body: [#random-content]))
-  }
-  return molecule
-}
-
-#let string-to-ir(reaction) = {
-  let remaining = reaction.trim()
+#let string-to-reaction(
+  reaction-string,
+  create-molecules: true,
+) = {
+  let remaining = reaction-string.trim()
   if remaining.len() == 0 {
     return none
   }
   let full-reaction = ()
-
-  let current-molecule = (
-    type: "molecule",
-    children: (),
-  )
-
+  let current-molecule-children = ()
+  let current-molecule-count = 1
+  let current-molecule-phase = none
+  let current-molecule-charge = 0
   let random-content = ""
+
   while remaining.len() > 0 {
     if remaining.at(0) == "&" {
-      if current-molecule.children.len() > 0 {
-        full-reaction.push(current-molecule)
-        current-molecule = (type: "molecule", children: ())
+      if current-molecule-children.len() > 0 {
+        full-reaction.push(molecule(current-molecule-children))
+        current-molecule-children = ()
       }
-      full-reaction.push((type: "align"))
+      full-reaction.push($&$)
       remaining = remaining.slice(1)
       continue
     }
     let math-result = string-to-math(remaining)
     if math-result.at(0) {
-      if random-content != none and random-content != "" {
-        full-reaction.push((type: "content", body: [#random-content]))
+      if not is-default(random-content) {
+        full-reaction.push([#random-content])
       }
       random-content = ""
       full-reaction.push(math-result.at(1))
@@ -281,70 +119,104 @@
 
     let element = string-to-element(remaining)
     if element.at(0) {
-      if random-content != none and random-content != "" {
-        if current-molecule.children.len() == 0 {
-          full-reaction.push((type: "content", body: [#random-content]))
+      if not is-default(random-content) {
+        if current-molecule-children.len() == 0 {
+          full-reaction.push([#random-content])
         } else {
-          current-molecule.children.push((type: "content", body: [#random-content]))
+          current-molecule-children.push([#random-content])
         }
       }
       random-content = ""
-      current-molecule.children.push(element.at(1))
+      current-molecule-children.push(element.at(1))
       remaining = remaining.slice(element.at(2))
       continue
     }
 
-    let group = string-to-group(remaining)
-    if group.at(0) {
-      if random-content != none and random-content != "" {
-        if current-molecule.children.len() == 0 {
-          full-reaction.push((type: "content", body: [#random-content]))
+
+    let group-match = remaining.match(patterns.group)
+    if group-match != none {
+      if not is-default(random-content) {
+        if current-molecule-children.len() == 0 {
+          full-reaction.push([#random-content])
         } else {
-          current-molecule.children.push((type: "content", body: [#random-content]))
+          current-molecule-children.push([#random-content])
         }
       }
       random-content = ""
-      current-molecule.children.push(group.at(1))
-      remaining = remaining.slice(group.at(2))
+
+      let group-content = group-match.captures.at(0)
+      let kind = if group-content.at(0) == "(" {
+        group-content = group-content.trim(regex("[()]"), repeat: false)
+        0
+      } else if group-content.at(0) == "[" {
+        group-content = group-content.trim(regex("[\[\]]"), repeat: false)
+        1
+      } else if group-content.at(0) == "{" {
+        group-content = group-content.trim(regex("[{}]"), repeat: false)
+        2
+      }
+      let x = get-count-and-charge(
+        group-match.captures.at(1),
+        group-match.captures.at(3),
+        group-match.captures.at(2),
+        group-match.captures.at(4),
+      )
+      let group-children = string-to-reaction(group-content, create-molecules: false)
+
+      current-molecule-children.push(group(group-children, kind: kind, count: x.at(0), charge: x.at(1)))
+      remaining = remaining.slice(group-match.end)
       continue
     }
 
     let plus-match = remaining.match(patterns.reaction-plus)
     if plus-match != none {
-      if current-molecule.children.len() > 0 {
-        full-reaction.push(current-molecule)
-        current-molecule = (type: "molecule", children: ())
+      if current-molecule-children.len() > 0 {
+        full-reaction.push(
+          molecule(
+            current-molecule-children,
+            count: current-molecule-count,
+            phase: current-molecule-phase,
+            charge: current-molecule-charge,
+          ),
+        )
+        current-molecule-children = ()
       }
-      if random-content != none and random-content != "" {
-        full-reaction.push((type: "content", body: [#random-content]))
+      if not is-default(random-content) {
+        full-reaction.push([#random-content])
       }
       random-content = ""
-      full-reaction.push((type: "+"))
+      full-reaction.push([+])
       remaining = remaining.slice(plus-match.end)
       continue
     }
 
     let arrow-match = remaining.match(patterns.reaction-arrow)
     if arrow-match != none {
-      if current-molecule.children.len() > 0 {
-        full-reaction.push(current-molecule)
-        current-molecule = (type: "molecule", children: ())
+      if current-molecule-children.len() > 0 {
+        full-reaction.push(
+          molecule(
+            current-molecule-children,
+            count: current-molecule-count,
+            phase: current-molecule-phase,
+            charge: current-molecule-charge,
+          ),
+        )
+        current-molecule-children = ()
       }
-      if random-content != none and random-content != "" {
-        full-reaction.push((type: "content", body: [#random-content]))
+      if not is-default(random-content) {
+        full-reaction.push([#random-content])
       }
       random-content = ""
-      let arrow = (
-        type: "arrow",
-        kind: arrow-string-to-kind(arrow-match.captures.at(0)),
-      )
+      let kind = arrow-string-to-kind(arrow-match.captures.at(0))
+      let top = ()
+      let bottom = ()
       if arrow-match.captures.at(1) != none {
-        arrow.top = string-to-ir(arrow-match.captures.at(1))
+        top = string-to-ir(arrow-match.captures.at(1))
       }
       if arrow-match.captures.at(2) != none {
-        arrow.bottom = string-to-ir(arrow-match.captures.at(2))
+        bottom = string-to-ir(arrow-match.captures.at(2))
       }
-      full-reaction.push(arrow)
+      full-reaction.push(arrow(kind:kind, top:top, bottom:bottom))
       remaining = remaining.slice(arrow-match.end)
       continue
     }
@@ -352,11 +224,13 @@
     random-content += remaining.codepoints().at(0)
     remaining = remaining.slice(remaining.codepoints().at(0).len())
   }
-  if current-molecule.children.len() != 0 {
-    full-reaction.push(current-molecule)
+  if current-molecule-children.len() != 0 {
+    full-reaction.push(
+      molecule(current-molecule-children, count: current-molecule-count, phase: current-molecule-phase),
+    )
   }
-  if random-content != none and random-content != "" {
-    full-reaction.push((type: "content", body: [#random-content]))
+  if not is-default(random-content) {
+    full-reaction.push([#random-content])
   }
 
   return full-reaction

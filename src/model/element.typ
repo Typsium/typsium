@@ -24,9 +24,10 @@
     if type(it.rest) == content {
       base += it.rest
     } else if type(it.rest) == int {
-      base += ['] * it.rest
+      base += box['] * it.rest
     }
   }
+
   let mass-number = it.a
   if type(it.a) == int {
     mass-number = [#it.a]
@@ -45,24 +46,6 @@
     bl: atomic-number,
     affect-layout: it.affect-layout,
   )
-  // } else {
-  //   math.attach(
-  //     base,
-  //     t: it.oxidation,
-  //     tr: box(place(bottom + left, charge-to-content(it.charge, radical: it.radical))),
-  //     br: box(place(bottom + left, count-to-content(it.count))),
-  //     tl: box(place(bottom+ right, mass-number)),
-  //     bl: box(place(bottom+ right, atomic-number)),
-  //   )
-
-  // box(
-  //   place(
-  //     bottom + left,
-  //     // float: true,
-  //     // box(fill:red, width:1em, height:1em),
-  //   ),
-  // )
-  // base
 }
 }
 
