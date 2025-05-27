@@ -89,6 +89,22 @@
   sym.arrow.l.not,
   sym.harpoons.rtlb,
 )
+#let roman-numerals = (
+  "0",
+  "I",
+  "II",
+  "III",
+  "IV",
+  "V",
+  "VI",
+  "VII",
+  "VIII",
+  "IX",
+  "X",
+  "XI",
+  "XII",
+  "XIII",
+)
 #let arrow-kinds = (
   "<->": 0,
   "↔": 0,
@@ -134,6 +150,34 @@
     }
   } else if type(count) == content {
     return count
+  }
+  return none
+}
+#let roman-to-number(roman-number) = {
+  return roman-numerals.position(x => x == roman-number)
+  // return if oxidation == "I" { 1 } else if oxidation == "II" { 2 } else if oxidation == "III" {
+  //       3
+  //     } else if oxidation == "IV" { 4 } else if oxidation == "V" { 5 } else if oxidation == "VI" { 6 } else if (
+  //       oxidation == "VII"
+  //     ) { 7 } else if oxidation == "VIII" { 8 } else { none }
+}
+#let oxidation-to-content(oxidation, roman: true) = {
+  if oxidation == none {
+    return none
+  } else if type(oxidation) == int {
+    let symbol = none
+    if oxidation < 0 {
+      symbol = math.minus
+    } else if oxidation > 0 {
+      symbol = math.plus
+    }
+    if roman {
+      return [#symbol#roman-numerals.at(calc.abs(oxidation))]
+    } else {
+      return [#symbol#calc.abs(oxidation)]
+    }
+  } else if type(oxidation) == content {
+    return oxidation
   }
   return none
 }
@@ -374,25 +418,29 @@
   }
 }
 
-#let charge-to-content(charge, radical: false) = {
-  if is-default(charge){
+#let charge-to-content(charge, radical: false, roman: false) = {
+  if is-default(charge) {
     []
   } else if type(charge) == int {
     if radical {
       sym.bullet
     }
-    if charge < 0 {
-      if calc.abs(charge) > 1 {
-        str(calc.abs(charge))
-      }
-      math.minus
-    } else if charge > 0 {
-      if charge > 1 {
-        str(charge)
-      }
-      math.plus
+    if roman {
+      roman-numerals.at(calc.abs(charge))
     } else {
-      []
+      if charge < 0 {
+        if calc.abs(charge) > 1 {
+          str(calc.abs(charge))
+        }
+        math.minus
+      } else if charge > 0 {
+        if charge > 1 {
+          str(charge)
+        }
+        math.plus
+      } else {
+        []
+      }
     }
   } else if type(charge) == str {
     charge.replace(".", sym.bullet).replace("-", math.minus).replace("+", math.plus)

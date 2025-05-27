@@ -11,6 +11,8 @@
   count: 1,
   charge: 0,
   phase: none,
+  //TODO: add up and down arrows
+  phase-transition:0,
   affect-layout: true,
   ..children,
 ) = { }

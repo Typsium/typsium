@@ -2,6 +2,7 @@
 #import "../utils.typ": (
   count-to-content,
   charge-to-content,
+  oxidation-to-content,
   none-coalesce,
   customizable-attach,
 )
@@ -16,6 +17,8 @@
   rest: none,
   radical: false,
   affect-layout: true,
+  roman-oxidation: true,
+  roman-charge: false,
 ) = { }
 
 #let draw-element(it) = {
@@ -39,8 +42,8 @@
 
   customizable-attach(
     base,
-    t: it.oxidation,
-    tr: charge-to-content(it.charge, radical: it.radical),
+    t: oxidation-to-content(it.oxidation, roman:it.roman-oxidation),
+    tr: charge-to-content(it.charge, radical: it.radical, roman:it.roman-charge),
     br: count-to-content(it.count),
     tl: mass-number,
     bl: atomic-number,
@@ -65,5 +68,7 @@
     e.field("rest", e.types.union(int, content), default: none),
     e.field("radical", bool, default: false),
     e.field("affect-layout", bool, default: true),
+    e.field("roman-oxidation", bool, default: true),
+    e.field("roman-charge", bool, default: false),
   ),
 )

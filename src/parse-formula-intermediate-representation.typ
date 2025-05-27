@@ -1,4 +1,4 @@
-#import "utils.typ": arrow-string-to-kind, is-default
+#import "utils.typ": arrow-string-to-kind, is-default, roman-to-number
 #import "model/molecule.typ": molecule
 #import "model/reaction.typ": reaction
 #import "model/element.typ": element
@@ -6,41 +6,45 @@
 #import "model/arrow.typ": arrow
 
 #let patterns = (
-  // element: regex("^(?P<element>[A-Z][a-z]?)(?:(?P<count>_?\d+)|(?P<charge>\^?[+-]?\d*\.?-?))?(?:(?P<count2>_?\d+)|(?P<charge2>\^?[+-]?\d*\.?-?))?"),
-  element: regex("^(?P<element>[A-Z][a-z]?)(?:(?P<count>_?\d+)|(?P<charge>(?:\^[+-]?[IV]+|\^?[+-]?\d?)\.?-?))?(?:(?P<count2>_?\d+)|(?P<charge2>(?:\^[+-]?[IV]+|\^?[+-]?\d?)\.?-?))?"),
-  // group: regex("^(\((?:[^()]|(?R))*\)|\{(?:[^{}]|(?R))*\}|\[(?:[^\[\]]|(?R))*\])"),
-  group: regex("^(?P<group>\((?:[^()]|(?R))*\)|\{(?:[^{}]|(?R))*\}|\[(?:[^\[\]]|(?R))*\])(?:(?P<count>_?\d+)|(?P<charge>(?:\^[+-]?[IV]+|\^?[+-]?\d?)\.?-?))?(?:(?P<count2>_?\d+)|(?P<charge2>(?:\^[+-]?[IV]+|\^?[+-]?\d?)\.?-?))?"),
+  element: regex("^(?P<element>[A-Z][a-z]?)(?:(?P<count>_?\d+)|(?P<charge>\^[+-]?[IV]+|\^\.?[+-]?\d+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?(?:(?P<count2>_?\d+)|(?P<charge2>\^[+-]?[IV]+|\^\.?[+-]?\d+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?(?P<ox>\^\^[+-]?[IViv]{1,3}|\^\^[+-]?\d+)?"),
+  group: regex("^(?P<group>\((?:[^()]|(?R))*\)|\{(?:[^{}]|(?R))*\}|\[(?:[^\[\]]|(?R))*\])(?:(?P<count>_?\d+)|(?P<charge>(?:\^?[+-]?\d?)\.?-?))?(?:(?P<count2>_?\d+)|(?P<charge2>(?:\^?[+-]?\d?)\.?-?))?"),
   reaction-plus: regex("^(\s?\+\s?)"),
   reaction-arrow: regex("^\s?(<->|↔|<=>|⇔|->|→|<-|←|=>|⇒|<=|⇐|-\/>|<\/-)(?:\[([^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*)\])?(?:\[([^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*)\])?\s?"),
   math: regex("^(\$[^$]*\$)"),
   // Match physical states (s/l/g/aq)
-  state: regex("^\((s|l|g|aq|solid|liquid|gas|aqueous)\)"),
+  state: regex("^\((s|l|g|aq|solid|liquid|gas|aqueous|aqua)\)"),
 )
 
 #let get-count-and-charge(count1, count2, charge1, charge2) = {
   let radical = false
-  let count = if count1 != none and count1 != "" {
+  let roman-charge = false
+  let count = if not is-default(count1) {
     int(count1.replace("_", ""))
-  } else if count2 != none and count2 != "" {
+  } else if not is-default(count2) {
     int(count2.replace("_", ""))
   } else {
     none
   }
 
-  let charge = if charge1 != none and charge1 != "" {
+  let charge = if not is-default(charge1) {
     charge1.replace("^", "")
-  } else if charge2 != none and charge2 != "" {
+  } else if not is-default(charge2) {
     charge2.replace("^", "")
   } else {
     none
   }
 
-  if charge != none and charge != "" {
+  if not is-default(charge) {
     if charge.contains(".") {
       charge = charge.replace(".", "")
       radical = true
     }
-    if charge == "-" {
+    if charge.contains("I") or charge.contains("V"){
+      let multiplier = if charge.contains("-") { -1 } else { 1 }
+      charge = charge.replace("-", "").replace("+", "")
+      charge = roman-to-number(charge) * multiplier
+      roman-charge = true
+    } else if charge == "-" {
       charge = -1
     } else if charge.contains("-") {
       charge = -int(charge.replace("-", ""))
@@ -48,15 +52,16 @@
       charge = 1
     } else if charge.replace("+", "").contains(regex("^[0-9]+$")) {
       charge = int(charge.replace("+", ""))
+    } else {
+      charge = 0
     }
   }
 
-  return (count, charge, radical)
+  return (count, charge, radical, roman-charge)
 }
 
 #let string-to-element(formula) = {
   let element-match = formula.match(patterns.element)
-
   if element-match == none {
     return (false,)
   }
@@ -66,9 +71,43 @@
     element-match.captures.at(2),
     element-match.captures.at(4),
   )
+  let oxidation = element-match.captures.at(5)
+  let oxidation-number = none
+  let roman-oxidation = true
+  let roman-charge = false
+  if oxidation != none {
+    oxidation = upper(oxidation)
+    oxidation = oxidation.replace("^", "", count: 2)
+    let multiplier = if oxidation.contains("-") { -1 } else { 1 }
+    oxidation = oxidation.replace("-", "").replace("+", "")
+    if oxidation.contains("I") or oxidation.contains("V") {
+      oxidation-number = roman-to-number(oxidation)
+    } else {
+      roman-oxidation = false
+      oxidation-number = int(oxidation)
+    }
+    if oxidation-number != none {
+      oxidation-number *= multiplier
+    }
+  }
+
+  if x.at(0) == none and x.at(1) == none and x.at(2) == false {
+    if formula.at(element-match.end + 1, default: "").match(regex("[a-z]")) != none {
+      return (false,)
+    }
+  }
+
   return (
     true,
-    element(element-match.captures.at(0), count: x.at(0), charge: x.at(1), radical: x.at(2)),
+    element(
+      element-match.captures.at(0),
+      count: x.at(0),
+      charge: x.at(1),
+      radical: x.at(2),
+      oxidation: oxidation-number,
+      roman-oxidation: roman-oxidation,
+      roman-charge: x.at(3),
+    ),
     element-match.end,
   )
 }
@@ -87,7 +126,7 @@
 ) = {
   let remaining = reaction-string.trim()
   if remaining.len() == 0 {
-    return none
+    return ()
   }
   let full-reaction = ()
   let current-molecule-children = ()
@@ -211,12 +250,12 @@
       let top = ()
       let bottom = ()
       if arrow-match.captures.at(1) != none {
-        top = string-to-ir(arrow-match.captures.at(1))
+        top = string-to-reaction(arrow-match.captures.at(1))
       }
       if arrow-match.captures.at(2) != none {
-        bottom = string-to-ir(arrow-match.captures.at(2))
+        bottom = string-to-reaction(arrow-match.captures.at(2))
       }
-      full-reaction.push(arrow(kind:kind, top:top, bottom:bottom))
+      full-reaction.push(arrow(kind: kind, top: top, bottom: bottom))
       remaining = remaining.slice(arrow-match.end)
       continue
     }
