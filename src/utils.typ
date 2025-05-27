@@ -107,6 +107,7 @@
 )
 
 #let get-bracket(kind, open: true) = {
+  kind = calc.clamp(kind, 0, 3)
   if not open {
     kind += 4
   }
@@ -124,42 +125,21 @@
   }
 }
 
-#let count-to-content(factor) = {
-  if factor == none {
-    none
-  } else if type(factor) == int {
-    if factor > 1 {
-      str(factor)
+#let count-to-content(count) = {
+  if count == none {
+    return none
+  } else if type(count) == int {
+    if count > 1 {
+      return [#count]
     }
+  } else if type(count) == content {
+    return count
   }
+  return none
 }
 #let arrow-string-to-kind(arrow) = {
   arrow = arrow.trim()
   arrow-kinds.at(arrow, default: 1)
-}
-#let charge-to-content(charge, radical: false) = {
-  if charge == none {
-    none
-  } else if type(charge) == int {
-    if radical {
-      sym.bullet
-    }
-    if charge < 0 {
-      if calc.abs(charge) > 1 {
-        str(calc.abs(charge))
-      }
-      math.minus
-    } else if charge > 0 {
-      if charge > 1 {
-        str(charge)
-      }
-      math.plus
-    } else {
-      none
-    }
-  } else if type(charge) == str {
-    charge.replace(".", sym.bullet).replace("-", math.minus).replace("+", math.plus)
-  }
 }
 
 #let parser-config = (
@@ -243,6 +223,36 @@
 }
 
 // own utils
+#let is-default(value) = {
+  if value == [] or value == none or value == auto or value == "" {
+    return true
+  }
+  return false
+}
+
+#let customizable-attach(
+  base,
+  t: none,
+  tr: none,
+  br: none,
+  tl: none,
+  bl: none,
+  b: none,
+  affect-layout: true,
+) = {
+  if affect-layout == false {
+    base = box(base)
+  }
+  math.attach(
+    base,
+    t: t,
+    tr: tr,
+    br: br,
+    tl: tl,
+    bl: bl,
+    b: b,
+  )
+}
 
 #let padright(array, targetLength) = {
   for value in range(array.len(), targetLength) {
@@ -361,5 +371,30 @@
     )
   } else {
     return template.func()(body)
+  }
+}
+
+#let charge-to-content(charge, radical: false) = {
+  if is-default(charge){
+    []
+  } else if type(charge) == int {
+    if radical {
+      sym.bullet
+    }
+    if charge < 0 {
+      if calc.abs(charge) > 1 {
+        str(calc.abs(charge))
+      }
+      math.minus
+    } else if charge > 0 {
+      if charge > 1 {
+        str(charge)
+      }
+      math.plus
+    } else {
+      []
+    }
+  } else if type(charge) == str {
+    charge.replace(".", sym.bullet).replace("-", math.minus).replace("+", math.plus)
   }
 }
