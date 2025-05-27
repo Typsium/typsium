@@ -246,7 +246,7 @@
   math.attach(
     base,
     t: t,
-    tr: tr,
+    tr: if tr == [] { none } else { tr },
     br: br,
     tl: tl,
     bl: bl,
