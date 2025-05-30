@@ -149,17 +149,37 @@
       return [#count]
     }
   } else if type(count) == content {
-    return count
+    if count != [1] {
+      return count
+    }
   }
   return none
 }
 #let roman-to-number(roman-number) = {
   return roman-numerals.position(x => x == roman-number)
-  // return if oxidation == "I" { 1 } else if oxidation == "II" { 2 } else if oxidation == "III" {
-  //       3
-  //     } else if oxidation == "IV" { 4 } else if oxidation == "V" { 5 } else if oxidation == "VI" { 6 } else if (
-  //       oxidation == "VII"
-  //     ) { 7 } else if oxidation == "VIII" { 8 } else { none }
+}
+#let show-roman(body, roman: true) = {
+  if roman {
+    show "1": "I"
+    show "2": "II"
+    show "3": "III"
+    show "4": "IV"
+    show "5": "V"
+    show "6": "VI"
+    show "7": "VII"
+    show "8": "VIII"
+    body
+  } else {
+    // show "V": "5"
+    // show "I": "1"
+    // show "II": "2"
+    // show "III": "3"
+    // show "IV": "4"
+    // show "VI": "6"
+    // show "VII": "7"
+    // show "VIII": "8"
+    body
+  }
 }
 #let oxidation-to-content(oxidation, roman: true) = {
   if oxidation == none {
@@ -267,6 +287,12 @@
 }
 
 // own utils
+#let length(value) = {
+  if value == none {
+    return 0
+  }
+  return value.len()
+}
 #let is-default(value) = {
   if value == [] or value == none or value == auto or value == "" {
     return true
@@ -384,17 +410,16 @@
       rest: template.at("rest", default: 0%),
     )
   } else if func == strong {
-    return template.func()(
-      body,
-      delta: template.at("delta", default: 300),
-    )
+    return template.func()(body, delta: template.at("delta", default: 300))
   } else if func == highlight {
     return template.func()(
       body,
+      bottom-edge: template.at("bottom-edge", default: "descender"),
       extent: template.at("extent", default: 0pt),
       fill: template.at("fill", default: rgb("#fffd11a1")),
       radius: template.at("radius", default: (:)),
       stroke: template.at("stroke", default: (:)),
+      top-edge: template.at("top-edge", default: "ascender"),
     )
   } else if func in (overline, underline, strike) {
     return template.func()(
@@ -418,12 +443,19 @@
   }
 }
 
-#let charge-to-content(charge, radical: false, roman: false) = {
+#let charge-to-content(
+  charge,
+  radical: false,
+  roman: false,
+  radical-symbol: sym.dot,
+  negative-symbol: math.minus,
+  positive-symbol: math.plus,
+) = {
   if is-default(charge) {
-    []
+    none
   } else if type(charge) == int {
     if radical {
-      sym.bullet
+      radical-symbol
     }
     if roman {
       roman-numerals.at(calc.abs(charge))
@@ -432,17 +464,22 @@
         if calc.abs(charge) > 1 {
           str(calc.abs(charge))
         }
-        math.minus
+        negative-symbol
       } else if charge > 0 {
         if charge > 1 {
           str(charge)
         }
-        math.plus
+        positive-symbol
       } else {
         []
       }
     }
   } else if type(charge) == str {
-    charge.replace(".", sym.bullet).replace("-", math.minus).replace("+", math.plus)
+    charge.replace(".", radical-symbol).replace("-", negative-symbol).replace("+", positive-symbol)
+  } else if type(charge) == content {
+    show ".": radical-symbol
+    show "-": negative-symbol
+    show "+": positive-symbol
+    show-roman(charge, roman: roman)
   }
 }

@@ -19,6 +19,9 @@
   affect-layout: true,
   roman-oxidation: true,
   roman-charge: false,
+  radical-symbol: sym.dot,
+  negative-symbol: math.minus,
+  positive-symbol: math.plus,
 ) = { }
 
 #let draw-element(it) = {
@@ -42,8 +45,15 @@
 
   customizable-attach(
     base,
-    t: oxidation-to-content(it.oxidation, roman:it.roman-oxidation),
-    tr: charge-to-content(it.charge, radical: it.radical, roman:it.roman-charge),
+    t: oxidation-to-content(it.oxidation, roman: it.roman-oxidation),
+    tr: charge-to-content(
+      it.charge,
+      radical: it.radical,
+      roman: it.roman-charge,
+      radical-symbol: it.radical-symbol,
+      negative-symbol: it.negative-symbol,
+      positive-symbol: it.positive-symbol,
+    ),
     br: count-to-content(it.count),
     tl: mass-number,
     bl: atomic-number,
@@ -70,5 +80,8 @@
     e.field("affect-layout", bool, default: true),
     e.field("roman-oxidation", bool, default: true),
     e.field("roman-charge", bool, default: false),
+    e.field("radical-symbol", content, default: sym.dot),
+    e.field("negative-symbol", content, default: math.minus),
+    e.field("positive-symbol", content, default: math.plus),
   ),
 )
