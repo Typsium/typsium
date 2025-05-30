@@ -382,7 +382,10 @@
 
   if func == typst-builtin-styled {
     return template.func()(body, template.styles)
-  } // else if func in (emph, smallcaps, sub, super, box, block, hide, heading) {
+  } else if func == typst-builtin-context{
+    template
+  }
+  // else if func in (emph, smallcaps, sub, super, box, block, hide, heading) {
    //   return template.func()(body)
    // }
   else if (

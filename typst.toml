@@ -9,7 +9,8 @@ authors = [
     "β-吲哚基丙氨酸 <https://github.com/tryptophawa>",
     "Ants Aare Alamaa <@Ants-Aare>"
 ]
+compiler = "0.13.1"
 description = "Typeset chemical formulas and reactions."
 categories = [ "text", "paper" ]
 disciplines = [ "education", "chemistry" ]
-keywords = ["chemistry", "chemical", "reaction", "formula", "stochiometry", "oxidation", "equation", "electron", "isotope", "molecule","atom", "hazard", "precaution", "h and p", "mhchem"]
+keywords = ["chemistry", "chemical", "biotech","organic", "reaction", "formula", "stochiometry", "oxidation", "equation", "isotope", "molecule","atom", "mhchem"]

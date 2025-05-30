@@ -7,7 +7,7 @@
 
 #let patterns = (
   element: regex("^(?P<element>[A-Z][a-z]?)(?:(?P<count>_?\d+)|(?P<charge>\^[+-]?[IV]+|\^\.?[+-]?\d+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?(?:(?P<count2>_?\d+)|(?P<charge2>\^[+-]?[IV]+|\^\.?[+-]?\d+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?(?P<ox>\^\^[+-]?[IViv]{1,3}|\^\^[+-]?\d+)?"),
-  group: regex("^(?P<group>\((?:[^()]|(?R))*\)|\{(?:[^{}]|(?R))*\}|\[(?:[^\[\]]|(?R))*\])(?:(?P<count>_?\d+)|(?P<charge>(?:\^?[+-]?\d?)\.?-?))?(?:(?P<count2>_?\d+)|(?P<charge2>(?:\^?[+-]?\d?)\.?-?))?"),
+  group: regex("^(?P<group>\((?:[^()]|(?R))*\)|\{(?:[^{}]|(?R))*\}|\[(?:[^\[\]]|(?R))*\])(?:(?P<count>_?\d+)|(?P<charge>\^[+-]?\d+[+-]?|\^[+-]{1}|[+-]{1}\d?))?(?:(?P<count2>_?\d+)|(?P<charge2>\^[+-]?\d+[+-]?|\^[+-]{1}|[+-]{1}\d?))?"),
   reaction-plus: regex("^(\s?\+\s?)"),
   reaction-arrow: regex("^\s?(<->|↔|<=>|⇔|->|→|<-|←|=>|⇒|<=|⇐|-\/>|<\/-)(?:\[([^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*)\])?(?:\[([^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*)\])?\s?"),
   math: regex("^(\$[^$]*\$)"),
@@ -92,7 +92,7 @@
   }
 
   if x.at(0) == none and x.at(1) == none and x.at(2) == false {
-    if formula.at(element-match.end + 1, default: "").match(regex("[a-z]")) != none {
+    if formula.at(element-match.end, default: "").match(regex("[a-z]")) != none {
       return (false,)
     }
   }

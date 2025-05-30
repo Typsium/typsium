@@ -5,6 +5,7 @@
   typst-builtin-context,
   length,
   reconstruct-content-from-strings,
+  reconstruct-nested-content
 )
 #import "parse-formula-intermediate-representation.typ": patterns
 
@@ -93,7 +94,7 @@
   }
 
   if x.at(0) == none and x.at(1) == none and x.at(2) == false {
-    if formula.at(element-match.end + 1, default: "").match(regex("[a-z]")) != none {
+    if formula.at(element-match.end, default: "").match(regex("[a-z]")) != none {
       return (false,)
     }
   }
@@ -140,26 +141,40 @@
   let current-molecule-count = 1
   let current-molecule-phase = none
   let current-molecule-charge = 0
-  let random-content = ""
+  let random-content = 0
 
   let index = 0
   while remaining.len() > 0 {
     if remaining.at(0) == "&" {
+      //flush current molecule
       if current-molecule-children.len() > 0 {
         full-reaction.push(molecule(current-molecule-children))
         current-molecule-children = ()
       }
+      //end flush current molecule
+
       full-reaction.push($&$)
       remaining = remaining.slice(1)
       index += 1
       continue
     }
+
     let math-result = string-to-math(remaining)
     if math-result.at(0) {
-      if not is-default(random-content) {
-        full-reaction.push([#random-content])
+      //flush random content
+      if random-content != 0 {
+        full-reaction.push(
+          reconstruct-content-from-strings(
+            reaction-string,
+            templates,
+            start: index - random-content,
+            end: index,
+          ),
+        )
+        random-content = 0
       }
-      random-content = ""
+      //end flush random content
+
       full-reaction.push(math-result.at(1))
       remaining = remaining.slice(math-result.at(2))
       index += math-result.at(2)
@@ -168,14 +183,30 @@
 
     let element = string-to-element(remaining, reaction-string, templates, index)
     if element.at(0) {
-      if not is-default(random-content) {
+      //flush random content
+      if random-content != 0 {
         if current-molecule-children.len() == 0 {
-          full-reaction.push([#random-content])
+          full-reaction.push(
+            reconstruct-content-from-strings(
+              reaction-string,
+              templates,
+              start: index - random-content,
+              end: index,
+            ),
+          )
         } else {
-          current-molecule-children.push([#random-content])
+          current-molecule-children.push(
+            reconstruct-content-from-strings(
+              reaction-string,
+              templates,
+              start: index - random-content,
+              end: index,
+            ),
+          )
         }
+        random-content = 0
       }
-      random-content = ""
+      //end flush random content
       current-molecule-children.push(element.at(1))
       remaining = remaining.slice(element.at(2))
       index += element.at(2)
@@ -185,14 +216,30 @@
 
     let group-match = remaining.match(patterns.group)
     if group-match != none {
-      if not is-default(random-content) {
+      //flush random content
+      if random-content != 0 {
         if current-molecule-children.len() == 0 {
-          full-reaction.push([#random-content])
+          full-reaction.push(
+            reconstruct-content-from-strings(
+              reaction-string,
+              templates,
+              start: index - random-content,
+              end: index,
+            ),
+          )
         } else {
-          current-molecule-children.push([#random-content])
+          current-molecule-children.push(
+            reconstruct-content-from-strings(
+              reaction-string,
+              templates,
+              start: index - random-content,
+              end: index,
+            ),
+          )
         }
+        random-content = 0
       }
-      random-content = ""
+      //end flush random content
 
       let group-content = group-match.captures.at(0)
       let kind = if group-content.at(0) == "(" {
@@ -215,11 +262,13 @@
 
       current-molecule-children.push(group(group-children, kind: kind, count: x.at(0), charge: x.at(1)))
       remaining = remaining.slice(group-match.end)
+      index += group-match.end
       continue
     }
 
     let plus-match = remaining.match(patterns.reaction-plus)
     if plus-match != none {
+      //flush current molecule
       if current-molecule-children.len() > 0 {
         full-reaction.push(
           molecule(
@@ -231,17 +280,31 @@
         )
         current-molecule-children = ()
       }
-      if not is-default(random-content) {
-        full-reaction.push([#random-content])
+      //end flush current molecule
+
+      //flush random content
+      if random-content != 0 {
+        full-reaction.push(
+          reconstruct-content-from-strings(
+            reaction-string,
+            templates,
+            start: index - random-content,
+            end: index,
+          ),
+        )
+        random-content = 0
       }
-      random-content = ""
+      //end flush random content
+
       full-reaction.push([+])
       remaining = remaining.slice(plus-match.end)
+      index += plus-match.end
       continue
     }
 
     let arrow-match = remaining.match(patterns.reaction-arrow)
     if arrow-match != none {
+      //flush current molecule
       if current-molecule-children.len() > 0 {
         full-reaction.push(
           molecule(
@@ -253,34 +316,103 @@
         )
         current-molecule-children = ()
       }
-      if not is-default(random-content) {
-        full-reaction.push([#random-content])
+      //end flush current molecule
+
+      //flush random content
+      if random-content != 0 {
+        full-reaction.push(
+          reconstruct-content-from-strings(
+            reaction-string,
+            templates,
+            start: index - random-content,
+            end: index,
+          ),
+        )
+        random-content = 0
       }
-      random-content = ""
+      //end flush random content
+
       let kind = arrow-string-to-kind(arrow-match.captures.at(0))
       let top = ()
       let bottom = ()
       if arrow-match.captures.at(1) != none {
-        top = string-to-reaction(arrow-match.captures.at(1))
+        top = string-to-reaction(
+          arrow-match.captures.at(1),
+          templates.slice(
+            index + arrow-match.captures.at(0).len() + 2,
+            count: arrow-match.captures.at(1).len() + 2,
+          ),
+        )
       }
       if arrow-match.captures.at(2) != none {
-        bottom = string-to-reaction(arrow-match.captures.at(2))
+        bottom = string-to-reaction(
+          arrow-match.captures.at(2),
+          templates.slice(
+            index + arrow-match.captures.at(0).len() + length(arrow-match.captures.at(1)) + 2 + 2,
+            count: arrow-match.captures.at(2).len() + 2,
+          ),
+        )
       }
       full-reaction.push(arrow(kind: kind, top: top, bottom: bottom))
       remaining = remaining.slice(arrow-match.end)
+      index += arrow-match.end
       continue
     }
+    let current-character = remaining.codepoints().at(0)
+    if (current-character == "#" and templates.at(index).len() != 0) {
+      //flush current molecule
+      if current-molecule-children.len() > 0 {
+        full-reaction.push(
+          molecule(
+            current-molecule-children,
+            count: current-molecule-count,
+            phase: current-molecule-phase,
+            charge: current-molecule-charge,
+          ),
+        )
+        current-molecule-children = ()
+      }
+      //end flush current molecule
 
-    random-content += remaining.codepoints().at(0)
-    remaining = remaining.slice(remaining.codepoints().at(0).len())
+      //flush random content
+      if random-content != 0 {
+        full-reaction.push(
+          reconstruct-content-from-strings(
+            reaction-string,
+            templates,
+            start: index - random-content,
+            end: index,
+          ),
+        )
+        random-content = 0
+      }
+      //end flush random content
+
+      full-reaction.push(reconstruct-nested-content(templates.at(index).slice(1), templates.at(index).at(0)))
+    } else {
+      random-content += current-character.len()
+    }
+
+    remaining = remaining.slice(current-character.len())
+    index += current-character.len()
   }
+
+  //flush current molecule
   if current-molecule-children.len() != 0 {
     full-reaction.push(
       molecule(current-molecule-children, count: current-molecule-count, phase: current-molecule-phase),
     )
   }
-  if not is-default(random-content) {
-    full-reaction.push([#random-content])
+  //flush random content
+  if random-content != 0 {
+    full-reaction.push(
+      reconstruct-content-from-strings(
+        reaction-string,
+        templates,
+        start: reaction-string.len() - random-content,
+        end: reaction-string.len(),
+      ),
+    )
   }
 
   return full-reaction
@@ -350,7 +482,7 @@
         full-string += inner-full-strings
         templates += inner-templates
       } else {
-        full-string += " "
+        full-string += "#"
         templates.push((child,))
         continue
       }

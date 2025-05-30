@@ -4,6 +4,7 @@
 #import "../../src/model/group.typ":*
 #import "../../src/model/element.typ":*
 #import "../../src/parse-formula-intermediate-representation.typ": string-to-reaction,
+#import "@preview/alchemist:0.1.5": *
 // #show: e.set_(group, grow-brackets:false, affect-layout:false)
 
 #set page(width: auto, height: auto, margin: 0.5em)
@@ -12,29 +13,47 @@
 
 // #show: e.set_(element, affect-layout:true,roman-charge:false)
 
-#ce[#text(red)[He2]#math.cancel[S]O4^#math.cancel[5-]]
 
-// // #ce[#text(red)[H]e_2#math.cancel[S]O4^IV]\
-// #ce("He2SO4-5")\
-// 
-// #reconstruct-content-from-strings("Hello", ((text(red)[],), (text(red)[],), (text(red)[],), (text(blue)[],), (text(blue)[],)))
-// #reconstruct-content-from-strings("Hello", ((math.cancel[],), (math.cancel[],), (math.cancel[],), (text(blue)[],), (text(blue)[],)))
-// #reconstruct-nested-content(([Hello World], text(red)[h], math.cancel[h], underline[], math.overbrace[Hello][Hello]))
+#let alchemist-molecule = skeletize({
+  molecule(name: "A", "A")
+  single()
+  molecule("B")
+  branch({
+    single(angle: 1)
+    molecule(
+      "W",
+      links: (
+        "A": double(stroke: red),
+      ),
+    )
+    single()
+    molecule(name: "X", "X")
+  })
+  branch({
+    single(angle: -1)
+    molecule("Y")
+    single()
+    molecule(
+      name: "Z",
+      "Z",
+      links: (
+        "X": single(stroke: black + 3pt),
+      ),
+    )
+  })
+  single()
+  molecule(
+    "C",
+    links: (
+      "X": cram-filled-left(fill: blue),
+      "Z": single(),
+    ),
+  )
+})
 
-// #ce[12Fe2(SO4)3]\
-// #ce("12Fe2(SO4)3")\
-// #ce[514H2O]\
-// #ce("514H2O")\
-// #ce[9Fe(OH)3]\
-// #ce("9Fe(OH)3")\
+$
+#ce[H2SO4 ->H2O + #math.overbrace[#alchemist-molecule][Hello World]]\
+$
+#ce[#text(green)[He2]#math.cancel[S]O4^#text(blue)[#math.cancel[5]-]]
 
-
-// #ce("A + B =>[H2SO4][Hello World] C + D")\
-// 
-// #ce("2[Fe(CN)6]^4+")
-// #linebreak()
-// #ce("3[Co(NH3)4]^2+")
-// #linebreak()
-// #ce("[FeCo(CN)4 (NH3)2]^5-")
-// #linebreak()
-// #ce("[Co(en)3]^3- + 3[HCl]^+")
+#ce[A + B =>[PO4-3][Hello World] C + D]\
