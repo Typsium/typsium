@@ -181,15 +181,20 @@
     body
   }
 }
-#let oxidation-to-content(oxidation, roman: true) = {
+#let oxidation-to-content(
+  oxidation,
+  roman: true,
+  negative-symbol: math.minus,
+  positive-symbol: math.plus,
+) = {
   if oxidation == none {
     return none
   } else if type(oxidation) == int {
     let symbol = none
     if oxidation < 0 {
-      symbol = math.minus
+      symbol = negative-symbol
     } else if oxidation > 0 {
-      symbol = math.plus
+      symbol = positive-symbol
     }
     if roman {
       return [#symbol#roman-numerals.at(calc.abs(oxidation))]
@@ -382,10 +387,9 @@
 
   if func == typst-builtin-styled {
     return template.func()(body, template.styles)
-  } else if func == typst-builtin-context{
+  } else if func == typst-builtin-context {
     template
-  }
-  // else if func in (emph, smallcaps, sub, super, box, block, hide, heading) {
+  } // else if func in (emph, smallcaps, sub, super, box, block, hide, heading) {
    //   return template.func()(body)
    // }
   else if (
@@ -452,15 +456,15 @@
   return result
 }
 #let templates-equal(a, b) = {
-  if a.func() != b.func(){
+  if a.func() != b.func() {
     return false
   }
-  if a.func() == typst-builtin-styled{
+  if a.func() == typst-builtin-styled {
     return true
   }
   for i in a.fields() {
-    if i.at(0) != "child" and i.at(0) != "text" and i.at(0) != "body"{
-      if i.at(1) != b.at(i.at(0)){
+    if i.at(0) != "child" and i.at(0) != "text" and i.at(0) != "body" {
+      if i.at(1) != b.at(i.at(0)) {
         return false
       }
     }
@@ -468,7 +472,7 @@
   return true
 }
 #let reconstruct-content-from-strings(strings, templates, start: 0, end: none) = {
-  if strings.len() == 1{
+  if strings.len() == 1 {
     return reconstruct-nested-content(templates.at(0), [#strings.at(0)])
   }
   strings = strings.slice(start, end)
@@ -480,7 +484,7 @@
     let is-equal = templates.at(i).len() == templates.at(start).len()
     if is-equal {
       for j in range(0, templates.at(i).len()) {
-        if not templates-equal(templates.at(i).at(j), templates.at(start).at(j)){
+        if not templates-equal(templates.at(i).at(j), templates.at(start).at(j)) {
           is-equal = false
         }
       }
@@ -505,7 +509,7 @@
   positive-symbol: math.plus,
 ) = {
   if is-default(charge) {
-    none
+    []
   } else if type(charge) == int {
     if radical {
       radical-symbol

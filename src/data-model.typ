@@ -11,8 +11,6 @@
   get-molecule-dict,
   to-string,
 )
-#import "regex.typ": patterns
-
 #let get-element(
   symbol: auto,
   atomic-number: auto,
