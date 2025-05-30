@@ -8,11 +8,19 @@
 
 #set page(width: auto, height: auto, margin: 0.5em)
 
-// #show: show-roman.with(roman: true)
+// #show: show-roman.with(roman: false)
+
 // #show: e.set_(element, affect-layout:true,roman-charge:false)
-#ce[#text(red)[H]e_2#math.cancel[S]O4^5-]\
-// #ce[#text(red)[H]e_2#math.cancel[S]O4^IV]\
-#ce("He2SO4-5")\
+
+#ce[#text(red)[He2]#math.cancel[S]O4^#math.cancel[5-]]
+
+// // #ce[#text(red)[H]e_2#math.cancel[S]O4^IV]\
+// #ce("He2SO4-5")\
+// 
+// #reconstruct-content-from-strings("Hello", ((text(red)[],), (text(red)[],), (text(red)[],), (text(blue)[],), (text(blue)[],)))
+// #reconstruct-content-from-strings("Hello", ((math.cancel[],), (math.cancel[],), (math.cancel[],), (text(blue)[],), (text(blue)[],)))
+// #reconstruct-nested-content(([Hello World], text(red)[h], math.cancel[h], underline[], math.overbrace[Hello][Hello]))
+
 // #ce[12Fe2(SO4)3]\
 // #ce("12Fe2(SO4)3")\
 // #ce[514H2O]\

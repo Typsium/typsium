@@ -1,4 +1,11 @@
-#import "utils.typ": get-all-children, is-metadata, typst-builtin-styled, typst-builtin-context, length
+#import "utils.typ": (
+  get-all-children,
+  is-metadata,
+  typst-builtin-styled,
+  typst-builtin-context,
+  length,
+  reconstruct-content-from-strings,
+)
 #import "parse-formula-intermediate-representation.typ": patterns
 
 #import "utils.typ": arrow-string-to-kind, is-default, roman-to-number
@@ -8,52 +15,49 @@
 #import "model/group.typ": group
 #import "model/arrow.typ": arrow
 
-#let get-count-and-charge(count1, count2, charge1, charge2, index, templates) = {
+#let get-count-and-charge(count1, count2, charge1, charge2, full-string, templates, index) = {
   let radical = false
   let roman-charge = false
   let count = if not is-default(count1) {
-    templates.slice(index + if count1.contains("_"){1}, index + length(count1)).sum()
+    reconstruct-content-from-strings(
+      full-string,
+      templates,
+      start: index + if count1.contains("_") { 1 },
+      end: index + length(count1),
+    )
+    // templates.slice()
   } else if not is-default(count2) {
-    templates.slice(index + length(charge1) + if count2.contains("_"){1}, index + length(charge1) + length(count2)).sum()
+    reconstruct-content-from-strings(
+      full-string,
+      templates,
+      start: index + length(charge1) + if count2.contains("_") { 1 },
+      end: index + length(charge1) + length(count2),
+    )
   } else {
     none
   }
 
   let charge = if not is-default(charge1) {
-    templates.slice(index + if charge1.contains("^"){1}, index + length(charge1)).sum()
+    reconstruct-content-from-strings(
+      full-string,
+      templates,
+      start: index + if charge1.contains("^") { 1 },
+      end: index + length(charge1),
+    )
   } else if not is-default(charge2) {
-    templates.slice(index + length(count1) + if charge2.contains("^"){1}, index + length(count1) + length(charge2)).sum()
+    reconstruct-content-from-strings(
+      full-string,
+      templates,
+      start: index + length(count1) + if charge2.contains("^") { 1 },
+      end: index + length(count1) + length(charge2),
+    )
   } else {
     none
   }
-
-  // if not is-default(charge) {
-  //   if charge.contains(".") {
-  //     charge = charge.replace(".", "")
-  //     radical = true
-  //   }
-  //   if charge.contains("I") or charge.contains("V") {
-  //     let multiplier = if charge.contains("-") { -1 } else { 1 }
-  //     charge = charge.replace("-", "").replace("+", "")
-  //     charge = roman-to-number(charge) * multiplier
-  //     roman-charge = true
-  //   } else if charge == "-" {
-  //     charge = -1
-  //   } else if charge.contains("-") {
-  //     charge = -int(charge.replace("-", ""))
-  //   } else if charge == "+" {
-  //     charge = 1
-  //   } else if charge.replace("+", "").contains(regex("^[0-9]+$")) {
-  //     charge = int(charge.replace("+", ""))
-  //   } else {
-  //     charge = 0
-  //   }
-  // }
-
   return (count, charge, radical, roman-charge)
 }
 
-#let string-to-element(formula, templates, index) = {
+#let string-to-element(formula, full-string, templates, index) = {
   let element-match = formula.match(patterns.element)
   if element-match == none {
     return (false,)
@@ -65,8 +69,9 @@
     element-match.captures.at(3),
     element-match.captures.at(2),
     element-match.captures.at(4),
+    full-string,
+    templates,
     index + symbol.len(),
-    templates
   )
   let oxidation-number = none
   let roman-oxidation = true
@@ -96,7 +101,12 @@
   return (
     true,
     element(
-      templates.slice(index, index + element-match.captures.at(0).len()).sum(),
+      reconstruct-content-from-strings(
+        full-string,
+        templates,
+        start: index,
+        end: index + element-match.captures.at(0).len(),
+      ),
       count: x.at(0),
       charge: x.at(1),
       radical: x.at(2),
@@ -141,7 +151,7 @@
       }
       full-reaction.push($&$)
       remaining = remaining.slice(1)
-      index+=1
+      index += 1
       continue
     }
     let math-result = string-to-math(remaining)
@@ -152,11 +162,11 @@
       random-content = ""
       full-reaction.push(math-result.at(1))
       remaining = remaining.slice(math-result.at(2))
-      index+=math-result.at(2)
+      index += math-result.at(2)
       continue
     }
 
-    let element = string-to-element(remaining, templates, index)
+    let element = string-to-element(remaining, reaction-string, templates, index)
     if element.at(0) {
       if not is-default(random-content) {
         if current-molecule-children.len() == 0 {
@@ -168,7 +178,7 @@
       random-content = ""
       current-molecule-children.push(element.at(1))
       remaining = remaining.slice(element.at(2))
-      index+= element.at(2)
+      index += element.at(2)
       continue
     }
 
@@ -276,10 +286,6 @@
   return full-reaction
 }
 
-
-
-
-
 #let create-full-string(children) = {
   let full-string = ""
   let templates = ()
@@ -288,16 +294,19 @@
       let func-type = child.func()
       if child == [ ] {
         full-string += " "
+        templates.push(())
       } else if func-type == text {
         full-string += child.text
         for value in child.text {
-          templates.push([#value])
+          templates.push(())
         }
-        // templates += child.text.map(x=> [#x])
       } else if func-type == typst-builtin-styled {
-        let x = create-full-string(get-all-children(child.child))
-        full-string += x.at(0)
-        templates.push(child)
+        let (inner-full-strings, inner-templates) = create-full-string(get-all-children(child.child))
+        for value in range(inner-templates.len()) {
+          inner-templates.at(value).push(child)
+        }
+        full-string += inner-full-strings
+        templates += inner-templates
       } else if (
         func-type
           in (
@@ -334,10 +343,15 @@
             square,
           )
       ) {
-        let x = create-full-string(get-all-children(child.body))
-        full-string += x.at(0)
-        templates.push(child)
+        let (inner-full-strings, inner-templates) = create-full-string(get-all-children(child.body))
+        for value in range(inner-templates.len()) {
+          inner-templates.at(value).push(child)
+        }
+        full-string += inner-full-strings
+        templates += inner-templates
       } else {
+        full-string += " "
+        templates.push((child,))
         continue
       }
     }

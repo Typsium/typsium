@@ -170,14 +170,14 @@
     show "8": "VIII"
     body
   } else {
-    // show "V": "5"
-    // show "I": "1"
-    // show "II": "2"
-    // show "III": "3"
-    // show "IV": "4"
-    // show "VI": "6"
-    // show "VII": "7"
-    // show "VIII": "8"
+    show "V": "5"
+    show "I": "1"
+    show "II": "2"
+    show "III": "3"
+    show "IV": "4"
+    show "VI": "6"
+    show "VII": "7"
+    show "VIII": "8" // highest priority is lowest, otherwise it will render VII as 511
     body
   }
 }
@@ -373,7 +373,6 @@
     return element.value
   }
 }
-
 #let reconstruct-content(template, body) = {
   if template == none or template == auto {
     return body
@@ -441,6 +440,57 @@
   } else {
     return template.func()(body)
   }
+}
+#let reconstruct-nested-content(templates, body) = {
+  let result = body
+  for template in templates {
+    result = reconstruct-content(template, result)
+  }
+  return result
+}
+#let templates-equal(a, b) = {
+  if a.func() != b.func(){
+    return false
+  }
+  if a.func() == typst-builtin-styled{
+    return true
+  }
+  for i in a.fields() {
+    if i.at(0) != "child" and i.at(0) != "text" and i.at(0) != "body"{
+      if i.at(1) != b.at(i.at(0)){
+        return false
+      }
+    }
+  }
+  return true
+}
+#let reconstruct-content-from-strings(strings, templates, start: 0, end: none) = {
+  if strings.len() == 1{
+    return reconstruct-nested-content(templates.at(0), [#strings.at(0)])
+  }
+  strings = strings.slice(start, end)
+  templates = templates.slice(start, end)
+
+  let result = none
+  start = 0
+  for i in range(1, templates.len()) {
+    let is-equal = templates.at(i).len() == templates.at(start).len()
+    if is-equal {
+      for j in range(0, templates.at(i).len()) {
+        if not templates-equal(templates.at(i).at(j), templates.at(start).at(j)){
+          is-equal = false
+        }
+      }
+    }
+    if is-equal {
+      continue
+    } else {
+      result += reconstruct-nested-content(templates.at(start), [#strings.slice(start, i)])
+      start = i
+    }
+  }
+  result += reconstruct-nested-content(templates.at(start), [#strings.slice(start, templates.len())])
+  return result
 }
 
 #let charge-to-content(
