@@ -5,11 +5,14 @@
   typst-builtin-context,
   length,
   reconstruct-content-from-strings,
-  reconstruct-nested-content
+  reconstruct-nested-content,
+  is-kind,
+  arrow-string-to-kind,
+  is-default,
+  roman-to-number,
 )
 #import "parse-formula-intermediate-representation.typ": patterns
 
-#import "utils.typ": arrow-string-to-kind, is-default, roman-to-number
 #import "model/molecule.typ": molecule
 #import "model/reaction.typ": reaction
 #import "model/element.typ": element
@@ -422,7 +425,19 @@
   let full-string = ""
   let templates = ()
   for child in children {
-    if type(child) == content {
+    if is-metadata(child) {
+      if is-kind(child, "molecule") {
+        full-string += child.value.formula
+        for value in child.value.formula {
+          templates.push(())
+        }
+      } else if is-kind(child, "element") {
+        full-string += child.value.symbol
+        for value in child.value.symbol {
+          templates.push(())
+        }
+      }
+    } else if type(child) == content {
       let func-type = child.func()
       if child == [ ] {
         full-string += " "
