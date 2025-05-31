@@ -30,7 +30,8 @@
         ) {
           h(-0.4em)
         }
-      } // else if type-id == "e_typsium_---_group"{
+      } 
+      // else if type-id == "e_typsium_---_group"{
        //   child
        //   let charge = last.fields.at("charge", default: none)
        //   let count = last.fields.at("count", default: none)
@@ -48,7 +49,7 @@
 
 #let reaction = e.element.declare(
   "reaction",
-  prefix: "typsium",
+  prefix: "@preview/typsium:0.3.0",
 
   display: draw-reaction,
 

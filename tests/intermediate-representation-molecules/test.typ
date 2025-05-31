@@ -1,6 +1,6 @@
-#import "../../src/model/element.typ": element
-#import "../../src/model/molecule.typ": molecule
-#import "../../src/model/group.typ": group
+#import "../../src/model/element-element.typ": element
+#import "../../src/model/molecule-element.typ": molecule
+#import "../../src/model/group-element.typ": group
 #set page(width: auto, height: auto, margin: 0.5em)
 
 #let co2 = molecule(

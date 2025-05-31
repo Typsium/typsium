@@ -1,9 +1,9 @@
 #import "libs/elembic/lib.typ" as e: selector
-#import "model/arrow.typ": arrow
-#import "model/element.typ": element
-#import "model/group.typ": group
-#import "model/molecule.typ": molecule
-#import "model/reaction.typ": reaction
+#import "model/arrow-element.typ": arrow
+#import "model/element-element.typ": element
+#import "model/group-element.typ": group
+#import "model/molecule-element.typ": molecule
+#import "model/reaction-element.typ": reaction
 
 #let fields = e.fields
 #let elembic = e

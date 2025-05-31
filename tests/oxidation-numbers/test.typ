@@ -1,6 +1,6 @@
 #import "../../src/lib.typ": *
 // #import "../../src/libs/elembic/lib.typ" as e
-#import "../../src/model/element.typ": *
+#import "../../src/model/element-element.typ": *
 
 #set page(width: auto, height: auto, margin: 0.5em)
 

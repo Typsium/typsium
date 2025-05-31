@@ -1,9 +1,9 @@
 #import "utils.typ": arrow-string-to-kind, is-default, roman-to-number
-#import "model/molecule.typ": molecule
-#import "model/reaction.typ": reaction
-#import "model/element.typ": element
-#import "model/group.typ": group
-#import "model/arrow.typ": arrow
+#import "model/molecule-element.typ": molecule
+#import "model/reaction-element.typ": reaction
+#import "model/element-element.typ": element
+#import "model/group-element.typ": group
+#import "model/arrow-element.typ": arrow
 
 #let patterns = (
   element: regex("^(?P<element>[A-Z][a-z]?)(?:(?P<count>_?\d+)|(?P<charge>\^[+-]?[IV]+|\^\.?[+-]?\d+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?(?:(?P<count2>_?\d+)|(?P<charge2>\^[+-]?[IV]+|\^\.?[+-]?\d+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?(?P<ox>\^\^[+-]?[IViv]{1,3}|\^\^[+-]?\d+)?"),

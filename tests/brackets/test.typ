@@ -1,6 +1,6 @@
 #import "../../src/lib.typ" : ce
 #import "../../src/libs/elembic/lib.typ" as e
-#import "../../src/model/group.typ":*
+#import "../../src/model/group-element.typ":*
 // #show: e.set_(group, grow-brackets:false, affect-layout:false)
 
 #set page(width: auto, height: auto, margin: 0.5em)

@@ -26,7 +26,7 @@
 
 #let arrow = e.element.declare(
   "arrow",
-  prefix: "typsium",
+  prefix: "@preview/typsium:0.3.0",
 
   display: draw-arrow,
 

@@ -30,29 +30,14 @@
 
 #let molecule = e.element.declare(
   "molecule",
-  prefix: "typsium",
+  prefix: "@preview/typsium:0.3.0",
 
   display: draw-molecule,
 
   fields: (
-    // e.field("children", e.types.any, required: true),
     e.field("children", e.types.array(content), required: true),
     e.field("count", e.types.union(int, content), default: 1),
     e.field("phase", e.types.union(str, content), default: none),
     e.field("affect-layout", bool, default: true),
   ),
-  // parse-args: (default-parser, fields: none, typecheck: none) => (args, include-required: false) => {
-  //   let args = if include-required {
-  //     let values = args.pos()
-  //     arguments(values, ..args.named())
-  //   } else if args.pos() == () {
-  //     args
-  //   } else {
-  //     assert(
-  //       false,
-  //       message: "element 'diagram': unexpected positional arguments\n  hint: these can only be passed to the constructor",
-  //     )
-  //   }
-  //   default-parser(args, include-required: include-required)
-  // },
 )

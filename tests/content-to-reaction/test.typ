@@ -1,8 +1,8 @@
 #import "../../src/lib.typ" : ce, define-molecule, get-element
 #import "../../src/utils.typ" : *
 #import "../../src/libs/elembic/lib.typ" as e
-#import "../../src/model/group.typ":*
-#import "../../src/model/element.typ":*
+#import "../../src/model/group-element.typ":*
+#import "../../src/model/element-element.typ":*
 #import "../../src/parse-formula-intermediate-representation.typ": string-to-reaction,
 #import "@preview/alchemist:0.1.4": *
 // #show: e.set_(group, grow-brackets:false, affect-layout:false)

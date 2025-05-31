@@ -13,11 +13,11 @@
 )
 #import "parse-formula-intermediate-representation.typ": patterns
 
-#import "model/molecule.typ": molecule
-#import "model/reaction.typ": reaction
-#import "model/element.typ": element
-#import "model/group.typ": group
-#import "model/arrow.typ": arrow
+#import "model/molecule-element.typ": molecule
+#import "model/reaction-element.typ": reaction
+#import "model/element-element.typ": element
+#import "model/group-element.typ": group
+#import "model/arrow-element.typ": arrow
 
 #let get-count-and-charge(count1, count2, charge1, charge2, full-string, templates, index) = {
   let radical = false
