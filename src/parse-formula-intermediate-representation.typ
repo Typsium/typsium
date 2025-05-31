@@ -39,7 +39,7 @@
       charge = charge.replace(".", "")
       radical = true
     }
-    if charge.contains("I") or charge.contains("V"){
+    if charge.contains("I") or charge.contains("V") {
       let multiplier = if charge.contains("-") { -1 } else { 1 }
       charge = charge.replace("-", "").replace("+", "")
       charge = roman-to-number(charge) * multiplier
@@ -99,15 +99,24 @@
 
   return (
     true,
-    element(
-      element-match.captures.at(0),
-      count: x.at(0),
-      charge: x.at(1),
-      radical: x.at(2),
-      oxidation: oxidation-number,
-      roman-oxidation: roman-oxidation,
-      roman-charge: x.at(3),
-    ),
+    if x.at(3) {
+      element(
+        element-match.captures.at(0),
+        count: x.at(0),
+        charge: x.at(1),
+        radical: x.at(2),
+        oxidation: oxidation-number,
+        roman-charge: true,
+      )
+    } else {
+      element(
+        element-match.captures.at(0),
+        count: x.at(0),
+        charge: x.at(1),
+        radical: x.at(2),
+        oxidation: oxidation-number,
+      )
+    },
     element-match.end,
   )
 }
@@ -130,7 +139,7 @@
   }
   let full-reaction = ()
   let current-molecule-children = ()
-  let current-molecule-count = 1
+  let current-molecule-count = ""
   let current-molecule-phase = none
   let current-molecule-charge = 0
   let random-content = ""
@@ -265,12 +274,17 @@
   }
   if current-molecule-children.len() != 0 {
     full-reaction.push(
-      molecule(current-molecule-children, count: current-molecule-count, phase: current-molecule-phase),
+      molecule(
+        current-molecule-children,
+        count: current-molecule-count,
+        phase: current-molecule-phase,
+      ),
     )
   }
   if not is-default(random-content) {
     full-reaction.push([#random-content])
   }
+
 
   return full-reaction
 }

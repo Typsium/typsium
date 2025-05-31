@@ -45,7 +45,12 @@
 
   customizable-attach(
     base,
-    t: oxidation-to-content(it.oxidation, roman: it.roman-oxidation),
+    t: oxidation-to-content(
+      it.oxidation,
+      roman: it.roman-oxidation,
+      negative-symbol: it.negative-symbol,
+      positive-symbol: it.positive-symbol,
+    ),
     tr: charge-to-content(
       it.charge,
       radical: it.radical,

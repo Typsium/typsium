@@ -516,6 +516,11 @@
     }
     if roman {
       roman-numerals.at(calc.abs(charge))
+      if charge < 0 {
+        negative-symbol
+      } else if charge > 0 {
+        positive-symbol
+      }
     } else {
       if charge < 0 {
         if calc.abs(charge) > 1 {

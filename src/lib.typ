@@ -11,14 +11,18 @@
 
 #let ce(formula) = {
   if type(formula) == str{
-    reaction(string-to-reaction(formula))
+    let result = string-to-reaction(formula)
+    if result.len() == 1{
+      result.at(0)
+    } else {
+      reaction(result)
+    }
   } else if type(formula) == content{
-    // formula
-    let r = content-to-reaction(formula)
-    if type(r) == content{
-      r
-    } else{
-      reaction(content-to-reaction(formula))
+    let result = content-to-reaction(formula)
+    if result.len() == 1{
+      result.at(0)
+    } else {
+      reaction(result)
     }
   }
 }
