@@ -270,14 +270,14 @@
     }
 
     random-content += remaining.codepoints().at(0)
-    remaining = remaining.slice(remaining.codepoints().at(0).len())
-  }
+    remaining = remaining.slice(remaining.codepoints().at(0).len())  }
   if current-molecule-children.len() != 0 {
     full-reaction.push(
       molecule(
         current-molecule-children,
         count: current-molecule-count,
         phase: current-molecule-phase,
+        charge: current-molecule-charge,
       ),
     )
   }
