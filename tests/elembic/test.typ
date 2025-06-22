@@ -3,12 +3,6 @@
 #set page(width: auto, height: auto, margin: 0.5em)
 
 #[
-  #lorem(5)\
-  #lorem(5)\
-  #lorem(10)\
-  Hello World
-  #sym.bullet
-  #math.dot
   $
   #string-to-element("H5+3").at(1)\
   #reaction(string-to-reaction("(H5+3)5+3"))\
@@ -42,8 +36,5 @@
       ),count: 2,),
     ))
   $
-  
-  Hello World\
-  #lorem(10)\
-R'
 ]
+
