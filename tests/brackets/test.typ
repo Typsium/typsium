@@ -1,7 +1,8 @@
 #import "../../src/lib.typ" : ce
 #import "@preview/elembic:1.1.0" as e
 #import "../../src/model/group-element.typ":*
-// #show: e.set_(group, grow-brackets:false, affect-layout:false)
+
+#show: e.set_(group, grow-brackets:true, affect-layout:true)
 
 #set page(width: auto, height: auto, margin: 0.5em)
 
@@ -15,3 +16,5 @@
 #ce("[FeCo(CN)4 (NH3)2]^5-")
 #linebreak()
 #ce("[Co(en)3]^3- + 3[HCl]^+")
+\
+#ce("[CH2[NH3]]2SO2")

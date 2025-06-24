@@ -53,7 +53,7 @@
     e.field("kind", int, default: 0),
     e.field("count", e.types.union(int, content), default: 1),
     e.field("charge", e.types.union(int, content), default: 0),
-    e.field("grow-brackets", bool, default: true),
+    e.field("grow-brackets", bool, default: false),
     e.field("affect-layout", bool, default: true),
   ),
 )
