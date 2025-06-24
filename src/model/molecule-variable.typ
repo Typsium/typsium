@@ -1,4 +1,4 @@
-#import "../libs/elembic/lib.typ" as e
+#import "@preview/elembic:1.1.0" as e
 #import "../utils.typ": (
   // is-sequence,
   // is-kind,

@@ -1,4 +1,4 @@
-#import "libs/elembic/lib.typ" as e: selector
+#import "@preview/elembic:1.1.0" as e: selector
 #import "model/arrow-element.typ": arrow
 #import "model/element-element.typ": element
 #import "model/group-element.typ": group
