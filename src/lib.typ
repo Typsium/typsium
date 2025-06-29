@@ -10,6 +10,9 @@
 #import "model/reaction-element.typ": reaction
 
 #let ce(formula) = {
+
+  show "*": sym.dot
+
   if type(formula) == str{
     let result = string-to-reaction(formula)
     if result.len() == 1{

@@ -13,15 +13,30 @@ Enter your chemical formula or reaction into the `#ce"` method like this:
 ```
 ![result](https://raw.githubusercontent.com/Typsium/typsium/main/tests/README-graphic1/ref/1.png)
 
-You can also embed any kind of content into your chemical reactions like by using square brackets instead of a passing in a string. This will also apply any styling to the reaction.
+You can also embed any kind of content into your chemical reactions like by using square brackets instead of a passing in a string. This will also apply any styling to the reaction. 
+
+> **Warning:** Currently, brackets inside another bracket will not be parsed correctly. 
+
 ```typst
 #ce[...]
 ```
+
 ![result2](https://raw.githubusercontent.com/Typsium/typsium/main/tests/README-graphic1/ref/1.png)
 
-There are many different kinds of arrows to choose from. And you can add additional arguments to them (such as the top or bottom text) by adding square brackets.
+There are many different kinds of arrows to choose from. 
 ```typst
-//show arrows and how they look
+#ce[->]\
+#ce[=>]\
+#ce[<=>]\
+#ce[<=]\
+#ce("<->")\
+#ce("<-")\
+```
+
+And you can add additional arguments to them (such as the top or bottom text) by adding square brackets.
+
+```typst
+#ce("->[top text][bottom text]")
 ```
 
 The molecule parsing is flexible and allows many different ways of writing, so you can just copy paste in your formulas and they will probably work. Oxidation numbers can be added like this`^^`,  radicals can be added like this`.` and hydration groups can be added like this`*`.
