@@ -1,90 +1,65 @@
-#import "../../src/display-intermediate-representation.typ": display-ir
+#import "../../src/model/element-element.typ": element
+#import "../../src/model/molecule-element.typ": molecule
+#import "../../src/model/group-element.typ": group
 #set page(width: auto, height: auto, margin: 0.5em)
 
-#let co2 = (
-  type: "molecule",
+#let co2 = molecule(
+  (
+    element(
+      "C",
+      count: 1,
+      charge: 0,
+      oxidation: none,
+      a: none,
+      z: none,
+    ),
+    element(
+      "O",
+      count: 2,
+      charge: 0,
+      oxidation: none,
+      a: none,
+      z: none,
+    ),
+  ),
   count: 1,
   phase: "g",
   charge: 0,
-  align: none,
-  arrow: none,
-  children: (
-    (
-      type: "element",
-      count: 1,
-      symbol: "C",
-      charge: 0,
-      oxidation-number: none,
-      isotope: none,
-      align: none,
-    ),
-    (
-      type: "element",
-      count: 2,
-      symbol: "O",
-      charge: 0,
-      oxidation-number: none,
-      isotope: none,
-      align: none,
-    ),
-  ),
 )
 
-#let hexacyanidoferrat = (
-  type: "molecule",
-  count: 3,
-  phase: "s",
-  charge: 0,
-  align: none,
-  arrow: none,
-  children: (
-    (
-      type: "group",
+#let hexacyanidoferrat = molecule(
+  (
+    group(
+      (
+        element(
+          "Fe",
+          count: 1,
+        ),
+        group(
+          (
+            element(
+              "C",
+              count: 1,
+            ),
+            element(
+              "N",
+              count: 1,
+            ),
+          ),
+          count: 6,
+          kind: 0,
+        ),
+      ),
       count: 2,
       kind: 1,
       charge: 4,
-      align: none,
-      children: (
-        (
-          type: "element",
-          count: 1,
-          symbol: "Fe",
-          charge: 0,
-          oxidation-number: none,
-          isotope: none,
-          align: none,
-        ),
-        (
-          type: "group",
-          count: 6,
-          kind: 0,
-          charge: 0,
-          align: none,
-          children: (
-            (
-              type: "element",
-              count: 1,
-              symbol: "C",
-              charge: 0,
-              oxidation-number: none,
-              isotope: none,
-              align: none,
-            ),
-            (
-              type: "element",
-              count: 1,
-              symbol: "N",
-              charge: 0,
-              oxidation-number: none,
-              isotope: none,
-              align: none,
-            ),
-          ),
-        ),
-      ),
     ),
   ),
+  count: 3,
+  phase: "s",
+  charge: 0,
 )
 
-#display-ir(co2)\
-#display-ir(hexacyanidoferrat)
+#co2\
+#hexacyanidoferrat
+// #display-ir(hexacyanidoferrat)

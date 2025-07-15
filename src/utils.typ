@@ -89,6 +89,22 @@
   sym.arrow.l.not,
   sym.harpoons.rtlb,
 )
+#let roman-numerals = (
+  "0",
+  "I",
+  "II",
+  "III",
+  "IV",
+  "V",
+  "VI",
+  "VII",
+  "VIII",
+  "IX",
+  "X",
+  "XI",
+  "XII",
+  "XIII",
+)
 #let arrow-kinds = (
   "<->": 0,
   "↔": 0,
@@ -133,7 +149,60 @@
       return [#count]
     }
   } else if type(count) == content {
-    return count
+    if count != [1] {
+      return count
+    }
+  }
+  return none
+}
+#let roman-to-number(roman-number) = {
+  return roman-numerals.position(x => x == roman-number)
+}
+#let show-roman(body, roman: true) = {
+  if roman {
+    show "1": "I"
+    show "2": "II"
+    show "3": "III"
+    show "4": "IV"
+    show "5": "V"
+    show "6": "VI"
+    show "7": "VII"
+    show "8": "VIII"
+    body
+  } else {
+    show "V": "5"
+    show "I": "1"
+    show "II": "2"
+    show "III": "3"
+    show "IV": "4"
+    show "VI": "6"
+    show "VII": "7"
+    show "VIII": "8" // highest priority is lowest, otherwise it will render VII as 511
+    body
+  }
+}
+#let oxidation-to-content(
+  oxidation,
+  roman: true,
+  negative-symbol: math.minus,
+  positive-symbol: math.plus,
+) = {
+  if oxidation == none {
+    return none
+  } else if type(oxidation) == int {
+    let symbol = none
+    if oxidation < 0 {
+      symbol = negative-symbol
+    } else if oxidation > 0 {
+      symbol = positive-symbol
+    }
+    if roman {
+      return [#symbol#roman-numerals.at(calc.abs(oxidation))]
+    } else {
+      return [#symbol#calc.abs(oxidation)]
+    }
+  } else if type(oxidation) == content {
+    return oxidation
   }
   return none
 }
@@ -223,6 +292,12 @@
 }
 
 // own utils
+#let length(value) = {
+  if value == none {
+    return 0
+  }
+  return value.len()
+}
 #let is-default(value) = {
   if value == [] or value == none or value == auto or value == "" {
     return true
@@ -303,7 +378,6 @@
     return element.value
   }
 }
-
 #let reconstruct-content(template, body) = {
   if template == none or template == auto {
     return body
@@ -313,6 +387,8 @@
 
   if func == typst-builtin-styled {
     return template.func()(body, template.styles)
+  } else if func == typst-builtin-context {
+    template
   } // else if func in (emph, smallcaps, sub, super, box, block, hide, heading) {
    //   return template.func()(body)
    // }
@@ -340,17 +416,16 @@
       rest: template.at("rest", default: 0%),
     )
   } else if func == strong {
-    return template.func()(
-      body,
-      delta: template.at("delta", default: 300),
-    )
+    return template.func()(body, delta: template.at("delta", default: 300))
   } else if func == highlight {
     return template.func()(
       body,
+      bottom-edge: template.at("bottom-edge", default: "descender"),
       extent: template.at("extent", default: 0pt),
       fill: template.at("fill", default: rgb("#fffd11a1")),
       radius: template.at("radius", default: (:)),
       stroke: template.at("stroke", default: (:)),
+      top-edge: template.at("top-edge", default: "ascender"),
     )
   } else if func in (overline, underline, strike) {
     return template.func()(
@@ -373,28 +448,100 @@
     return template.func()(body)
   }
 }
+#let reconstruct-nested-content(templates, body) = {
+  let result = body
+  for template in templates {
+    result = reconstruct-content(template, result)
+  }
+  return result
+}
+#let templates-equal(a, b) = {
+  if a.func() != b.func() {
+    return false
+  }
+  if a.func() == typst-builtin-styled {
+    return true
+  }
+  for i in a.fields() {
+    if i.at(0) != "child" and i.at(0) != "text" and i.at(0) != "body" {
+      if i.at(1) != b.at(i.at(0)) {
+        return false
+      }
+    }
+  }
+  return true
+}
+#let reconstruct-content-from-strings(strings, templates, start: 0, end: none) = {
+  if strings.len() == 1 {
+    return reconstruct-nested-content(templates.at(0), [#strings.at(0)])
+  }
+  strings = strings.slice(start, end)
+  templates = templates.slice(start, end)
 
-#let charge-to-content(charge, radical: false) = {
-  if is-default(charge){
+  let result = none
+  start = 0
+  for i in range(1, templates.len()) {
+    let is-equal = templates.at(i).len() == templates.at(start).len()
+    if is-equal {
+      for j in range(0, templates.at(i).len()) {
+        if not templates-equal(templates.at(i).at(j), templates.at(start).at(j)) {
+          is-equal = false
+        }
+      }
+    }
+    if is-equal {
+      continue
+    } else {
+      result += reconstruct-nested-content(templates.at(start), [#strings.slice(start, i)])
+      start = i
+    }
+  }
+  result += reconstruct-nested-content(templates.at(start), [#strings.slice(start, templates.len())])
+  return result
+}
+
+#let charge-to-content(
+  charge,
+  radical: false,
+  roman: false,
+  radical-symbol: sym.dot,
+  negative-symbol: math.minus,
+  positive-symbol: math.plus,
+) = {
+  if is-default(charge) {
     []
   } else if type(charge) == int {
     if radical {
-      sym.bullet
+      radical-symbol
     }
-    if charge < 0 {
-      if calc.abs(charge) > 1 {
-        str(calc.abs(charge))
+    if roman {
+      roman-numerals.at(calc.abs(charge))
+      if charge < 0 {
+        negative-symbol
+      } else if charge > 0 {
+        positive-symbol
       }
-      math.minus
-    } else if charge > 0 {
-      if charge > 1 {
-        str(charge)
-      }
-      math.plus
     } else {
-      []
+      if charge < 0 {
+        if calc.abs(charge) > 1 {
+          str(calc.abs(charge))
+        }
+        negative-symbol
+      } else if charge > 0 {
+        if charge > 1 {
+          str(charge)
+        }
+        positive-symbol
+      } else {
+        []
+      }
     }
   } else if type(charge) == str {
-    charge.replace(".", sym.bullet).replace("-", math.minus).replace("+", math.plus)
+    charge.replace(".", radical-symbol).replace("-", negative-symbol).replace("+", positive-symbol)
+  } else if type(charge) == content {
+    show ".": radical-symbol
+    show "-": negative-symbol
+    show "+": positive-symbol
+    show-roman(charge, roman: roman)
   }
 }
