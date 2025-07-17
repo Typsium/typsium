@@ -41,17 +41,8 @@ And you can add additional arguments to them (such as the top or bottom text) by
 
 The molecule parsing is flexible and allows many different ways of writing, so you can just copy paste in your formulas and they will probably work. Oxidation numbers can be added like this`^^`,  radicals can be added like this`.` and hydration groups can be added like this`*`.
 
-```typst
-//examples
-```
-
 You can use many kinds of brackets. they will auto scale by default, but you can disable it with a show rule.
-```typst
-//brackets examples and grow-brackets show rule
-```
+
 Inline formulas often need to be a bit more compact, for this purpose there is an `affect-layout` rule, which can be toggled on and off for each part of the reaction separately.
-```typst
-//brackets examples
-```
 
 You can use Typsium inside other packages and the styling will be consistent across the entire document.
