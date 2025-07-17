@@ -2,20 +2,56 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-blue)](https://github.com/Typsium/typsium/blob/main/LICENSE)
 ![User Manual](https://img.shields.io/badge/manual-.pdf-purple)
 
-# Typst Chemical Formula Package
-
-A Typst package for typesetting chemical formulas, currently working on inorganic.
-
-- Typeset chemical formulas with ease
-- Reactions and equations, including reversible reactions
-- Support for complex reaction conditions (e.g. temperature (T=), pressure (P=), etc.)
-
+# Write beautiful chemical formulas and reactions with Typsium
 ## Usage
-
-To use Typsium, you need to include the package in your document:
-// update to newest typsium usage, add "#import "@preview/typsium:0.3.0": ce" when releasing 0.3.0
 ```typst
-#ce("[Cu(H2O)4] 2+ + 4NH3 -> [Cu(NH3)4] 2+ + 4H2O")
+#import "@preview/typsium:0.3.0":*
+```
+Enter your chemical formula or reaction into the `#ce"` method like this: 
+```typst
+#ce("[Cu(H2O)4]^2+ + 4NH3 -> [Cu(NH3)4]^2+ + 4H2O")
+```
+![result](https://raw.githubusercontent.com/Typsium/typsium/main/tests/README-graphic1/ref/1.png)
+
+You can also embed any kind of content into your chemical reactions like by using square brackets instead of a passing in a string. This will also apply any styling to the reaction. 
+
+> **Warning:** Currently, brackets inside another bracket will not be parsed correctly. 
+
+```typst
+#ce[...]
 ```
 
-![result](https://raw.githubusercontent.com/Typsium/typsium/main/tests/README-graphic1/ref/formula-parser.svg)
+![result2](https://raw.githubusercontent.com/Typsium/typsium/main/tests/README-graphic1/ref/1.png)
+
+There are many different kinds of arrows to choose from. 
+```typst
+#ce[->]\
+#ce[=>]\
+#ce[<=>]\
+#ce[<=]\
+#ce("<->")\
+#ce("<-")\
+```
+
+And you can add additional arguments to them (such as the top or bottom text) by adding square brackets.
+
+```typst
+#ce("->[top text][bottom text]")
+```
+
+The molecule parsing is flexible and allows many different ways of writing, so you can just copy paste in your formulas and they will probably work. Oxidation numbers can be added like this`^^`,  radicals can be added like this`.` and hydration groups can be added like this`*`.
+
+```typst
+//examples
+```
+
+You can use many kinds of brackets. they will auto scale by default, but you can disable it with a show rule.
+```typst
+//brackets examples and grow-brackets show rule
+```
+Inline formulas often need to be a bit more compact, for this purpose there is an `affect-layout` rule, which can be toggled on and off for each part of the reaction separately.
+```typst
+//brackets examples
+```
+
+You can use Typsium inside other packages and the styling will be consistent across the entire document.

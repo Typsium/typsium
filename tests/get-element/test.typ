@@ -1,4 +1,4 @@
-#import "../../src/lib.typ" : get-element
+#import "../../src/lib.typ": get-element
 
 #let iron = get-element(symbol: "Fe")
 #let hydrogen = get-element(common-name: "Hydrogen")
