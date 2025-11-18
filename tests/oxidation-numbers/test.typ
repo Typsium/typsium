@@ -27,6 +27,6 @@
 #ce("K^+I")
 #ce("Pb^I2")
 
-#ce[Ag^I]
+#ce[AgI]
 #ce[K^.^^IV]
 #ce[Pb^I2]
