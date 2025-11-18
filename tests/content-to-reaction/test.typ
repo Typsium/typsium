@@ -4,7 +4,7 @@
 #import "../../src/model/group-element.typ":*
 #import "../../src/model/element-element.typ":*
 #import "../../src/parse-formula-intermediate-representation.typ": string-to-reaction,
-#import "@preview/alchemist:0.1.4": *
+#import "@preview/alchemist:0.1.8": *
 // #show: e.set_(group, grow-brackets:false, affect-layout:false)
 
 #set page(width: auto, height: auto, margin: 0.5em)
@@ -51,6 +51,7 @@
   )
 })
 
+// #alchemist-molecule
 $
 #ce[H2SO4 ->H2O + #math.overbrace[#alchemist-molecule][Hello World]]\
 $

@@ -52,7 +52,7 @@
       end: index + length(charge1),
     )
   } else if not is-default(charge2) {
-    if charge1.contains("I") or charge1.contains("V") {
+    if charge2.contains("I") or charge2.contains("V") {
       roman-charge = true
     }
     reconstruct-content-from-strings(

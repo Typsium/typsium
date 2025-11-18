@@ -1,5 +1,4 @@
-// #import "data-model.typ": get-element-counts, get-element, get-weight, define-molecule, define-hydrate
-// #import "display-shell-configuration.typ": get-electron-configuration,get-shell-configuration,display-electron-configuration,
+#import "data-model.typ": get-element-counts, get-element, get-weight, define-molecule, define-hydrate
 #import "parse-formula-intermediate-representation.typ": string-to-reaction
 #import "parse-content-intermediate-representation.typ": content-to-reaction
 #import "typing.typ": set-arrow, set-element, set-group, set-molecule, set-reaction, elembic, fields, selector
