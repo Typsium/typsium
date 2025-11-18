@@ -504,7 +504,7 @@
   charge,
   radical: false,
   roman: false,
-  radical-symbol: sym.dot,
+  radical-symbol: sym.bullet,
   negative-symbol: math.minus,
   positive-symbol: math.plus,
 ) = {

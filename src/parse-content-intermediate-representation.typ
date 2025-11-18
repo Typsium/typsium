@@ -42,6 +42,9 @@
   }
 
   let charge = if not is-default(charge1) {
+    if charge1.contains("I") or charge1.contains("V") {
+      roman-charge = true
+    }
     reconstruct-content-from-strings(
       full-string,
       templates,
@@ -49,6 +52,9 @@
       end: index + length(charge1),
     )
   } else if not is-default(charge2) {
+    if charge1.contains("I") or charge1.contains("V") {
+      roman-charge = true
+    }
     reconstruct-content-from-strings(
       full-string,
       templates,

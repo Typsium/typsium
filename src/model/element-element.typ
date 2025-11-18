@@ -19,7 +19,7 @@
   affect-layout: true,
   roman-oxidation: true,
   roman-charge: false,
-  radical-symbol: sym.dot,
+  radical-symbol: sym.bullet,
   negative-symbol: math.minus,
   positive-symbol: math.plus,
 ) = { }
@@ -85,7 +85,7 @@
     e.field("affect-layout", bool, default: true),
     e.field("roman-oxidation", bool, default: true),
     e.field("roman-charge", bool, default: false),
-    e.field("radical-symbol", content, default: sym.dot),
+    e.field("radical-symbol", content, default: sym.bullet),
     e.field("negative-symbol", content, default: math.minus),
     e.field("positive-symbol", content, default: math.plus),
   ),
