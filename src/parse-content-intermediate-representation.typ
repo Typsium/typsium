@@ -72,13 +72,36 @@
   if element-match == none {
     return (false,)
   }
-  let symbol = element-match.captures.at(0)
-  let oxidation = element-match.captures.at(5)
+  let symbol = element-match.captures.at(2)
+  let oxidation = element-match.captures.at(7)
+  let a = element-match.captures.at(0)
+  let z = element-match.captures.at(1)
+  if a != none {
+    let len = element-match.captures.at(0).len()
+    a = reconstruct-content-from-strings(
+        full-string,
+        templates,
+        start: index + 1,
+        end: index + len,
+      )
+      index += len
+  }
+  if z != none {
+    let len = element-match.captures.at(1).len()
+    z = reconstruct-content-from-strings(
+        full-string,
+        templates,
+        start: index + 1,
+        end: index + len,
+      )
+      index += len
+  }
+  // if z != none{z = z.slice(1, z.len())}
   let x = get-count-and-charge(
-    element-match.captures.at(1),
     element-match.captures.at(3),
-    element-match.captures.at(2),
+    element-match.captures.at(5),
     element-match.captures.at(4),
+    element-match.captures.at(6),
     full-string,
     templates,
     index + symbol.len(),
@@ -115,7 +138,7 @@
         full-string,
         templates,
         start: index,
-        end: index + element-match.captures.at(0).len(),
+        end: index + element-match.captures.at(2).len(),
       ),
       count: x.at(0),
       charge: x.at(1),
@@ -123,6 +146,8 @@
       oxidation: oxidation-number,
       roman-oxidation: roman-oxidation,
       roman-charge: x.at(3),
+      a:a,
+      z:z,
     ),
     element-match.end,
   )

@@ -7,7 +7,8 @@
 
 #let patterns = (
   element: regex(
-    "^([A-Z][a-z]?)" +
+    "^(\^\d+)?(_\d+)?"+
+    "([A-Z][a-z]?)" +
     "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?" +
     "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?" +
     "(\^\^[+-]?(?:[IViv]{1,3}|\d+))?",
@@ -80,12 +81,16 @@
     return (false,)
   }
   let x = get-count-and-charge(
-    element-match.captures.at(1),
     element-match.captures.at(3),
-    element-match.captures.at(2),
+    element-match.captures.at(5),
     element-match.captures.at(4),
+    element-match.captures.at(6),
   )
-  let oxidation = element-match.captures.at(5)
+  let oxidation = element-match.captures.at(7)
+  let a = element-match.captures.at(0)
+  let z = element-match.captures.at(1)
+  if a != none{a = a.slice(1, a.len())}
+  if z != none{z = z.slice(1, z.len())}
   let oxidation-number = none
   let roman-oxidation = true
   let roman-charge = false
@@ -115,20 +120,24 @@
     true,
     if x.at(3) {
       element(
-        element-match.captures.at(0),
+        element-match.captures.at(2),
         count: x.at(0),
         charge: x.at(1),
         radical: x.at(2),
         oxidation: oxidation-number,
         roman-charge: x.at(3),
+        a:a,
+        z:z,
       )
     } else {
       element(
-        element-match.captures.at(0),
+        element-match.captures.at(2),
         count: x.at(0),
         charge: x.at(1),
         radical: x.at(2),
         oxidation: oxidation-number,
+        a:a,
+        z:z,
       )
     },
     element-match.end,
