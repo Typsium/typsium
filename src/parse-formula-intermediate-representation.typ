@@ -10,7 +10,7 @@
     "^([A-Z][a-z]?)" +
     "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?" +
     "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?" +
-    "(\^\^[+-]?(?:[IViv]{1,3}|\d+))?"
+    "(\^\^[+-]?(?:[IViv]{1,3}|\d+))?",
   ),
   group: regex(
     "^((?:\([^()]*(?:\([^()]*\)[^()]*)*\))|(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})|(?:\[[^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*\]))" +
@@ -25,7 +25,8 @@
     "\s*"
   ),
   math: regex("^\$[^$]*?\$"),
-  state: regex("^\((s|l|g|aq|solid|liquid|gas|aqueous|aqua)\)"),
+  aggregation: regex("^\((?:s|l|g|aq|cd|cr|fl|lc|vit|a|ads|pol|mon|sln|am)\)"),
+  count: regex("^\d+"),
 )
 
 #let get-count-and-charge(count1, count2, charge1, charge2) = {
@@ -152,27 +153,45 @@
   }
   let full-reaction = ()
   let current-molecule-children = ()
-  let current-molecule-count = ""
+  let current-molecule-count = 1
   let current-molecule-phase = none
-  let current-molecule-charge = 0
   let random-content = ""
 
   while remaining.len() > 0 {
     if remaining.at(0) == "&" {
+      //flush current molecule
       if current-molecule-children.len() > 0 {
-        full-reaction.push(molecule(current-molecule-children))
+        full-reaction.push(
+          molecule(
+            current-molecule-children,
+            count: current-molecule-count,
+            aggregation: current-molecule-phase,
+          ),
+        )
         current-molecule-children = ()
+        current-molecule-phase = none
+        current-molecule-count = 1
       }
+      //end flush current molecule
+
       full-reaction.push($&$)
       remaining = remaining.slice(1)
       continue
     }
+
     let math-result = string-to-math(remaining)
     if math-result.at(0) {
+      //flush random content
       if not is-default(random-content) {
-        full-reaction.push([#random-content])
+        if current-molecule-children.len() == 0 {
+          full-reaction.push([#random-content])
+        } else {
+          current-molecule-children.push([#random-content])
+        }
       }
       random-content = ""
+      //end flush random content
+
       full-reaction.push(math-result.at(1))
       remaining = remaining.slice(math-result.at(2))
       continue
@@ -180,6 +199,7 @@
 
     let element = string-to-element(remaining)
     if element.at(0) {
+      //flush random content
       if not is-default(random-content) {
         if current-molecule-children.len() == 0 {
           full-reaction.push([#random-content])
@@ -188,14 +208,16 @@
         }
       }
       random-content = ""
+      //end flush random content
+
       current-molecule-children.push(element.at(1))
       remaining = remaining.slice(element.at(2))
       continue
     }
 
-
-    let group-match = remaining.match(patterns.group)
-    if group-match != none {
+    let aggregation-match = remaining.match(patterns.aggregation)
+    if aggregation-match != none{
+      //flush random content
       if not is-default(random-content) {
         if current-molecule-children.len() == 0 {
           full-reaction.push([#random-content])
@@ -204,6 +226,25 @@
         }
       }
       random-content = ""
+      //end flush random content
+
+      current-molecule-phase = aggregation-match.text
+      remaining = remaining.slice(aggregation-match.end)
+      continue
+    }
+
+    let group-match = remaining.match(patterns.group)
+    if group-match != none {
+      //flush random content
+      if not is-default(random-content) {
+        if current-molecule-children.len() == 0 {
+          full-reaction.push([#random-content])
+        } else {
+          current-molecule-children.push([#random-content])
+        }
+      }
+      random-content = ""
+      //end flush random content
 
       let group-content = group-match.captures.at(0)
       let kind = if group-content.at(0) == "(" {
@@ -229,23 +270,51 @@
       continue
     }
 
+    let count-match = remaining.match(patterns.count)
+    if count-match != none{
+      //flush random content
+      if not is-default(random-content) {
+        if current-molecule-children.len() == 0 {
+          full-reaction.push([#random-content])
+        } else {
+          current-molecule-children.push([#random-content])
+        }
+      }
+      random-content = ""
+      //end flush random content
+
+      current-molecule-count = count-match.text
+      remaining = remaining.slice(count-match.end)
+      continue
+    }
+
     let plus-match = remaining.match(patterns.reaction-plus)
     if plus-match != none {
+      //flush current molecule
       if current-molecule-children.len() > 0 {
         full-reaction.push(
           molecule(
             current-molecule-children,
             count: current-molecule-count,
-            phase: current-molecule-phase,
-            charge: current-molecule-charge,
+            aggregation: current-molecule-phase,
           ),
         )
         current-molecule-children = ()
+        current-molecule-phase = none
+        current-molecule-count = 1
       }
+      //end flush current molecule
+      
+      //flush random content
       if not is-default(random-content) {
-        full-reaction.push([#random-content])
+        if current-molecule-children.len() == 0 {
+          full-reaction.push([#random-content])
+        } else {
+          current-molecule-children.push([#random-content])
+        }
       }
       random-content = ""
+      //end flush random content
       full-reaction.push([+])
       remaining = remaining.slice(plus-match.end)
       continue
@@ -253,21 +322,32 @@
 
     let arrow-match = remaining.match(patterns.reaction-arrow)
     if arrow-match != none {
+      //flush current molecule
       if current-molecule-children.len() > 0 {
         full-reaction.push(
           molecule(
             current-molecule-children,
             count: current-molecule-count,
-            phase: current-molecule-phase,
-            charge: current-molecule-charge,
+            aggregation: current-molecule-phase,
           ),
         )
         current-molecule-children = ()
+        current-molecule-phase = none
+        current-molecule-count = 1
       }
+      //end flush current molecule
+      
+      //flush random content
       if not is-default(random-content) {
-        full-reaction.push([#random-content])
+        if current-molecule-children.len() == 0 {
+          full-reaction.push([#random-content])
+        } else {
+          current-molecule-children.push([#random-content])
+        }
       }
       random-content = ""
+      //end flush random content
+
       let kind = arrow-string-to-kind(arrow-match.captures.at(0))
       let top = ()
       let bottom = ()
@@ -282,21 +362,53 @@
       continue
     }
 
+    //TODO: revisit if this is giving good results
+    if remaining.codepoints().at(0) == " "{
+      //flush current molecule
+      if current-molecule-children.len() > 0 {
+        full-reaction.push(
+          molecule(
+            current-molecule-children,
+            count: current-molecule-count,
+            aggregation: current-molecule-phase,
+          ),
+        )
+        current-molecule-children = ()
+        current-molecule-phase = none
+        current-molecule-count = 1
+      }
+      //end flush current molecule
+    }
+
     random-content += remaining.codepoints().at(0)
-    remaining = remaining.slice(remaining.codepoints().at(0).len())  }
-  if current-molecule-children.len() != 0 {
+    remaining = remaining.slice(remaining.codepoints().at(0).len())  
+    }
+
+  //flush current molecule
+  if current-molecule-children.len() > 0 {
     full-reaction.push(
       molecule(
         current-molecule-children,
         count: current-molecule-count,
-        phase: current-molecule-phase,
-        charge: current-molecule-charge,
+        aggregation: current-molecule-phase,
       ),
     )
+    current-molecule-children = ()
+    current-molecule-phase = none
+    current-molecule-count = 1
   }
+  //end flush current molecule
+  
+  //flush random content
   if not is-default(random-content) {
-    full-reaction.push([#random-content])
+    if current-molecule-children.len() == 0 {
+      full-reaction.push([#random-content])
+    } else {
+      current-molecule-children.push([#random-content])
+    }
   }
+  random-content = ""
+  //end flush random content
 
 
   return full-reaction

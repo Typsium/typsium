@@ -4,15 +4,14 @@
   charge-to-content,
   is-default,
   customizable-attach,
-  phase-to-content,
 )
 
 #let molecule(
   count: 1,
-  phase: none,
+  aggregation: none,
   charge: 0,
   //TODO: add up and down arrows
-  phase-transition: 0,
+  transition: 0,
   affect-layout: true,
   ..children,
 ) = { }
@@ -29,11 +28,12 @@
       affect-layout: it.affect-layout,
     )
   }
-  if not is-default(it.phase) {
+  if not is-default(it.aggregation) {
     result += context {
-      text(phase-to-content(it.phase), size: text.size * 0.75)
+      text(it.aggregation, size: text.size * 0.75)
     }
   }
+  // return box(result, fill:red, outset: -0.05em)
   return result
 }
 
@@ -45,7 +45,7 @@
   fields: (
     e.field("children", e.types.array(content), required: true),
     e.field("count", e.types.union(int, content), default: 1),
-    e.field("phase", e.types.union(str, content), default: none),
+    e.field("aggregation", e.types.union(str, content), default: none),
     e.field("charge", e.types.union(int, content), default: 0),
     e.field("affect-layout", bool, default: true),
   ),

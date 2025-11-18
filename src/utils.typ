@@ -133,14 +133,6 @@
   arrows.at(kind, default: sym.arrow.r)
 }
 
-#let phase-to-content(phase) = {
-  if phase == none {
-    none
-  } else if type(phase) == str {
-    "(" + phase + ")"
-  }
-}
-
 #let count-to-content(count) = {
   if count == none {
     return none
