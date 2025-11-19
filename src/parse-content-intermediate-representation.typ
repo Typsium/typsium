@@ -1,15 +1,6 @@
 #import "utils.typ": (
-  get-all-children,
-  is-metadata,
-  typst-builtin-styled,
-  typst-builtin-context,
-  length,
-  reconstruct-content-from-strings,
-  reconstruct-nested-content,
-  is-kind,
-  arrow-string-to-kind,
-  is-default,
-  roman-to-number,
+  arrow-string-to-kind, get-all-children, is-default, is-kind, is-metadata, length, reconstruct-content-from-strings,
+  reconstruct-nested-content, roman-to-number, typst-builtin-context, typst-builtin-styled,
 )
 #import "parse-formula-intermediate-representation.typ": patterns
 
@@ -79,22 +70,22 @@
   if a != none {
     let len = element-match.captures.at(0).len()
     a = reconstruct-content-from-strings(
-        full-string,
-        templates,
-        start: index + 1,
-        end: index + len,
-      )
-      index += len
+      full-string,
+      templates,
+      start: index + 1,
+      end: index + len,
+    )
+    index += len
   }
   if z != none {
     let len = element-match.captures.at(1).len()
     z = reconstruct-content-from-strings(
-        full-string,
-        templates,
-        start: index + 1,
-        end: index + len,
-      )
-      index += len
+      full-string,
+      templates,
+      start: index + 1,
+      end: index + len,
+    )
+    index += len
   }
   // if z != none{z = z.slice(1, z.len())}
   let x = get-count-and-charge(
@@ -146,8 +137,8 @@
       oxidation: oxidation-number,
       roman-oxidation: roman-oxidation,
       roman-charge: x.at(3),
-      a:a,
-      z:z,
+      a: a,
+      z: z,
     ),
     element-match.end,
   )
@@ -266,7 +257,7 @@
     }
 
     let aggregation-match = remaining.match(patterns.aggregation)
-    if aggregation-match != none{
+    if aggregation-match != none {
       //flush random content
       if random-content != 0 {
         if current-molecule-children.len() == 0 {
@@ -294,11 +285,11 @@
 
 
       current-molecule-phase = reconstruct-content-from-strings(
-            reaction-string,
-            templates,
-            start: index,
-            end: index + aggregation-match.end,
-          )
+        reaction-string,
+        templates,
+        start: index,
+        end: index + aggregation-match.end,
+      )
       remaining = remaining.slice(aggregation-match.end)
       index += aggregation-match.end
       continue
@@ -489,7 +480,7 @@
     }
 
     //TODO: revisit if this is giving good results
-    if remaining.codepoints().at(0) == " "{
+    if remaining.codepoints().at(0) == " " {
       //flush current molecule
       if current-molecule-children.len() > 0 {
         full-reaction.push(
@@ -543,14 +534,19 @@
   let templates = ()
   for child in children {
     if is-metadata(child) {
-      if is-kind(child, "molecule") {
-        full-string += child.value.formula
-        for value in child.value.formula {
+      let elembic-data = e.data(child.value)
+      if elembic-data.id.name == "element-variable" {
+        let combined = child.value.symbol
+        if child.value.charge != 0 {
+          combined += "^" + str(child.value.charge)
+        }
+        full-string += combined
+        for value in combined {
           templates.push(())
         }
-      } else if is-kind(child, "element") {
-        full-string += child.value.symbol
-        for value in child.value.symbol {
+      } else if elembic-data.id.name == "molecule-variable" {
+        let combined = child.value.formula
+        for value in combined {
           templates.push(())
         }
       }
@@ -558,6 +554,10 @@
       let func-type = child.func()
       if child == [ ] {
         full-string += " "
+        templates.push(())
+      } else if func-type == raw {
+        let x = eval(child.text)
+        full-string += "#"
         templates.push(())
       } else if func-type == text {
         full-string += child.text

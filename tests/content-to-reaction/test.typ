@@ -1,19 +1,9 @@
-/// [max-delta: 50]
+/// [max-delta: 70]
 #import "../../src/lib.typ" : ce, define-molecule, get-element
-#import "../../src/utils.typ" : *
-#import "@preview/elembic:1.1.0" as e
-// #import "../../src/model/group-element.typ":*
-// #import "../../src/model/element-element.typ":*
-// #import "../../src/parse-formula-intermediate-representation.typ": string-to-reaction,
 #import "@preview/alchemist:0.1.8": *
-// #show: e.set_(group, grow-brackets:false, affect-layout:false)
+// #import "../../src/typing.typ": e
 
 #set page(width: auto, height: auto, margin: 0.5em)
-
-// #show: show-roman.with(roman: false)
-
-// #show: e.set_(element, affect-layout:true,roman-charge:false)
-
 
 #let alchemist-molecule = skeletize({
   molecule(name: "A", "A")

@@ -13,7 +13,7 @@
   // to-string,
 )
 
-#let element-variable = e.types.declare(
+#let molecule-variable = e.types.declare(
   "molecule-variable",
   prefix: "@preview/typsium:0.3.0",
   fields: ()

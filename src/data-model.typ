@@ -6,9 +6,6 @@
   padright,
   get-all-children,
   hydrates,
-  elements,
-  get-element-dict,
-  get-molecule-dict,
   to-string,
 )
 #import "parse-content-intermediate-representation.typ": patterns

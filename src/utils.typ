@@ -1,28 +1,3 @@
-
-// === Declarations & Configurations ===
-// source: https://en.wikipedia.org/wiki/List_of_chemical_elements
-// source: https://github.com/BlueObelisk/bodr/blob/master/bodr/elements/elements.xml
-#let elements = csv("resources/elements.csv", row-type: dictionary).map(x => (
-  kind: "element",
-  atomic-number: int(x.atomic-number),
-  symbol: x.symbol,
-  common-name: x.common-name,
-  group: int(x.group),
-  period: int(x.period),
-  block: x.block,
-  atomic-weight: float(x.atomic-weight),
-  covalent-radius: float(x.covalent-radius),
-  van-der-waal-radius: float(x.van-der-waal-radius),
-  outshell-electrons: int(x.outshell-electrons),
-  most-common-isotope: int(x.most-common-isotope),
-  density: float(x.density),
-  melting-point: float(x.melting-point),
-  boiling-point: float(x.boiling-point),
-  electronegativity: float(x.electronegativity),
-  phase: x.phase,
-  cas: x.cas,
-))
-
 #let hydrates = (
   "anhydrous",
   "monohydrate",
@@ -224,7 +199,7 @@
 
 #let typst-builtin-sequence = ([A] + [ ] + [B]).func()
 #let typst-builtin-styled = [#set text(fill: red)].func()
-#let typst-builtin-context = [#context { }].func()
+#let typst-builtin-context = [#context {}].func()
 #let typst-builtin-space = [ ].func()
 
 #let is-sequence(it) = {
@@ -310,14 +285,14 @@
   if affect-layout == false {
     base = box(base)
   }
-  
-  if t == []{t=none}
-  if tr == [] and t == none{tr=none} // otherwise oxidation numbers appear in the top left even when attached to the top position
-  if tl == []{tl=none}
-  if br == []{br=none}
-  if bl == []{bl=none}
 
-  if t == none and tr == none and tl == none and br == none and bl == none{
+  if t == [] { t = none }
+  if tr == [] and t == none { tr = none } // otherwise oxidation numbers appear in the top left even when attached to the top position
+  if tl == [] { tl = none }
+  if br == [] { br = none }
+  if bl == [] { bl = none }
+
+  if t == none and tr == none and tl == none and br == none and bl == none {
     return base
   }
 
@@ -371,16 +346,6 @@
   }
 }
 
-#let get-molecule-dict(molecule) = {
-  if is-metadata(molecule) and is-kind(molecule, "molecule") {
-    return molecule.value
-  }
-}
-#let get-element-dict(element) = {
-  if is-metadata(element) and is-kind(element, "element") {
-    return element.value
-  }
-}
 #let reconstruct-content(template, body) = {
   if template == none or template == auto {
     return body
@@ -393,8 +358,8 @@
   } else if func == typst-builtin-context {
     template
   } // else if func in (emph, smallcaps, sub, super, box, block, hide, heading) {
-   //   return template.func()(body)
-   // }
+  //   return template.func()(body)
+  // }
   else if (
     func
       in (

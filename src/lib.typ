@@ -7,6 +7,9 @@
 #import "model/group-element.typ": group
 #import "model/molecule-element.typ": molecule
 #import "model/reaction-element.typ": reaction
+#import "model/element-variable.typ": element-variable, get-element, define-ion, define-isotope
+#import "model/molecule-variable.typ": molecule-variable, define-molecule, define-hydrate
+
 
 #let ce(formula) = {
 

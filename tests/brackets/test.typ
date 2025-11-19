@@ -19,4 +19,4 @@
 #ce("[Co(en)3]^3- + 3[HCl]^+")
 #show: set-group(grow-brackets:false, affect-layout:false)
 \
-#ce("[CH2[NH3]]2SO2")
+#ce("[CH2(NH3)5]2SO2")
