@@ -483,6 +483,8 @@
       //end flush random content
 
       full-reaction.push(reconstruct-nested-content(templates.at(index).slice(1), templates.at(index).at(0)))
+      remaining = remaining.slice(1)
+      index += 1
       continue
     }
 

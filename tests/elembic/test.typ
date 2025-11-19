@@ -18,7 +18,7 @@
 
     molecule((element("He", count: 2, charge: 1, a: 15, z: 11, oxidation: "+IV"),),
     count:2,
-    phase:"aq",
+    aggregation:"aq",
   ),)
   )
 

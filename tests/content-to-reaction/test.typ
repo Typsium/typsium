@@ -1,9 +1,9 @@
 #import "../../src/lib.typ" : ce, define-molecule, get-element
 #import "../../src/utils.typ" : *
 #import "@preview/elembic:1.1.0" as e
-#import "../../src/model/group-element.typ":*
-#import "../../src/model/element-element.typ":*
-#import "../../src/parse-formula-intermediate-representation.typ": string-to-reaction,
+// #import "../../src/model/group-element.typ":*
+// #import "../../src/model/element-element.typ":*
+// #import "../../src/parse-formula-intermediate-representation.typ": string-to-reaction,
 #import "@preview/alchemist:0.1.8": *
 // #show: e.set_(group, grow-brackets:false, affect-layout:false)
 
@@ -51,10 +51,10 @@
   )
 })
 
-// #alchemist-molecule
 $
 #ce[H2SO4 ->H2O + #math.overbrace[#alchemist-molecule][Hello World]]\
 $
+
 #ce[#text(green)[He2]#math.cancel[S]O4^#text(blue)[#math.cancel[5]-]]
 
 #ce[A + B =>[PO4-3][Hello World] C + D]\

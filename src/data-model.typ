@@ -58,7 +58,7 @@
     let match = remaining.match(patterns.element)
     if match != none {
       remaining = remaining.slice(match.end)
-      let element = match.captures.at(0)
+      let element = match.captures.at(2)
       let count = 1 //int(if match.captures.at(1, default: "") == "" {1} else{match.captures.at(1)})
       let current = found-elements.at(element, default: 0)
       found-elements.insert(element, count)
