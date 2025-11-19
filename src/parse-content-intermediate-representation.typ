@@ -3,6 +3,7 @@
   reconstruct-nested-content, roman-to-number, typst-builtin-context, typst-builtin-styled,
 )
 #import "parse-formula-intermediate-representation.typ": patterns
+#import "@preview/elembic:1.1.1" as e
 
 #import "model/molecule-element.typ": molecule
 #import "model/reaction-element.typ": reaction
