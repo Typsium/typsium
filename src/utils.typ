@@ -310,14 +310,16 @@
   if affect-layout == false {
     base = box(base)
   }
-  if is-default(t) and is-default(tr) and is-default(tl) and is-default(br) and is-default(bl){
-    return base
-  }
+  
   if t == []{t=none}
-  // if tr == []{tr=none}
+  if tr == [] and t == none{tr=none} // otherwise oxidation numbers appear in the top left even when attached to the top position
   if tl == []{tl=none}
   if br == []{br=none}
   if bl == []{bl=none}
+
+  if t == none and tr == none and tl == none and br == none and bl == none{
+    return base
+  }
 
   return math.attach(
     base,
