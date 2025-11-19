@@ -371,7 +371,7 @@
       continue
     }
 
-    //TODO: revisit if this is giving good results
+    //TODO: revisit if this is not giving good results
     if remaining.codepoints().at(0) == " "{
       //flush current molecule
       if current-molecule-children.len() > 0 {

@@ -10,8 +10,8 @@
   kind: 1,
   count: 1,
   charge: 0,
-  grow-brackets: true,
-  affect-layout: true,
+  affect-layout: false,
+  grow-brackets: false,
   ..children,
 ) = { }
 
@@ -54,7 +54,7 @@
     e.field("count", e.types.union(int, content), default: 1),
     e.field("charge", e.types.union(int, content), default: 0),
     e.field("grow-brackets", bool, default: false),
-    e.field("affect-layout", bool, default: true),
+    e.field("affect-layout", bool, default: false),
   ),
 )
 

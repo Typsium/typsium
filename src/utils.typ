@@ -310,7 +310,10 @@
   if affect-layout == false {
     base = box(base)
   }
-  math.attach(
+  if is-default(t) and is-default(tr) and is-default(tl) and is-default(br) and is-default(bl){
+    return base
+  }
+  return math.attach(
     base,
     t: t,
     tr: tr,
