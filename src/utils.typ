@@ -313,6 +313,12 @@
   if is-default(t) and is-default(tr) and is-default(tl) and is-default(br) and is-default(bl){
     return base
   }
+  if t == []{t=none}
+  // if tr == []{tr=none}
+  if tl == []{tl=none}
+  if br == []{br=none}
+  if bl == []{bl=none}
+
   return math.attach(
     base,
     t: t,

@@ -1,3 +1,4 @@
+/// [max-delta: 50]
 #import "../../src/lib.typ" : ce, define-molecule, get-element
 #import "../../src/utils.typ" : *
 #import "@preview/elembic:1.1.0" as e

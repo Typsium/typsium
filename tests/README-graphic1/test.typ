@@ -1,3 +1,4 @@
+/// [max-delta: 50]
 #import "../../src/lib.typ": ce
 #set page(width: auto, height: auto, margin: 0em)
 

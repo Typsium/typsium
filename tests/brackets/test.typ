@@ -1,3 +1,4 @@
+/// [max-delta: 50]
 #import "../../src/lib.typ" : ce, set-group
 
 #show: set-group(grow-brackets:true, affect-layout:true)

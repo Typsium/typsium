@@ -39,7 +39,7 @@
   if type(it.z) == int {
     atomic-number = [#it.z]
   }
-
+  
   if it.spaced-charge and not is-default(it.charge) and not is-default(it.count) {
     customizable-attach(
       base,
