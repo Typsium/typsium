@@ -9,8 +9,8 @@
   element: regex(
     "^(\^\d+)?(_\d+)?"+
     "([A-Z][a-z]?)" +
-    "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?" +
-    "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?" +
+    "(?:((?:_?\d+)|(?:_\([^()]*(?:\([^()]*\)[^()]*)*\)))|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?" +
+    "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\^\([^)]*\)|\.?[+-]{1}\d?))?" +
     "(\^\^[+-]?(?:[IViv]{1,3}|\d+))?",
   ),
   group: regex(
@@ -34,22 +34,32 @@
   let radical = false
   let roman-charge = false
   let count = if not is-default(count1) {
-    int(count1.replace("_", ""))
+    if count1.at(0) == "_" and count1.at(1) == "("{
+      count1.slice(2,count1.len()-1)
+    } else{
+      int(count1.replace("_", ""))
+    }
   } else if not is-default(count2) {
     int(count2.replace("_", ""))
   } else {
     none
   }
 
+  let custom-charge = false
   let charge = if not is-default(charge1) {
     charge1.replace("^", "")
   } else if not is-default(charge2) {
-    charge2.replace("^", "")
+    if charge2.at(0) == "^" and charge2.at(1) == "("{
+      custom-charge = true
+      charge2.slice(2,charge2.len()-1)
+    } else{
+      charge2.replace("^", "")
+    }
   } else {
     none
   }
 
-  if not is-default(charge) {
+  if not is-default(charge) and not custom-charge {
     if charge.contains(".") {
       charge = charge.replace(".", "")
       radical = true
