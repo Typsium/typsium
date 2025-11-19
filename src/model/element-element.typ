@@ -1,10 +1,6 @@
 #import "@preview/elembic:1.1.0" as e
 #import "../utils.typ": (
-  count-to-content,
-  charge-to-content,
-  oxidation-to-content,
-  none-coalesce,
-  customizable-attach,
+  charge-to-content, count-to-content, customizable-attach, is-default, none-coalesce, oxidation-to-content,
 )
 
 #let element(
@@ -18,11 +14,12 @@
   radical: false,
   affect-layout: true,
   roman-oxidation: true,
+  spaced-charge: false,
   roman-charge: false,
   radical-symbol: sym.bullet,
   negative-symbol: math.minus,
   positive-symbol: math.plus,
-) = { }
+) = {}
 
 #let draw-element(it) = {
   let base = it.symbol
@@ -43,27 +40,52 @@
     atomic-number = [#it.z]
   }
 
-  customizable-attach(
-    base,
-    t: oxidation-to-content(
-      it.oxidation,
-      roman: it.roman-oxidation,
-      negative-symbol: it.negative-symbol,
-      positive-symbol: it.positive-symbol,
-    ),
-    tr: charge-to-content(
-      it.charge,
-      radical: it.radical,
-      roman: it.roman-charge,
-      radical-symbol: it.radical-symbol,
-      negative-symbol: it.negative-symbol,
-      positive-symbol: it.positive-symbol,
-    ),
-    br: count-to-content(it.count),
-    tl: mass-number,
-    bl: atomic-number,
-    affect-layout: it.affect-layout,
-  )
+  if it.spaced-charge and not is-default(it.charge) and not is-default(it.count) {
+    customizable-attach(
+      base,
+      t: oxidation-to-content(
+        it.oxidation,
+        roman: it.roman-oxidation,
+        negative-symbol: it.negative-symbol,
+        positive-symbol: it.positive-symbol,
+      ),
+      br: count-to-content(it.count),
+      tl: mass-number,
+      bl: atomic-number,
+      affect-layout: it.affect-layout,
+    )
+    math.attach(none, tr:charge-to-content(
+        it.charge,
+        radical: it.radical,
+        roman: it.roman-charge,
+        radical-symbol: it.radical-symbol,
+        negative-symbol: it.negative-symbol,
+        positive-symbol: it.positive-symbol,
+      )
+    )
+  } else {
+    customizable-attach(
+      base,
+      t: oxidation-to-content(
+        it.oxidation,
+        roman: it.roman-oxidation,
+        negative-symbol: it.negative-symbol,
+        positive-symbol: it.positive-symbol,
+      ),
+      tr: charge-to-content(
+        it.charge,
+        radical: it.radical,
+        roman: it.roman-charge,
+        radical-symbol: it.radical-symbol,
+        negative-symbol: it.negative-symbol,
+        positive-symbol: it.positive-symbol,
+      ),
+      br: count-to-content(it.count),
+      tl: mass-number,
+      bl: atomic-number,
+      affect-layout: it.affect-layout,
+    )
+  }
 }
 }
 
@@ -85,6 +107,7 @@
     e.field("affect-layout", bool, default: true),
     e.field("roman-oxidation", bool, default: true),
     e.field("roman-charge", bool, default: false),
+    e.field("spaced-charge", bool, default: false),
     e.field("radical-symbol", content, default: sym.bullet),
     e.field("negative-symbol", content, default: math.minus),
     e.field("positive-symbol", content, default: math.plus),
