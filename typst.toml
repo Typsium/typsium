@@ -1,6 +1,6 @@
 [package]
 name = "typsium"
-version = "0.3.0"
+version = "0.3.1"
 repository = "https://github.com/Typsium/typsium"
 license = "MIT"
 entrypoint = "src/lib.typ"

@@ -5,7 +5,7 @@
 # Write beautiful chemical formulas and reactions with Typsium
 ## Usage
 ```typst
-#import "@preview/typsium:0.3.0":*
+#import "@preview/typsium:0.3.1":*
 ```
 Enter your chemical formula or reaction into the `#ce"` method like this: 
 ```typst
