@@ -29,3 +29,8 @@ bump-patch:
 	sed -i '' "s|^version = .*|version = \"$$new_version\"|" typst.toml; \
 	sed -i '' "s|@preview/typsium:$$current_version|@preview/typsium:$$new_version|" README.md; \
 	echo "Version bumped to $$new_version"
+
+# Target to bump the version in all files in /src
+ELEMBIC_VERSION ?= 1.1.1
+bump-elembic:
+	find ./src -type f -exec perl -pi -e 's/elembic:[0-9]+\.[0-9]+\.[0-9]+/elembic:$(ELEMBIC_VERSION)/g' {} +

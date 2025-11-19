@@ -1,5 +1,5 @@
 
-#import "@preview/elembic:1.1.0" as e
+#import "@preview/elembic:1.1.1" as e
 #import "../utils.typ": get-arrow, is-default
 
 #let reaction(

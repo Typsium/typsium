@@ -1,4 +1,4 @@
-#import "@preview/elembic:1.1.0" as e
+#import "@preview/elembic:1.1.1" as e
 #import "../utils.typ": (
   charge-to-content, count-to-content, customizable-attach, is-default, none-coalesce, oxidation-to-content,
 )
