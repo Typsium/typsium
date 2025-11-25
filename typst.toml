@@ -7,7 +7,7 @@ entrypoint = "src/lib.typ"
 authors = [
     "Typsium Community <https://github.com/Typsium>",
     "β-吲哚基丙氨酸 <https://github.com/tryptophawa>",
-    "Ants Aare Alamaa <@Ants-Aare>"
+    "Ants Aare Alamaa <https://github.com/Ants-Aare>"
 ]
 compiler = "0.13.1"
 description = "Typeset chemical formulas and reactions."

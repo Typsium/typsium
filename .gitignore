@@ -1,3 +1,4 @@
 # Ignore PDF files
 *.pdf
 /tests/temp
+!/docs/manual.pdf
