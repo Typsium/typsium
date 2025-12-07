@@ -8,6 +8,7 @@ on:
       - .github/**
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   tests:
@@ -15,6 +16,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Typst
+        uses: typst-community/setup-typst@v4
 
       - name: Install tytanic
         uses: taiki-e/cache-cargo-install-action@v2
