@@ -339,8 +339,21 @@
         group-match.captures.at(3),
         group-match.captures.at(2),
         group-match.captures.at(4),
+        reaction-string,
+        templates,
+        index + group-match.captures.at(0).len(),
       )
-      let group-children = string-to-reaction(group-content, create-molecules: false)
+      // Parse inside-group content with the *same* template mapping.
+      // `string-to-reaction` in this file requires both `reaction-string` and `templates`.
+      // `group-content` is `reaction-string[index..index+group_match.end]` stripped of the outer brackets,
+      // so we slice templates accordingly.
+      let inner-group-start = index + 1
+      let inner-group-end = index + group-match.end - 1
+      let group-children = string-to-reaction(
+        group-content,
+        templates.slice(inner-group-start, inner-group-end),
+        create-molecules: false,
+      )
 
       current-molecule-children.push(group(group-children, kind: kind, count: x.at(0), charge: x.at(1)))
       remaining = remaining.slice(group-match.end)

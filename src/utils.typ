@@ -316,10 +316,6 @@
   if br == [] { br = none }
   if bl == [] { bl = none }
 
-  if t == none and tr == none and tl == none and br == none and bl == none {
-    return base
-  }
-
   return math.attach(
     base,
     t: t,
@@ -496,40 +492,46 @@
   charge,
   radical: false,
   roman: false,
-  radical-symbol: sym.bullet,
-  negative-symbol: math.minus,
-  positive-symbol: math.plus,
+  radical-symbol: box(baseline: - 0.1em, sym.dot),
+  negative-symbol: box(baseline: - 0.1em, sym.minus),
+  positive-symbol: box(baseline: - 0.1em, sym.plus),
 ) = {
+  // NOTE: This function intentionally returns `[]` (not `none`) for
+  // "no charge" in many cases, because callers feed it into `math.attach`
+  // where `[]` behaves as an empty attachment.
   if is-default(charge) {
-    []
-  } else if type(charge) == int {
+    return []
+  }
+
+  if type(charge) == int {
+    // `radical` is rendered as a dot/bullet in front of the charge.
     if radical {
       radical-symbol
     }
+
+    // No visible charge.
+    if charge == 0 {
+      return []
+    }
+
+    // Choose sign symbol.
+    let sign = if charge < 0 { negative-symbol } else { positive-symbol }
+    let magnitude = calc.abs(charge)
+
     if roman {
-      roman-numerals.at(calc.abs(charge))
-      if charge < 0 {
-        negative-symbol
-      } else if charge > 0 {
-        positive-symbol
-      }
+      roman-numerals.at(magnitude)
+      sign
     } else {
-      if charge < 0 {
-        if calc.abs(charge) > 1 {
-          str(calc.abs(charge))
-        }
-        negative-symbol
-      } else if charge > 0 {
-        if charge > 1 {
-          str(charge)
-        }
-        positive-symbol
-      } else {
-        []
+      if magnitude > 1 {
+        str(magnitude)
       }
+      sign
     }
   } else if type(charge) == str {
-    charge.replace(".", radical-symbol).replace("-", negative-symbol).replace("+", positive-symbol)
+    charge
+      .replace(".", radical-symbol)
+      .replace("-", negative-symbol)
+      .replace("+", positive-symbol)
   } else if type(charge) == content {
     show ".": radical-symbol
     show "-": negative-symbol
