@@ -4,7 +4,7 @@
   get-arrow,
 )
 
-#let arrow(
+#let reaction-arrow(
   kind: 0,
   top: (),
   bottom: (),
@@ -25,10 +25,10 @@
   )
 }
 
-#let arrow = e.element.declare(
-  "arrow",
-  prefix: "@preview/typsium:0.3.0",
-
+#let reaction-arrow = e.element.declare(
+  "reaction-arrow",
+  prefix: "@preview/typsium:0.3.2",
+  
   display: draw-arrow,
 
   fields: (

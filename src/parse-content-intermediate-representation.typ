@@ -9,7 +9,7 @@
 #import "model/reaction-element.typ": reaction
 #import "model/element-element.typ": element
 #import "model/group-element.typ": group
-#import "model/arrow-element.typ": arrow
+#import "model/arrow-element.typ": reaction-arrow
 
 #let get-count-and-charge(count1, count2, charge1, charge2, full-string, templates, index) = {
   let radical = false
@@ -450,7 +450,7 @@
           ),
         )
       }
-      full-reaction.push(arrow(kind: kind, top: top, bottom: bottom))
+      full-reaction.push(reaction-arrow(kind: kind, top: top, bottom: bottom))
       remaining = remaining.slice(arrow-match.end)
       index += arrow-match.end
       continue

@@ -11,11 +11,16 @@
   aggregation: none,
   //TODO: add up and down arrows
   transition: 0,
+  count-separator: sym.space.thin,
   ..children,
 ) = { }
 
 #let draw-molecule(it) = {
   let result = count-to-content(it.count)
+  if result != none {
+    result += it.count-separator
+  }
+
   for child in it.children {
     result += child
   }
@@ -30,7 +35,7 @@
 
 #let molecule = e.element.declare(
   "molecule",
-  prefix: "@preview/typsium:0.3.0",
+  prefix: "@preview/typsium:0.3.2",
 
   display: draw-molecule,
   fields: (
@@ -38,5 +43,6 @@
     e.field("count", e.types.union(int, content), default: 1),
     e.field("aggregation", e.types.union(str, content), default: none),
     e.field("transition", e.types.union(int, content), default: none),
+    e.field("count-separator", content, default: sym.space.thin),
   ),
 )

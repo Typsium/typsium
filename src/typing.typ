@@ -1,5 +1,5 @@
 #import "@preview/elembic:1.1.1" as e: selector
-#import "model/arrow-element.typ": arrow
+#import "model/arrow-element.typ": reaction-arrow
 #import "model/element-element.typ": element
 #import "model/group-element.typ": group
 #import "model/molecule-element.typ": molecule

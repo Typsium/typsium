@@ -91,7 +91,7 @@
 
 #let element = e.element.declare(
   "element",
-  prefix: "@preview/typsium:0.3.0",
+  prefix: "@preview/typsium:0.3.2",
 
   display: draw-element,
 

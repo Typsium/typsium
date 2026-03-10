@@ -3,7 +3,7 @@
 #import "model/reaction-element.typ": reaction
 #import "model/element-element.typ": element
 #import "model/group-element.typ": group
-#import "model/arrow-element.typ": arrow
+#import "model/arrow-element.typ": reaction-arrow
 
 #let patterns = (
   element: regex(
@@ -403,7 +403,7 @@
       if arrow-match.captures.at(2) != none {
         bottom = string-to-reaction(arrow-match.captures.at(2))
       }
-      full-reaction.push(arrow(kind: kind, top: top, bottom: bottom))
+      full-reaction.push(reaction-arrow(kind: kind, top: top, bottom: bottom))
       remaining = remaining.slice(arrow-match.end)
       continue
     }

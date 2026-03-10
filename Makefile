@@ -21,14 +21,17 @@ bump-minor:
 	@current_version=$$(grep '^version' typst.toml | awk -F ' = ' '{print $$2}' | tr -d '"'); \
 	new_version=$$(echo $$current_version | awk -F. '{printf "%d.%d.%d", $$1, $$2+1, $$3}'); \
 	sed -i '' "s|^version = .*|version = \"$$new_version\"|" typst.toml; \
-	sed -i '' "s|@preview/typsium:$$current_version|@preview/typsium:$$new_version|" README.md; \
-	echo "Version bumped to $$new_version"
+	sed -i '' "s|@preview/$(PACKAGE_NAME):$$current_version|@preview/$(PACKAGE_NAME):$$new_version|" README.md; \
+	find ./src -type f -exec perl -pi -e "s/$(PACKAGE_NAME):[0-9]+\.[0-9]+\.[0-9]+/$(PACKAGE_NAME):$$new_version/g" {} +; \
+	echo "$(PACKAGE_NAME) Version bumped to $$new_version"
+
 bump-patch:
 	@current_version=$$(grep '^version' typst.toml | awk -F ' = ' '{print $$2}' | tr -d '"'); \
 	new_version=$$(echo $$current_version | awk -F. '{printf "%d.%d.%d", $$1, $$2, $$3+1}'); \
 	sed -i '' "s|^version = .*|version = \"$$new_version\"|" typst.toml; \
-	sed -i '' "s|@preview/typsium:$$current_version|@preview/typsium:$$new_version|" README.md; \
-	echo "Version bumped to $$new_version"
+	sed -i '' "s|@preview/$(PACKAGE_NAME):$$current_version|@preview/$(PACKAGE_NAME):$$new_version|" README.md; \
+	find ./src -type f -exec perl -pi -e "s/$(PACKAGE_NAME):[0-9]+\.[0-9]+\.[0-9]+/$(PACKAGE_NAME):$$new_version/g" {} +; \
+	echo "$(PACKAGE_NAME) Version bumped to $$new_version"
 
 # Target to bump the version in all files in /src
 ELEMBIC_VERSION ?= 1.1.1
