@@ -119,3 +119,25 @@
   top: (top,),
   bottom: (bottom,),
 )
+
+/// Use this to modify the way reactions get drawn
+/// ```example
+/// >>> #v(1em)
+/// #show: set-reaction(
+/// )
+/// $ce("A + B -> C")$
+/// ```
+/// -> show rule
+#let set-reaction(
+) = e.set_.with(reaction)(
+  
+)
+
+/// Use this to modify how molecules are displayed in your document
+#let set-molecule(
+  /// the content used for the spacing between the stochiometric number and the rest of the molecule
+  /// -> content
+  count-spacing: sym.space.nobreak,
+) = e.set_.with(molecule)(
+  count-spacing: count-spacing
+)

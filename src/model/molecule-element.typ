@@ -11,14 +11,14 @@
   aggregation: none,
   //TODO: add up and down arrows
   transition: 0,
-  count-separator: sym.space.thin,
+  count-spacing: sym.space.nobreak,
   ..children,
 ) = { }
 
 #let draw-molecule(it) = {
   let result = count-to-content(it.count)
-  if result != none {
-    result += it.count-separator
+  if not is-default(result) {
+    result += it.count-spacing
   }
 
   for child in it.children {
@@ -43,6 +43,6 @@
     e.field("count", e.types.union(int, content), default: 1),
     e.field("aggregation", e.types.union(str, content), default: none),
     e.field("transition", e.types.union(int, content), default: none),
-    e.field("count-separator", content, default: sym.space.thin),
+    e.field("count-spacing", content, default: sym.space.nobreak),
   ),
 )

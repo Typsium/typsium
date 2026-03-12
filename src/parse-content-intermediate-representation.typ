@@ -1,15 +1,13 @@
-#import "utils.typ": (
-  arrow-string-to-kind, get-all-children, is-default, is-kind, is-metadata, length, reconstruct-content-from-strings,
-  reconstruct-nested-content, roman-to-number, typst-builtin-context, typst-builtin-styled,
-)
-#import "parse-formula-intermediate-representation.typ": patterns
-#import "@preview/elembic:1.1.1" as e
-
 #import "model/molecule-element.typ": molecule
 #import "model/reaction-element.typ": reaction
 #import "model/element-element.typ": element
 #import "model/group-element.typ": group
 #import "model/arrow-element.typ": reaction-arrow
+#import "utils.typ": (
+  arrow-string-to-kind, get-all-children, is-default, is-kind, is-metadata, length, reconstruct-content-from-strings,
+  reconstruct-nested-content, roman-to-number, typst-builtin-context, typst-builtin-styled,
+)
+#import "parse-formula-intermediate-representation.typ": patterns
 
 #let get-count-and-charge(count1, count2, charge1, charge2, full-string, templates, index) = {
   let radical = false
@@ -33,6 +31,8 @@
     none
   }
 
+  //TODO custom charges (refer to)
+  // let custom-charge = false
   let charge = if not is-default(charge1) {
     if charge1.contains("I") or charge1.contains("V") {
       roman-charge = true
@@ -164,7 +164,8 @@
   }
   let full-reaction = ()
   let current-molecule-children = ()
-  let current-molecule-count = 1
+  let current-molecule-count = none
+  let current-molecule-count-len = 0
   let current-molecule-phase = none
   let random-content = 0
 
@@ -182,7 +183,7 @@
         )
         current-molecule-children = ()
         current-molecule-phase = none
-        current-molecule-count = 1
+        current-molecule-count = none
       }
       //end flush current molecule
 
@@ -195,6 +196,11 @@
     let math-result = string-to-math(remaining)
     if math-result.at(0) {
       //flush random content
+      if current-molecule-count != none{
+        random-content += current-molecule-count-len
+        current-molecule-count = none
+        current-molecule-count-len = 0
+      }
       if random-content != 0 {
         if current-molecule-children.len() == 0 {
           full-reaction.push(
@@ -260,6 +266,11 @@
     let aggregation-match = remaining.match(patterns.aggregation)
     if aggregation-match != none {
       //flush random content
+      if current-molecule-count != none{
+        random-content += current-molecule-count-len
+        current-molecule-count = none
+        current-molecule-count-len = 0
+      }
       if random-content != 0 {
         if current-molecule-children.len() == 0 {
           full-reaction.push(
@@ -299,6 +310,11 @@
     let group-match = remaining.match(patterns.group)
     if group-match != none {
       //flush random content
+      if current-molecule-count != none{
+        random-content += current-molecule-count-len
+        current-molecule-count = none
+        current-molecule-count-len = 0
+      }
       if random-content != 0 {
         if current-molecule-children.len() == 0 {
           full-reaction.push(
@@ -361,6 +377,34 @@
       continue
     }
 
+    let count-match = remaining.match(patterns.count)
+    if count-match != none{
+      //flush random content
+      if random-content != 0 {
+        full-reaction.push(
+          reconstruct-content-from-strings(
+            reaction-string,
+            templates,
+            start: index - random-content,
+            end: index,
+          ),
+        )
+        random-content = 0
+      }
+      //end flush random content
+
+      current-molecule-count =  reconstruct-content-from-strings(
+        reaction-string,
+        templates,
+        start: index,
+        end: index + count-match.end,
+      )
+      current-molecule-count-len = count-match.end
+      remaining = remaining.slice(count-match.end)
+      index += count-match.end
+      continue
+    }
+
     let plus-match = remaining.match(patterns.reaction-plus)
     if plus-match != none {
       //flush current molecule
@@ -374,11 +418,16 @@
         )
         current-molecule-children = ()
         current-molecule-phase = none
-        current-molecule-count = 1
+        current-molecule-count = none
       }
       //end flush current molecule
 
       //flush random content
+      if current-molecule-count != none{
+        random-content += current-molecule-count-len
+        current-molecule-count = none
+        current-molecule-count-len = 0
+      }
       if random-content != 0 {
         full-reaction.push(
           reconstruct-content-from-strings(
@@ -411,11 +460,16 @@
         )
         current-molecule-children = ()
         current-molecule-phase = none
-        current-molecule-count = 1
+        current-molecule-count = none
       }
       //end flush current molecule
 
       //flush random content
+      if current-molecule-count != none{
+        random-content += current-molecule-count-len
+        current-molecule-count = none
+        current-molecule-count-len = 0
+      }
       if random-content != 0 {
         full-reaction.push(
           reconstruct-content-from-strings(
@@ -469,11 +523,16 @@
         )
         current-molecule-children = ()
         current-molecule-phase = none
-        current-molecule-count = 1
+        current-molecule-count = none
       }
       //end flush current molecule
 
       //flush random content
+      if current-molecule-count != none{
+        random-content += current-molecule-count-len
+        current-molecule-count = none
+        current-molecule-count-len = 0
+      }
       if random-content != 0 {
         full-reaction.push(
           reconstruct-content-from-strings(
@@ -506,7 +565,7 @@
         )
         current-molecule-children = ()
         current-molecule-phase = none
-        current-molecule-count = 1
+        current-molecule-count = none
       }
       //end flush current molecule
     }
@@ -529,6 +588,11 @@
   //end flush current molecule
 
   //flush random content
+  if current-molecule-count != none{
+    random-content += current-molecule-count-len
+    current-molecule-count = none
+    current-molecule-count-len = 0
+  }
   if random-content != 0 {
     full-reaction.push(
       reconstruct-content-from-strings(

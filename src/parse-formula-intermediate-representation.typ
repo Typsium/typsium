@@ -1,9 +1,13 @@
-#import "utils.typ": arrow-string-to-kind, is-default, roman-to-number
 #import "model/molecule-element.typ": molecule
 #import "model/reaction-element.typ": reaction
 #import "model/element-element.typ": element
 #import "model/group-element.typ": group
 #import "model/arrow-element.typ": reaction-arrow
+#import "utils.typ": (
+  arrow-string-to-kind,
+  is-default,
+  roman-to-number
+)
 
 #let patterns = (
   element: regex(
@@ -228,6 +232,10 @@
     let math-result = string-to-math(remaining)
     if math-result.at(0) {
       //flush random content
+      if current-molecule-count != 1{
+        random-content += current-molecule-count
+        current-molecule-count = 1
+      }
       if not is-default(random-content) {
         if current-molecule-children.len() == 0 {
           full-reaction.push([#random-content])
@@ -264,6 +272,10 @@
     let aggregation-match = remaining.match(patterns.aggregation)
     if aggregation-match != none{
       //flush random content
+      if current-molecule-count != 1{
+        random-content += current-molecule-count
+        current-molecule-count = 1
+      }
       if not is-default(random-content) {
         if current-molecule-children.len() == 0 {
           full-reaction.push([#random-content])
@@ -282,6 +294,10 @@
     let group-match = remaining.match(patterns.group)
     if group-match != none {
       //flush random content
+      if current-molecule-count != 1{
+        random-content += current-molecule-count
+        current-molecule-count = 1
+      }
       if not is-default(random-content) {
         if current-molecule-children.len() == 0 {
           full-reaction.push([#random-content])
@@ -337,6 +353,10 @@
     let plus-match = remaining.match(patterns.reaction-plus)
     if plus-match != none {
       //flush current molecule
+      if current-molecule-count != 1{
+        random-content += current-molecule-count
+        current-molecule-count = 1
+      }
       if current-molecule-children.len() > 0 {
         full-reaction.push(
           molecule(
@@ -352,6 +372,10 @@
       //end flush current molecule
       
       //flush random content
+      if current-molecule-count != 1{
+        random-content += current-molecule-count
+        current-molecule-count = 1
+      }
       if not is-default(random-content) {
         if current-molecule-children.len() == 0 {
           full-reaction.push([#random-content])
@@ -384,6 +408,10 @@
       //end flush current molecule
       
       //flush random content
+      if current-molecule-count != 1{
+        random-content += current-molecule-count
+        current-molecule-count = 1
+      }
       if not is-default(random-content) {
         if current-molecule-children.len() == 0 {
           full-reaction.push([#random-content])
@@ -425,7 +453,11 @@
       }
       //end flush current molecule
     }
-
+    // if we have come this far, it means something random is between what we thought was a count and the coming stuff, so that means it probably wasn't a count but rather random content instead
+    if current-molecule-count != 1{
+      random-content += current-molecule-count
+      current-molecule-count = 1
+    }
     random-content += remaining.codepoints().at(0)
     remaining = remaining.slice(remaining.codepoints().at(0).len())  
     }
