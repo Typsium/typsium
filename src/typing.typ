@@ -129,8 +129,13 @@
 /// ```
 /// -> show rule
 #let set-reaction(
+  plus-spacing: h(0.4em, weak: true),
+  arrow-spacing: h(0.4em, weak: true),
+  group-spacing-correction: h(-0.4em),
 ) = e.set_.with(reaction)(
-  
+  plus-spacing: plus-spacing,
+  arrow-spacing: arrow-spacing,
+  group-spacing-correction: group-spacing-correction,
 )
 
 /// Use this to modify how molecules are displayed in your document

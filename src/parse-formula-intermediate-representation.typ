@@ -324,7 +324,7 @@
       random-content = ""
       //end flush random content
 
-      current-molecule-count = count-match.text
+      current-molecule-count = int(count-match.text)
       remaining = remaining.slice(count-match.end)
       continue
     }
@@ -433,10 +433,12 @@
       //end flush current molecule
     }
     // if we have come this far, it means something random is between what we thought was a count and the coming stuff, so that means it probably wasn't a count but rather random content instead
-    if current-molecule-count != 1{
-      random-content += current-molecule-count
-      current-molecule-count = 1
-    }
+    // 
+    // TODO: what
+    // if current-molecule-count != 1{
+    //   random-content += str(current-molecule-count)
+    //   current-molecule-count = 1
+    // }
     random-content += remaining.codepoints().at(0)
     remaining = remaining.slice(remaining.codepoints().at(0).len())  
     }
@@ -457,6 +459,10 @@
   //end flush current molecule
   
   //flush random content
+  if current-molecule-count != 1{
+    random-content += current-molecule-count
+    current-molecule-count = 1
+  }
   if not is-default(random-content) {
     if current-molecule-children.len() == 0 {
       full-reaction.push([#random-content])

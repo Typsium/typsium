@@ -584,6 +584,7 @@
         aggregation: current-molecule-phase,
       ),
     )
+    current-molecule-count = none
   }
   //end flush current molecule
 
