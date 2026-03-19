@@ -13,7 +13,7 @@
     // 5: count2     6: charge2
     // 7: oxidation (^^...)
     "^(\^\d+)?(_\d+)?" +
-    "([A-Z][a-z]?)" +
+    "([A-Za-z][A-Za-zα-ωΑ-Ω]?)" +
     // suffix #1: count-or-charge (optional)
     "(?:" +
       // count: _?digits OR _( ... )  (kept for custom count expr)
