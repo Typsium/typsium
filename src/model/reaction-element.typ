@@ -6,10 +6,12 @@
   children: (),
   plus-spacing: h(0.4em, weak: true),
   arrow-spacing: h(0.4em, weak: true),
-  group-spacing-correction: h(-0.4em),
+  molecule-spacing: sym.space.nobreak,
+  group-spacing-correction: h(-0.3em),
 ) = { }
 
 #let draw-reaction(it) = {
+  let last-type-id = ""
   for child in it.children {
     if child == [+] {
       it.plus-spacing
@@ -22,6 +24,10 @@
         child
         it.arrow-spacing
       } else if type-id == "e_@preview/typsium:0.3.2_---_molecule" {
+        if last-type-id == "e_@preview/typsium:0.3.2_---_molecule"{
+          it.molecule-spacing
+        }
+
         child
         let last = e.data(e.data(child).fields.children.last())
         let last-child-type-id = last.eid
@@ -46,6 +52,7 @@
         child
       }
     }
+    last-type-id = e.data(child).eid
   }
 }
 }
@@ -60,6 +67,7 @@
     e.field("children", e.types.array(content), required: true),
     e.field("plus-spacing", content, default: h(0.4em, weak: true)),
     e.field("arrow-spacing", content, default: h(0.4em, weak: true)),
-    e.field("group-spacing-correction", content, default: h(-0.4em)),
+    e.field("molecule-spacing", content, default: sym.space.nobreak),
+    e.field("group-spacing-correction", content, default: h(-0.3em)),
   ),
 )

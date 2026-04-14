@@ -22,10 +22,11 @@
 
 #ce("H^.-^^+1")
 #ce("H_3^^+IO+^^-2")
+#ce("P^I2")
 
 #ce("AgI")
+#ce("Ag +I")
 #ce("K^+I")
-#ce("Pb^I2")
 
 #ce[AgI]
 #ce[K^.^^IV]

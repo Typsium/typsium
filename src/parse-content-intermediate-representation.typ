@@ -304,6 +304,22 @@
       )
       remaining = remaining.slice(aggregation-match.end)
       index += aggregation-match.end
+
+      //flush current molecule
+      if current-molecule-children.len() > 0 {
+        full-reaction.push(
+          molecule(
+            current-molecule-children,
+            count: current-molecule-count,
+            aggregation: current-molecule-phase,
+          ),
+        )
+        current-molecule-children = ()
+        current-molecule-phase = none
+        current-molecule-count = none
+      }
+      //end flush current molecule
+
       continue
     }
 

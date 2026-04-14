@@ -9,5 +9,5 @@
 $
 #ce("A + B &=>[H2SO4][Hello World] C + D")\
 
-#ce("[Cu(H2O)4]^2 + 4NH3 &->[dissolve in H2O][$Delta H^0$] [Cu(NH3)4]^+2 4H2O")\
+#ce("[Cu(H2O)4]^2 + 4NH3 &->[dissolve in H2O][$Delta H^0$] [Cu(NH3)4]^+2 + 4H2O")\
 $

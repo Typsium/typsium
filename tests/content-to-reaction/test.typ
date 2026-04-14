@@ -50,6 +50,5 @@ $
 #ce[#text(green)[He2]#math.cancel[S]O4^#text(blue)[#math.cancel[5]-]]
 
 #ce[A + B =>[PO4-3][Hello World] C + D]\
-
 // #ce[#sulfuric-acid + 2#iron]
 $
