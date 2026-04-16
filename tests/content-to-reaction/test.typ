@@ -1,6 +1,6 @@
 /// [max-delta: 70]
 #import "../../src/lib.typ" : ce
-#import "@preview/alchemist:0.1.8": *
+#import "@preview/alchemist:0.1.9": *
 // #import "../../src/typing.typ": e
 
 #set page(width: auto, height: auto, margin: 0.5em)

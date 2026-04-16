@@ -326,33 +326,33 @@
     let group-match = remaining.match(patterns.group)
     if group-match != none {
       //flush random content
-      if current-molecule-count != none{
-        random-content += current-molecule-count-len
-        current-molecule-count = none
-        current-molecule-count-len = 0
-      }
-      if random-content != 0 {
-        if current-molecule-children.len() == 0 {
-          full-reaction.push(
-            reconstruct-content-from-strings(
-              reaction-string,
-              templates,
-              start: index - random-content,
-              end: index,
-            ),
-          )
-        } else {
-          current-molecule-children.push(
-            reconstruct-content-from-strings(
-              reaction-string,
-              templates,
-              start: index - random-content,
-              end: index,
-            ),
-          )
-        }
-        random-content = 0
-      }
+      // if current-molecule-count != none{
+      //   random-content += current-molecule-count-len
+      //   current-molecule-count = none
+      //   current-molecule-count-len = 0
+      // }
+      // if random-content != 0 {
+      //   if current-molecule-children.len() == 0 {
+      //     full-reaction.push(
+      //       reconstruct-content-from-strings(
+      //         reaction-string,
+      //         templates,
+      //         start: index - random-content,
+      //         end: index,
+      //       ),
+      //     )
+      //   } else {
+      //     current-molecule-children.push(
+      //       reconstruct-content-from-strings(
+      //         reaction-string,
+      //         templates,
+      //         start: index - random-content,
+      //         end: index,
+      //       ),
+      //     )
+      //   }
+      //   random-content = 0
+      // }
       //end flush random content
 
       let group-content = group-match.captures.at(0)
@@ -500,8 +500,8 @@
       //end flush random content
 
       let kind = arrow-string-to-kind(arrow-match.captures.at(0))
-      let top = ()
-      let bottom = ()
+      let top = none
+      let bottom = none
       if arrow-match.captures.at(1) != none {
         top = string-to-reaction(
           arrow-match.captures.at(1),
@@ -510,6 +510,11 @@
             count: arrow-match.captures.at(1).len() + 2,
           ),
         )
+        top = if top.len() == 1{
+          top.at(0)
+        } else {
+          reaction(top)
+        }
       }
       if arrow-match.captures.at(2) != none {
         bottom = string-to-reaction(
@@ -519,6 +524,11 @@
             count: arrow-match.captures.at(2).len() + 2,
           ),
         )
+        bottom = if bottom.len() == 1{
+          bottom.at(0)
+        } else {
+          reaction(bottom)
+        }
       }
       full-reaction.push(reaction-arrow(kind: kind, top: top, bottom: bottom))
       remaining = remaining.slice(arrow-match.end)

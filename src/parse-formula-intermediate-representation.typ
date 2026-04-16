@@ -3,6 +3,8 @@
 #import "model/element-element.typ": element
 #import "model/group-element.typ": group
 #import "model/arrow-element.typ": reaction-arrow
+#import "model/particle-element.typ": particle
+
 #import "utils.typ": (
   arrow-string-to-kind,
   is-default,
@@ -17,7 +19,7 @@
     // 5: count2     6: charge2
     // 7: oxidation (^^...)
     "^(\^\d+)?(_\d+)?" +
-    "([A-Z][a-z]?)" +
+    "([A-Za-zα-ωΑ-Ω][A-Za-z]?)" +
     "(?:((?:_?\d+)|(?:_\([^()]*(?:\([^()]*\)[^()]*)*\)))|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?" +
     "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\^\([^)]*\)|\.?[+-]{1}\d?))?" +
     "(\^\^[+-]?(?:[IViv]{1,3}|\d+))?",
@@ -164,6 +166,173 @@
   )
 }
 
+#let string-to-particle(formula, count) = {
+
+  return if formula.starts-with("proton"){
+    (
+      true,
+      particle(
+         "p",
+        charge: 1,
+        count:count,
+      ),
+      6
+    )
+  }else if formula.starts-with("antiproton"){
+    (
+      true,
+      particle(
+         "ap",
+        charge: 0,
+        count:count,
+      ),
+      10
+    )
+  } else if formula.starts-with("neutrino"){
+    (
+      true,
+      particle(
+         "ne",
+        charge: 0,
+        count:count,
+      ),
+      8
+    )
+  } else if formula.starts-with("antineutrino"){
+    (
+      true,
+      particle(
+         "ane",
+        charge: 0,
+        count:count,
+      ),
+      12
+    )
+  } else if formula.starts-with("neutron"){
+    (
+      true,
+      particle(
+         "n",
+        charge: 0,
+        count:count,
+      ),
+      7
+    )
+  } else if formula.starts-with("antineutron"){
+    (
+      true,
+      particle(
+         "an",
+        charge: 0,
+        count:count,
+      ),
+      11
+    )
+  } else if formula.starts-with("electron"){
+    (
+      true,
+      particle(
+         "e",
+        charge: -1,
+        count:count,
+      ),
+      8
+    )
+  }else if formula.starts-with("positron"){
+    (
+      true,
+      particle(
+         "e",
+        charge: 1,
+        count:count,
+      ),
+      8
+    )
+  } else if formula.starts-with("muon"){
+    let charge = if formula.len() >4 {if formula.at(4) == "-"{-1} }
+    (
+      true,
+      particle(
+        "m",
+        charge: charge,
+        count:count,
+      ),
+      4 + calc.abs(charge)
+    )
+  } else if formula.starts-with("mu"){
+    let charge = if formula.len() >2 {if formula.at(2) == "-"{-1} }
+    (
+      true,
+      particle(
+         "m",
+        charge: charge,
+        count:count,
+      ),
+      2 + calc.abs(charge)
+    )
+  } else if formula.starts-with("photon"){
+    (
+      true,
+      particle(
+         "g",
+        charge: 0,
+        count:count,
+      ),
+      6
+    )
+  } else if formula.starts-with("gamma"){
+    (
+      true,
+      particle(
+         "g",
+        charge: 0,
+        count:count,
+      ),
+      5
+    )
+  } else if formula.starts-with("beta"){
+    let charge = if formula.len() >4 {if formula.at(4) == "-"{-1} else if formula.at(4) == "+"{1} else{0}} else {0}
+    (
+      true,
+      particle(
+         "b",
+        charge: charge,
+        count:count,
+      ),
+      4 + calc.abs(charge)
+    )
+  } else if formula.starts-with("alpha"){
+    (
+      true,
+      particle(
+         "a",
+        charge: 0,
+        count:count,
+      ),
+      5
+    )
+  } else {
+    (false, none, 0)
+  }
+//   proton
+// antiproton
+// neutron
+// antineutron
+// electron
+// beta
+// positron
+// muon
+// mu
+// photon
+// gamma
+// deuteron
+// triton
+// helion
+// alpha
+// neutrino
+// nu
+}
+
 #let string-to-math(formula) = {
   let match = formula.match(patterns.math)
   if match == none {
@@ -227,6 +396,42 @@
 
       full-reaction.push(math-result.at(1))
       remaining = remaining.slice(math-result.at(2))
+      continue
+    }
+
+    let particle = string-to-particle(remaining, current-molecule-count)
+    if particle.at(0) {
+      //flush current molecule
+      if current-molecule-children.len() > 0 {
+        full-reaction.push(
+          molecule(
+            current-molecule-children,
+            count: current-molecule-count,
+            aggregation: current-molecule-phase,
+          ),
+        )
+        current-molecule-children = ()
+        current-molecule-phase = none
+        current-molecule-count = 1
+      }
+      //end flush current molecule
+      
+      //flush random content
+
+      // This consumes the current count, so we need to reset it so it won't get used twice
+      current-molecule-count = 1
+      if not is-default(random-content) and random-content != " " {
+        if current-molecule-children.len() == 0 {
+          full-reaction.push([#random-content])
+        } else {
+          current-molecule-children.push([#random-content])
+        }
+      }
+      random-content = ""
+      //end flush random content
+
+      full-reaction.push(particle.at(1))
+      remaining = remaining.slice(particle.at(2))
       continue
     }
 
@@ -406,13 +611,23 @@
       //end flush random content
 
       let kind = arrow-string-to-kind(arrow-match.captures.at(0))
-      let top = ()
-      let bottom = ()
+      let top = none
+      let bottom = none
       if arrow-match.captures.at(1) != none {
         top = string-to-reaction(arrow-match.captures.at(1))
+        top = if top.len() == 1{
+          top.at(0)
+        } else {
+          reaction(top)
+        }
       }
       if arrow-match.captures.at(2) != none {
         bottom = string-to-reaction(arrow-match.captures.at(2))
+        bottom = if bottom.len() == 1{
+          bottom.at(0)
+        } else {
+          reaction(bottom)
+        }
       }
       full-reaction.push(reaction-arrow(kind: kind, top: top, bottom: bottom))
       remaining = remaining.slice(arrow-match.end)

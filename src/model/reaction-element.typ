@@ -24,7 +24,7 @@
         child
         it.arrow-spacing
       } else if type-id == "e_@preview/typsium:0.3.2_---_molecule" {
-        if last-type-id == "e_@preview/typsium:0.3.2_---_molecule"{
+        if last-type-id == "e_@preview/typsium:0.3.2_---_molecule" or last-type-id == "e_@preview/typsium:0.3.2_---_particle"{
           it.molecule-spacing
         }
 
@@ -39,7 +39,12 @@
         ) {
           it.group-spacing-correction
         }
-      } 
+      } else if type-id == "e_@preview/typsium:0.3.2_---_particle"{
+        if last-type-id == "e_@preview/typsium:0.3.2_---_molecule" or last-type-id == "e_@preview/typsium:0.3.2_---_particle"{
+          it.molecule-spacing
+        }
+        child
+      }
       // else if type-id == "e_@preview/typsium:0.3.2_---_group"{
       //    child
       //    let charge = last.fields.at("charge", default: none)
