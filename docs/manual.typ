@@ -27,7 +27,7 @@ Typsium is a tool for writing beautiful chemical equations easily.
 This is the manual for Typsiums input syntax and show rules.
 First, we import *typsium*: 
 ```typ
-#import "@preview/tidy:0.0.0"
+#import "@preview/typsium:0.3.2"
 ```
 
 #let docs = tidy.parse-module(read("../src/lib.typ"), name: "Chemical Equations",scope: (typsium:typsium), preamble: "#import typsium: *\n")
