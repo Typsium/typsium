@@ -667,7 +667,9 @@
       } else if func-type == text {
         full-string += child.text
         for value in child.text {
-          templates.push(())
+          for _ in range(value.len()) {
+            templates.push(())
+          }
         }
       } else if func-type == typst-builtin-styled {
         let (inner-full-strings, inner-templates) = create-full-string(get-all-children(child.child))
