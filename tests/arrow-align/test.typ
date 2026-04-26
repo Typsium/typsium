@@ -3,5 +3,16 @@
 
 $
   #ce("A &-> B")\
-  #ce("AAAAAAAAAA &-> BBBB")
+  #ce("AAAAAAAAAA &-> BBBB")\
+  #ce("A &<-> B")\
+  #ce("A &<- B")\
+  #ce("A &<= B")\
+  #ce("A &=> B")\
+  #ce("A &-/> B")\
+  #ce("A &</- B")\
+
+  #ce("A &<=>[Hello][World] B")\
+  #ce("A &<=>>[Hello][World] B")\
+  #ce("A &<<=>[Hello][World] B")\
 $
+
