@@ -37,6 +37,22 @@
   /// set alt to provide alt-text for accessibility
   ..args
   ) = {
+  /* warning: this is a very expensive function, especially for long formulas. Use with caution.
+  we want to show the intermediate representation for debugging purposes, but it can be very expensive to display and may cause OOM problem, so use very carefully and only for small formulas. */
+  let is-debug = args.named().at("debug", default: false)
+  let is-confirm = args.named().at("confirm", default: false)
+  if is-debug {
+    if not is-confirm {
+      panic("`ce` debug mode may cause serious performance issues. Add `confirm: true` together with `debug: true` to enable debug output.")
+    }
+    let result = if type(formula) == str {
+      string-to-reaction(formula)
+    } else if type(formula) == content {
+      content-to-reaction(formula)
+    }
+    return block(raw(repr(result)))
+  }
+
   math.equation(
     if type(formula) == str{
       show "*": sym.dot

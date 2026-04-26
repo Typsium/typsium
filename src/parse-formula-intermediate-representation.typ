@@ -19,7 +19,7 @@
     // 5: count2     6: charge2
     // 7: oxidation (^^...)
     "^(\^\d+)?(_\d+)?" +
-    "([A-Zα-ωΑ-Ω][a-z]?|e)" +
+    "([A-Za-zα-ωΑ-Ω][a-z]?)" +
     "(?:((?:_?\d+)|(?:_\([^()]*(?:\([^()]*\)[^()]*)*\)))|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?" +
     "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\^\([^)]*\)|\.?[+-]{1}\d?))?" +
     "(\^\^[+-]?(?:[IViv]{1,3}|\d+))?",
@@ -432,6 +432,13 @@
 
       full-reaction.push(particle.at(1))
       remaining = remaining.slice(particle.at(2))
+      continue
+    }
+
+    let lower-word-match = remaining.match(regex("^[A-Za-z]{2,}"))
+    if lower-word-match != none {
+      random-content += lower-word-match.text
+      remaining = remaining.slice(lower-word-match.end)
       continue
     }
 

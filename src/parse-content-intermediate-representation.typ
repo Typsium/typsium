@@ -231,6 +231,14 @@
       continue
     }
 
+    let lower-word-match = remaining.match(regex("^([A-Za-z]){2,}"))
+    if lower-word-match != none {
+      random-content += lower-word-match.end
+      remaining = remaining.slice(lower-word-match.end)
+      index += lower-word-match.end
+      continue
+    }
+
     let element = string-to-element(remaining, reaction-string, templates, index)
     if element.at(0) {
       //flush random content
@@ -506,8 +514,8 @@
         top = string-to-reaction(
           arrow-match.captures.at(1),
           templates.slice(
-            index + arrow-match.captures.at(0).len() + 2,
-            count: arrow-match.captures.at(1).len() + 2,
+            index + arrow-match.captures.at(0).len(),
+            count: arrow-match.captures.at(1).len(),
           ),
         )
         top = if top.len() == 1{
@@ -520,8 +528,8 @@
         bottom = string-to-reaction(
           arrow-match.captures.at(2),
           templates.slice(
-            index + arrow-match.captures.at(0).len() + length(arrow-match.captures.at(1)) + 2 + 2,
-            count: arrow-match.captures.at(2).len() + 2,
+            index + arrow-match.captures.at(0).len() + length(arrow-match.captures.at(1)),
+            count: arrow-match.captures.at(2).len(),
           ),
         )
         bottom = if bottom.len() == 1{
