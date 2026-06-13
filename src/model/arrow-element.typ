@@ -47,8 +47,14 @@
 
   math.attach(
     base,
-    t: if it.top == []{none} else {it.top},
-    b: if it.bottom == []{none} else {it.bottom},
+    t: if it.top == []{none} else {
+      show math.equation: set text(size:0.7em)
+      it.top
+      },
+    b: if it.bottom == []{none} else {
+      show math.equation: set text(size:0.7em)
+      it.bottom
+      },
   )
 }
 
