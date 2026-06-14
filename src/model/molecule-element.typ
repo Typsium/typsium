@@ -22,7 +22,16 @@
   }
 
   for child in it.children {
-    result += child
+    let type-id = e.data(child).eid
+    if type-id == "e_typsium_---_bond" {
+      result += it.bond-spacing
+      result += child
+      result += it.bond-spacing
+    }
+    else{
+      result += child
+    }
+
   }
   if not is-default(it.aggregation) {
     result += text({
@@ -30,7 +39,7 @@
       it.aggregation
     }, size: 0.75em)
   }
-  // return box(result, fill:red, outset: -0.05em)
+  // return box(result, fill:green.transparentize(50%), outset: (x:-0.05em))
   return result
 }
 
@@ -45,5 +54,6 @@
     e.field("aggregation", e.types.union(str, content), default: none),
     e.field("transition", e.types.union(int, content), default: none),
     e.field("count-spacing", content, default: sym.space.nobreak),
+    e.field("bond-spacing", content, default: h(0.05em)),
   ),
 )

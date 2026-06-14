@@ -1,4 +1,5 @@
 #import "model/molecule-element.typ": molecule
+#import "model/bond-element.typ": bond
 #import "model/reaction-element.typ": reaction
 #import "model/element-element.typ": element
 #import "model/group-element.typ": group
@@ -39,6 +40,8 @@
   ),
   math: regex("^\$[^$]*?\$"),
   aggregation: regex("^\((?:s|l|g|aq,oo|aq|cd|cr|fl|lc|vit|a|ads|pol|mon|sln|am)\)"),
+  bond: regex("^(?:——|==|\.\.=|=\.\.|~~\.\.|\.\.~~|~\.\.~|\.\.|~~)"),
+  bond-content: regex("^(?:–|==|\.\.=|=\.\.|\xA0\xA0\.\.|\.\.\xA0\xA0|\xA0\.\.\xA0|\.\.|\xA0\xA0)"),
   count: regex("^\d+"),
 )
 
@@ -166,9 +169,24 @@
     element-match.end,
   )
 }
+#let string-to-bond(remaining) = {
+  let bond-match = remaining.match(patterns.bond)
+  if bond-match == none {
+    return (false,)
+  }
+  let n = if bond-match.text.contains("="){
+    2
+  } else if bond-match.text.contains("~"){
+    3
+  } else{
+    1
+  }
+  let kind = bond-match.text.position("..")
+  if kind == none{kind = 0} else {kind += 1}
+  return (true, bond(n:n, kind:kind), bond-match.end)
+}
 
 #let string-to-particle(formula, count) = {
-
   return if formula.starts-with("proton"){
     (
       true,
@@ -315,23 +333,6 @@
   } else {
     (false, none, 0)
   }
-//   proton
-// antiproton
-// neutron
-// antineutron
-// electron
-// beta
-// positron
-// muon
-// mu
-// photon
-// gamma
-// deuteron
-// triton
-// helion
-// alpha
-// neutrino
-// nu
 }
 
 #let string-to-math(formula) = {
@@ -346,7 +347,7 @@
   reaction-string,
   create-molecules: true,
 ) = {
-  let remaining = reaction-string
+  let remaining = reaction-string.replace("--", "——")
   if remaining.len() == 0 {
     return ()
   }
@@ -396,6 +397,23 @@
 
       full-reaction.push(if remaining.at(1) == "v"{sym.arrow.b} else {sym.arrow.t} )
       remaining = remaining.slice(2)
+    }
+
+    let bond-match = string-to-bond(remaining)
+    if bond-match.at(0){
+      //flush random content
+      if not is-default(random-content) and random-content != " " {
+        if current-molecule-children.len() == 0 {
+          full-reaction.push([#random-content])
+        } else {
+          current-molecule-children.push([#random-content])
+        }
+      }
+      random-content = ""
+      //end flush random content
+      
+      current-molecule-children.push(bond-match.at(1))
+      remaining = remaining.slice(bond-match.at(2))
     }
 
     let math-result = string-to-math(remaining)

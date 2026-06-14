@@ -158,6 +158,7 @@
 
 #let typst-builtin-sequence = ([A] + [ ] + [B]).func()
 #let typst-builtin-styled = [#set text(fill: red)].func()
+#let typst-builtin-symbol = [--].func()
 #let typst-builtin-context = [#context {}].func()
 #let typst-builtin-space = [ ].func()
 
