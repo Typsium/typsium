@@ -48,7 +48,7 @@
 
 #let group = e.element.declare(
   "group",
-  prefix: "@preview/typsium:0.3.2",
+  prefix: "typsium",
 
   display: draw-group,
 

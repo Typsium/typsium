@@ -25,9 +25,10 @@
     result += child
   }
   if not is-default(it.aggregation) {
-    result += context {
-      text(it.aggregation, size: text.size * 0.75)
-    }
+    result += text({
+      show "oo": $oo$
+      it.aggregation
+    }, size: 0.75em)
   }
   // return box(result, fill:red, outset: -0.05em)
   return result
@@ -35,7 +36,7 @@
 
 #let molecule = e.element.declare(
   "molecule",
-  prefix: "@preview/typsium:0.3.2",
+  prefix: "typsium",
 
   display: draw-molecule,
   fields: (

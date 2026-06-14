@@ -4,3 +4,5 @@
 
 #ce("NaCl(aq)He(g) C(s) H2O(l)")\
 #ce[NaCl(aq)He(g) C(s) H2O(#text(green)[l])]\
+#ce("NaOH(aq,oo)")
+#ce[NaOH(aq,oo)]

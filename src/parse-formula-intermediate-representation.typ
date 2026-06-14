@@ -38,7 +38,7 @@
     "\s*"
   ),
   math: regex("^\$[^$]*?\$"),
-  aggregation: regex("^\((?:s|l|g|aq|cd|cr|fl|lc|vit|a|ads|pol|mon|sln|am)\)"),
+  aggregation: regex("^\((?:s|l|g|aq,oo|aq|cd|cr|fl|lc|vit|a|ads|pol|mon|sln|am)\)"),
   count: regex("^\d+"),
 )
 
@@ -134,9 +134,9 @@
 
     // how agressively should we convert things to elements? always when possible or only when needed?
   if x.at(0) == none and x.at(1) == none and x.at(2) == false  and oxidation-number == none and a == none and z == none{
-    // if formula.at(element-match.end, default: "").match(regex("[a-z]")) != none {
+    if formula.at(element-match.end, default: "").match(regex("[a-z]")) != none {
       return (false,)
-    // }
+    }
   }
 
   return (
@@ -346,7 +346,7 @@
   reaction-string,
   create-molecules: true,
 ) = {
-  let remaining = reaction-string.trim()
+  let remaining = reaction-string
   if remaining.len() == 0 {
     return ()
   }
@@ -376,6 +376,26 @@
       full-reaction.push($&$)
       remaining = remaining.slice(1)
       continue
+    }
+
+    if remaining.starts-with(" v ") or remaining.starts-with(" ^ "){
+      //flush current molecule
+      if current-molecule-children.len() > 0 {
+        full-reaction.push(
+          molecule(
+            current-molecule-children,
+            count: current-molecule-count,
+            aggregation: current-molecule-phase,
+          ),
+        )
+        current-molecule-children = ()
+        current-molecule-phase = none
+        current-molecule-count = 1
+      }
+      //end flush current molecule
+
+      full-reaction.push(if remaining.at(1) == "v"{sym.arrow.b} else {sym.arrow.t} )
+      remaining = remaining.slice(2)
     }
 
     let math-result = string-to-math(remaining)

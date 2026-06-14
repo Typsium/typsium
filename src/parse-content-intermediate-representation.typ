@@ -119,9 +119,9 @@
 
   // how agressively should we convert things to elements? always when possible or only when needed?
   if x.at(0) == none and x.at(1) == none and x.at(2) == false  and oxidation-number == none and a == none and z == none{
-    // if formula.at(element-match.end, default: "").match(regex("[a-z]")) != none {
+    if formula.at(element-match.end, default: "").match(regex("[a-z]")) != none {
       return (false,)
-    // }
+    }
   }
 
   return (
