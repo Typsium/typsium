@@ -11,11 +11,11 @@
 #let g = group((element("H"),[ello]),)
 #let m = molecule((element("H"),[ello]))
 
-#reaction-arrow(kind:1, top:g, bottom:g)\
-\
-#reaction-arrow(kind:1, top:molecule((g,)), bottom:molecule((g,)))\
-\
-#reaction-arrow(kind:1, top:m, bottom:m)\
+// #reaction-arrow(kind:1, top:g, bottom:g)\
+// \
+// #reaction-arrow(kind:1, top:molecule((g,)), bottom:molecule((g,)))\
+// \
+// #reaction-arrow(kind:1, top:m, bottom:m)\
 
 #ce[A ->[#qty("2.3", "electronvolt")] B]
 

@@ -132,15 +132,15 @@ $
 There exist many different kinds of arrows:
 
 ```example
-#ce("A -> B")\
+#ce("1A -> B")\
 #ce("2A <- B")\
 #ce("3A <=> B")\
 #ce("4A => B")\
 #ce("5A <= B")\
 #ce("6A -/> B")\
 #ce("7A </- B")\
-#ce("8A <=>>")\
-#ce("9A <<=>")\
+#ce("8A <=>> B")\
+#ce("9A <<=> B")\
 ```
 
 You can add any content you like on top of arrows, including full reactions or content from other packages.

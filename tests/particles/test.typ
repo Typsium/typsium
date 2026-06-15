@@ -2,9 +2,16 @@
 #import "../../src/lib.typ" : ce
 #set page(width: auto, height: auto, margin: 0.3em)
 
-#ce("electron") #ce("e-") #ce("beta-")#ce("alpha") \
-#ce("proton") #h(-0.3em) #ce("p+") #h(-0.3em) #ce("antiproton neutrino") #ce("antineutrino")\
-#ce("mu-") #ce("muon-") #ce("neutron") #ce("antineutron")\
-#ce("2alpha 2H2O")\
-#ce("2H2O 2alpha")\
-#ce("2H2O 2H2")\
+// #ce("electron") #ce("e-") #ce("beta-")#ce("alpha") \
+// #ce("proton") #h(-0.3em) #ce("p+") #h(-0.3em) #ce("antiproton neutrino") #ce("antineutrino")\
+// #ce("mu-") #ce("muon-") #ce("neutron") #ce("antineutron")\
+// #ce("2alpha 2H2O")\
+// #ce("2H2O 2alpha")\
+// #ce("2H2O 2H2")\
+// 
+#ce("electron") #ce("e-") #ce("beta-") \
+#ce("proton") #ce("p+") #ce("antiproton")\
+#ce("neutron") #ce("antineutron")\
+#ce(" neutrino antineutrino")\
+#ce("mu-") #ce("muon-")\
+#ce("alpha")\
