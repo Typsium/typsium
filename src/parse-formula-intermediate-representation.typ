@@ -668,7 +668,16 @@
           reaction(bottom)
         }
       }
-      full-reaction.push(reaction-arrow(kind: kind, top: top, bottom: bottom))
+      let a = if top != none and bottom != none{
+        reaction-arrow(kind: kind, top: top, bottom: bottom)
+      } else if top != none{
+        reaction-arrow(kind: kind, top: top)
+      } else if bottom != none{
+        reaction-arrow(kind: kind, bottom: bottom)
+      } else{
+        reaction-arrow(kind: kind)
+      }
+      full-reaction.push(a)
       remaining = remaining.slice(arrow-match.end)
       continue
     }

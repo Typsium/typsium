@@ -54,6 +54,6 @@
     e.field("aggregation", e.types.union(str, content), default: none),
     e.field("transition", e.types.union(int, content), default: none),
     e.field("count-spacing", content, default: sym.space.nobreak),
-    e.field("bond-spacing", content, default: h(0.05em)),
+    e.field("bond-spacing", content, default: h(0.1em)),
   ),
 )

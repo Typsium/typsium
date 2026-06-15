@@ -4,7 +4,7 @@
 #import "../../src/model/group-element.typ": group
 #import "../../src/model/molecule-element.typ": molecule
 #import "../../src/model/arrow-element.typ": reaction-arrow
-#import "@preview/unify:0.8.0": num, numrange, qty, qtyrange, unit
+#import "@preview/unify:0.8.0": qty
 #set page(width: auto, height: auto, margin: 1em)
 
 
