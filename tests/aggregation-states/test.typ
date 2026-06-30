@@ -9,3 +9,6 @@
 // 
  #ce("NaCl(aq) + He(g) + C(s)")\
  #ce[H2O(l) + NaOH(aq,oo)]\
+ #ce[2H2O(l) + 2NaOH(aq,oo)]\
+ #ce("2NH3(aq)")\
+

@@ -467,11 +467,11 @@
     let aggregation-match = remaining.match(patterns.aggregation)
     if aggregation-match != none {
       //flush random content
-      if current-molecule-count != none{
-        random-content += current-molecule-count-len
-        current-molecule-count = none
-        current-molecule-count-len = 0
-      }
+      // if current-molecule-count != none{
+      //   random-content += current-molecule-count-len
+      //   current-molecule-count = none
+      //   current-molecule-count-len = 0
+      // }
       if random-content != 0 {
         if current-molecule-children.len() == 0 {
           full-reaction.push(

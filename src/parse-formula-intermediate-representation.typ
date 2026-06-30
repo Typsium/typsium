@@ -495,10 +495,6 @@
     let aggregation-match = remaining.match(patterns.aggregation)
     if aggregation-match != none{
       //flush random content
-      if current-molecule-count != 1{
-        random-content += str(current-molecule-count)
-        current-molecule-count = 1
-      }
       if not is-default(random-content) and random-content != " " {
         if current-molecule-children.len() == 0 {
           full-reaction.push([#random-content])

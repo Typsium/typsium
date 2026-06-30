@@ -1,30 +1,30 @@
-/// [max-delta: 70]
+/// [max-delta: 100]
 #import "../../src/lib.typ" : ce
-#import "@preview/alchemist:0.1.9": *
+#import "@preview/alchemist:0.2.0": *
 // #import "../../src/typing.typ": e
 
 #set page(width: auto, height: auto, margin: 0.5em)
 
 #let alchemist-molecule = skeletize({
-  molecule(name: "A", "A")
+  fragment(name: "A", "A")
   single()
-  molecule("B")
+  fragment("B")
   branch({
     single(angle: 1)
-    molecule(
+    fragment(
       "W",
       links: (
         "A": double(stroke: red),
       ),
     )
     single()
-    molecule(name: "X", "X")
+    fragment(name: "X", "X")
   })
   branch({
     single(angle: -1)
-    molecule("Y")
+    fragment("Y")
     single()
-    molecule(
+    fragment(
       name: "Z",
       "Z",
       links: (
@@ -33,7 +33,7 @@
     )
   })
   single()
-  molecule(
+  fragment(
     "C",
     links: (
       "X": cram-filled-left(fill: blue),
