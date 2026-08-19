@@ -1,3 +1,4 @@
+#import "@preview/elembic:1.1.1" as e
 #import "model/molecule-element.typ": molecule
 #import "model/bond-element.typ": bond
 #import "model/reaction-element.typ": reaction
@@ -842,7 +843,7 @@
     // let x = type(child)
     if is-metadata(child) {
       let elembic-data = e.data(child.value)
-      if elembic-data.id.name == "element-variable" {
+      if e.types.cast(elembic-data, element).at(0) {
         let combined = child.value.symbol
         if child.value.charge != 0 {
           combined += "^" + str(child.value.charge)
@@ -851,7 +852,7 @@
         for value in combined {
           templates.push(())
         }
-      } else if elembic-data.id.name == "molecule-variable" {
+      } else if e.types.cast(elembic-data, molecule).at(0) {
         let combined = child.value.formula
         for value in combined {
           templates.push(())
