@@ -1,10 +1,5 @@
 #import "@preview/elembic:1.1.1" as e
-#import "../utils.typ": (
-  count-to-content,
-  charge-to-content,
-  is-default,
-  customizable-attach,
-)
+#import "../utils.typ": charge-to-content, count-to-content, customizable-attach, is-default
 
 #let molecule(
   count: 1,
@@ -13,7 +8,7 @@
   transition: 0,
   count-spacing: sym.space.nobreak,
   ..children,
-) = { }
+) = {}
 
 #let draw-molecule(it) = {
   let result = count-to-content(it.count)
@@ -27,17 +22,18 @@
       result += it.bond-spacing
       result += child
       result += it.bond-spacing
-    }
-    else{
+    } else {
       result += child
     }
-
   }
   if not is-default(it.aggregation) {
-    result += text({
-      show "oo": $oo$
-      it.aggregation
-    }, size: 0.75em)
+    result += text(
+      {
+        show "oo": $oo$
+        it.aggregation
+      },
+      size: 0.75em,
+    )
   }
   // return box(result, fill:green.transparentize(50%), outset: (x:-0.05em))
   return result

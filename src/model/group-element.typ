@@ -1,10 +1,5 @@
 #import "@preview/elembic:1.1.1" as e
-#import "../utils.typ": (
-  count-to-content,
-  charge-to-content,
-  get-bracket,
-  customizable-attach,
-)
+#import "../utils.typ": charge-to-content, count-to-content, customizable-attach, get-bracket
 
 #let group(
   kind: 1,
@@ -13,26 +8,26 @@
   affect-layout: false,
   grow-brackets: false,
   ..children,
-) = { }
+) = {}
 
 #let draw-group(it) = {
   let result = if it.grow-brackets {
-      math.lr({
-        get-bracket(it.kind, open: true)
-        for child in it.children {
-          child
-        }
-        get-bracket(it.kind, open: false)
-      })
-    } else {
+    math.lr({
       get-bracket(it.kind, open: true)
       for child in it.children {
         child
       }
       get-bracket(it.kind, open: false)
+    })
+  } else {
+    get-bracket(it.kind, open: true)
+    for child in it.children {
+      child
     }
+    get-bracket(it.kind, open: false)
+  }
 
-  if it.charge != 0 or it.count != 1{
+  if it.charge != 0 or it.count != 1 {
     result = customizable-attach(
       result,
       tr: charge-to-content(it.charge),

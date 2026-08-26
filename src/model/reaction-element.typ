@@ -8,7 +8,7 @@
   arrow-spacing: h(0.4em, weak: true),
   molecule-spacing: sym.space.nobreak,
   group-spacing-correction: h(-0.3em),
-) = { }
+) = {}
 
 #let draw-reaction(it) = {
   let last-type-id = ""
@@ -23,14 +23,13 @@
         it.arrow-spacing
         child
         it.arrow-spacing
-      }
-      // else if type-id == none{
+      } // else if type-id == none{
       //   // it.molecule-spacing
       //   child
       //   // it.molecule-spacing
       // }
       else if type-id == "e_typsium_---_molecule" {
-        if last-type-id == "e_typsium_---_molecule" or last-type-id == "e_typsium_---_particle"{
+        if last-type-id == "e_typsium_---_molecule" or last-type-id == "e_typsium_---_particle" {
           it.molecule-spacing
         }
 
@@ -39,16 +38,18 @@
         let last-child-type-id = last.eid
         let charge = last.fields.at("charge", default: none)
         let count = last.fields.at("count", default: none)
-        if last-child-type-id == "e_typsium_---_group" and (not is-default(charge) or (not is-default(count) and count != 1)) {
+        if (
+          last-child-type-id == "e_typsium_---_group"
+            and (not is-default(charge) or (not is-default(count) and count != 1))
+        ) {
           it.group-spacing-correction
         }
-      } else if type-id == "e_typsium_---_particle"{
-        if last-type-id == "e_typsium_---_molecule" or last-type-id == "e_typsium_---_particle"{
+      } else if type-id == "e_typsium_---_particle" {
+        if last-type-id == "e_typsium_---_molecule" or last-type-id == "e_typsium_---_particle" {
           it.molecule-spacing
         }
         child
-      }
-      // else if type-id == "e_typsium_---_group"{
+      } // else if type-id == "e_typsium_---_group"{
       //    child
       //    let charge = last.fields.at("charge", default: none)
       //    let count = last.fields.at("count", default: none)

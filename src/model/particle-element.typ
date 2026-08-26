@@ -1,20 +1,18 @@
 #import "@preview/elembic:1.1.1" as e
-#import "../utils.typ": (
-  charge-to-content, count-to-content, customizable-attach, is-default
-)
+#import "../utils.typ": charge-to-content, count-to-content, customizable-attach, is-default
 
 #let symbols = (
-  e:[e],
-  p:[p],
+  e: [e],
+  p: [p],
   ap: math.accent([p], sym.macron),
   an: math.accent([n], sym.macron),
-  n:[n],
+  n: [n],
   m: sym.mu,
   a: sym.alpha,
   b: sym.beta,
   g: sym.gamma,
-  ne: math.attach(sym.nu, br:[e]),
-  ane: math.attach(math.accent(sym.nu, sym.macron), br:[e]),
+  ne: math.attach(sym.nu, br: [e]),
+  ane: math.attach(math.accent(sym.nu, sym.macron), br: [e]),
 )
 
 #let particle(
@@ -32,12 +30,12 @@
     result += it.count-spacing
   }
 
-  let base = if type(it.symbol) == str{
-    symbols.at(it.symbol, default:it.symbol)
-  } else{
+  let base = if type(it.symbol) == str {
+    symbols.at(it.symbol, default: it.symbol)
+  } else {
     it.symbol
   }
-  
+
   result += customizable-attach(
     base,
     tr: charge-to-content(

@@ -6,11 +6,7 @@
 #import "model/arrow-element.typ": reaction-arrow
 #import "model/particle-element.typ": particle
 
-#import "utils.typ": (
-  arrow-string-to-kind,
-  is-default,
-  roman-to-number
-)
+#import "utils.typ": arrow-string-to-kind, is-default, roman-to-number
 
 #let patterns = (
   element: regex(
@@ -19,24 +15,21 @@
     // 3: count1     4: charge1
     // 5: count2     6: charge2
     // 7: oxidation (^^...)
-    "^(\^\d+)?(_\d+)?" +
-    "([A-Za-zα-ωΑ-Ω][a-z]?)" +
-    "(?:((?:_?\d+)|(?:_\([^()]*(?:\([^()]*\)[^()]*)*\)))|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?" +
-    "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\^\([^)]*\)|\.?[+-]{1}\d?))?" +
-    "(\^\^[+-]?(?:[IViv]{1,3}|\d+))?",
+    "^(\^\d+)?(_\d+)?"
+      + "([A-Za-zα-ωΑ-Ω][a-z]?)"
+      + "(?:((?:_?\d+)|(?:_\([^()]*(?:\([^()]*\)[^()]*)*\)))|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\.?[+-]{1}\d?))?"
+      + "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^[+-]?[IV]+[+-]?|\^\.?[+-.]{1}|\^\([^)]*\)|\.?[+-]{1}\d?))?"
+      + "(\^\^[+-]?(?:[IViv]{1,3}|\d+))?",
   ),
 
   group: regex(
-    "^((?:\([^()]*(?:\([^()]*\)[^()]*)*\))|(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})|(?:\[[^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*\]))" +
-    "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^\.?[+-.]{1}|[+-]{1}\d?))?" +
-    "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^\.?[+-.]{1}|[+-]{1}\d?))?"
+    "^((?:\([^()]*(?:\([^()]*\)[^()]*)*\))|(?:\{[^{}]*(?:\{[^{}]*\}[^{}]*)*\})|(?:\[[^\[\]]*(?:\[[^\[\]]*\][^\[\]]*)*\]))"
+      + "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^\.?[+-.]{1}|[+-]{1}\d?))?"
+      + "(?:(_?\d+)|(\^\.?[+-]?\d+[+-]?|\^\.?[+-.]{1}|[+-]{1}\d?))?",
   ),
   reaction-plus: regex("^\s*\+\s*"),
   reaction-arrow: regex(
-    "^\s*(<->|↔|<=>>|<=>|⇔|->|→|<-|←|=>|⇒|<=|⇐|-\/>|</-|<<=>)" +
-    "(?:\[([^\[\]]*)\])?" +
-    "(?:\[([^\[\]]*)\])?" +
-    "\s*"
+    "^\s*(<->|↔|<=>>|<=>|⇔|->|→|<-|←|=>|⇒|<=|⇐|-\/>|</-|<<=>)" + "(?:\[([^\[\]]*)\])?" + "(?:\[([^\[\]]*)\])?" + "\s*",
   ),
   math: regex("^\$[^$]*?\$"),
   aggregation: regex("^\((?:s|l|g|aq,oo|aq|cd|cr|fl|lc|vit|a|ads|pol|mon|sln|am)\)"),
@@ -49,9 +42,9 @@
   let radical = false
   let roman-charge = false
   let count = if not is-default(count1) {
-    if count1.at(0) == "_" and count1.at(1) == "("{
-      count1.slice(2,count1.len()-1)
-    } else{
+    if count1.at(0) == "_" and count1.at(1) == "(" {
+      count1.slice(2, count1.len() - 1)
+    } else {
       int(count1.replace("_", ""))
     }
   } else if not is-default(count2) {
@@ -64,10 +57,10 @@
   let charge = if not is-default(charge1) {
     charge1.replace("^", "")
   } else if not is-default(charge2) {
-    if charge2.at(0) == "^" and charge2.at(1) == "("{
+    if charge2.at(0) == "^" and charge2.at(1) == "(" {
       custom-charge = true
-      charge2.slice(2,charge2.len()-1)
-    } else{
+      charge2.slice(2, charge2.len() - 1)
+    } else {
       charge2.replace("^", "")
     }
   } else {
@@ -114,8 +107,8 @@
   let oxidation = element-match.captures.at(7)
   let a = element-match.captures.at(0)
   let z = element-match.captures.at(1)
-  if a != none{a = a.slice(1, a.len())}
-  if z != none{z = z.slice(1, z.len())}
+  if a != none { a = a.slice(1, a.len()) }
+  if z != none { z = z.slice(1, z.len()) }
   let oxidation-number = none
   let roman-oxidation = true
   let roman-charge = false
@@ -135,8 +128,8 @@
     }
   }
 
-    // how agressively should we convert things to elements? always when possible or only when needed?
-  if x.at(0) == none and x.at(1) == none and x.at(2) == false  and oxidation-number == none and a == none and z == none{
+  // how agressively should we convert things to elements? always when possible or only when needed?
+  if x.at(0) == none and x.at(1) == none and x.at(2) == false and oxidation-number == none and a == none and z == none {
     if formula.at(element-match.end, default: "").match(regex("[a-z]")) != none {
       return (false,)
     }
@@ -152,8 +145,8 @@
         radical: x.at(2),
         oxidation: oxidation-number,
         roman-charge: x.at(3),
-        a:a,
-        z:z,
+        a: a,
+        z: z,
       )
     } else {
       element(
@@ -162,8 +155,8 @@
         charge: x.at(1),
         radical: x.at(2),
         oxidation: oxidation-number,
-        a:a,
-        z:z,
+        a: a,
+        z: z,
       )
     },
     element-match.end,
@@ -174,161 +167,163 @@
   if bond-match == none {
     return (false,)
   }
-  let n = if bond-match.text.contains("="){
+  let n = if bond-match.text.contains("=") {
     2
-  } else if bond-match.text.contains("~"){
+  } else if bond-match.text.contains("~") {
     3
-  } else{
+  } else {
     1
   }
   let kind = bond-match.text.position("..")
-  if kind == none{kind = 0} else {kind += 1}
-  return (true, bond(n:n, kind:kind), bond-match.end)
+  if kind == none { kind = 0 } else { kind += 1 }
+  return (true, bond(n: n, kind: kind), bond-match.end)
 }
 
 #let string-to-particle(formula, count) = {
-  return if formula.starts-with("proton"){
+  return if formula.starts-with("proton") {
     (
       true,
       particle(
-         "p",
+        "p",
         charge: 1,
-        count:count,
+        count: count,
       ),
-      6
+      6,
     )
-  }else if formula.starts-with("antiproton"){
+  } else if formula.starts-with("antiproton") {
     (
       true,
       particle(
-         "ap",
+        "ap",
         charge: 0,
-        count:count,
+        count: count,
       ),
-      10
+      10,
     )
-  } else if formula.starts-with("neutrino"){
+  } else if formula.starts-with("neutrino") {
     (
       true,
       particle(
-         "ne",
+        "ne",
         charge: 0,
-        count:count,
+        count: count,
       ),
-      8
+      8,
     )
-  } else if formula.starts-with("antineutrino"){
+  } else if formula.starts-with("antineutrino") {
     (
       true,
       particle(
-         "ane",
+        "ane",
         charge: 0,
-        count:count,
+        count: count,
       ),
-      12
+      12,
     )
-  } else if formula.starts-with("neutron"){
+  } else if formula.starts-with("neutron") {
     (
       true,
       particle(
-         "n",
+        "n",
         charge: 0,
-        count:count,
+        count: count,
       ),
-      7
+      7,
     )
-  } else if formula.starts-with("antineutron"){
+  } else if formula.starts-with("antineutron") {
     (
       true,
       particle(
-         "an",
+        "an",
         charge: 0,
-        count:count,
+        count: count,
       ),
-      11
+      11,
     )
-  } else if formula.starts-with("electron"){
+  } else if formula.starts-with("electron") {
     (
       true,
       particle(
-         "e",
+        "e",
         charge: -1,
-        count:count,
+        count: count,
       ),
-      8
+      8,
     )
-  }else if formula.starts-with("positron"){
+  } else if formula.starts-with("positron") {
     (
       true,
       particle(
-         "e",
+        "e",
         charge: 1,
-        count:count,
+        count: count,
       ),
-      8
+      8,
     )
-  } else if formula.starts-with("muon"){
-    let charge = if formula.len() >4 {if formula.at(4) == "-"{-1} }
+  } else if formula.starts-with("muon") {
+    let charge = if formula.len() > 4 { if formula.at(4) == "-" { -1 } }
     (
       true,
       particle(
         "m",
         charge: charge,
-        count:count,
+        count: count,
       ),
-      4 + calc.abs(charge)
+      4 + calc.abs(charge),
     )
-  } else if formula.starts-with("mu"){
-    let charge = if formula.len() >2 {if formula.at(2) == "-"{-1} }
+  } else if formula.starts-with("mu") {
+    let charge = if formula.len() > 2 { if formula.at(2) == "-" { -1 } }
     (
       true,
       particle(
-         "m",
+        "m",
         charge: charge,
-        count:count,
+        count: count,
       ),
-      2 + calc.abs(charge)
+      2 + calc.abs(charge),
     )
-  } else if formula.starts-with("photon"){
+  } else if formula.starts-with("photon") {
     (
       true,
       particle(
-         "g",
+        "g",
         charge: 0,
-        count:count,
+        count: count,
       ),
-      6
+      6,
     )
-  } else if formula.starts-with("gamma"){
+  } else if formula.starts-with("gamma") {
     (
       true,
       particle(
-         "g",
+        "g",
         charge: 0,
-        count:count,
+        count: count,
       ),
-      5
+      5,
     )
-  } else if formula.starts-with("beta"){
-    let charge = if formula.len() >4 {if formula.at(4) == "-"{-1} else if formula.at(4) == "+"{1} else{0}} else {0}
+  } else if formula.starts-with("beta") {
+    let charge = if formula.len() > 4 {
+      if formula.at(4) == "-" { -1 } else if formula.at(4) == "+" { 1 } else { 0 }
+    } else { 0 }
     (
       true,
       particle(
-         "b",
+        "b",
         charge: charge,
-        count:count,
+        count: count,
       ),
-      4 + calc.abs(charge)
+      4 + calc.abs(charge),
     )
-  } else if formula.starts-with("alpha"){
+  } else if formula.starts-with("alpha") {
     (
       true,
       particle(
-         "a",
+        "a",
         charge: 0,
-        count:count,
+        count: count,
       ),
-      5
+      5,
     )
   } else {
     (false, none, 0)
@@ -379,7 +374,7 @@
       continue
     }
 
-    if remaining.starts-with(" v ") or remaining.starts-with(" ^ "){
+    if remaining.starts-with(" v ") or remaining.starts-with(" ^ ") {
       //flush current molecule
       if current-molecule-children.len() > 0 {
         full-reaction.push(
@@ -395,12 +390,12 @@
       }
       //end flush current molecule
 
-      full-reaction.push(if remaining.at(1) == "v"{sym.arrow.b} else {sym.arrow.t} )
+      full-reaction.push(if remaining.at(1) == "v" { sym.arrow.b } else { sym.arrow.t })
       remaining = remaining.slice(2)
     }
 
     let bond-match = string-to-bond(remaining)
-    if bond-match.at(0){
+    if bond-match.at(0) {
       //flush random content
       if not is-default(random-content) and random-content != " " {
         if current-molecule-children.len() == 0 {
@@ -411,7 +406,7 @@
       }
       random-content = ""
       //end flush random content
-      
+
       current-molecule-children.push(bond-match.at(1))
       remaining = remaining.slice(bond-match.at(2))
     }
@@ -419,7 +414,7 @@
     let math-result = string-to-math(remaining)
     if math-result.at(0) {
       //flush random content
-      if current-molecule-count != 1{
+      if current-molecule-count != 1 {
         random-content += str(current-molecule-count)
         current-molecule-count = 1
       }
@@ -454,7 +449,7 @@
         current-molecule-count = 1
       }
       //end flush current molecule
-      
+
       //flush random content
 
       // This consumes the current count, so we need to reset it so it won't get used twice
@@ -493,7 +488,7 @@
     }
 
     let aggregation-match = remaining.match(patterns.aggregation)
-    if aggregation-match != none{
+    if aggregation-match != none {
       //flush random content
       if not is-default(random-content) and random-content != " " {
         if current-molecule-children.len() == 0 {
@@ -567,7 +562,7 @@
     }
 
     let count-match = remaining.match(patterns.count)
-    if count-match != none{
+    if count-match != none {
       //flush random content
       if not is-default(random-content) and random-content != " " {
         if current-molecule-children.len() == 0 {
@@ -600,7 +595,7 @@
         current-molecule-count = 1
       }
       //end flush current molecule
-      
+
       //flush random content
       if not is-default(random-content) and random-content != " " {
         if current-molecule-children.len() == 0 {
@@ -611,7 +606,7 @@
       }
       random-content = ""
       //end flush random content
-      
+
       full-reaction.push([+])
       remaining = remaining.slice(plus-match.end)
       continue
@@ -633,7 +628,7 @@
         current-molecule-count = 1
       }
       //end flush current molecule
-      
+
       //flush random content
       if not is-default(random-content) and random-content != " " {
         if current-molecule-children.len() == 0 {
@@ -650,7 +645,7 @@
       let bottom = none
       if arrow-match.captures.at(1) != none {
         top = string-to-reaction(arrow-match.captures.at(1))
-        top = if top.len() == 1{
+        top = if top.len() == 1 {
           top.at(0)
         } else {
           reaction(top)
@@ -658,19 +653,19 @@
       }
       if arrow-match.captures.at(2) != none {
         bottom = string-to-reaction(arrow-match.captures.at(2))
-        bottom = if bottom.len() == 1{
+        bottom = if bottom.len() == 1 {
           bottom.at(0)
         } else {
           reaction(bottom)
         }
       }
-      let a = if top != none and bottom != none{
+      let a = if top != none and bottom != none {
         reaction-arrow(kind: kind, top: top, bottom: bottom)
-      } else if top != none{
+      } else if top != none {
         reaction-arrow(kind: kind, top: top)
-      } else if bottom != none{
+      } else if bottom != none {
         reaction-arrow(kind: kind, bottom: bottom)
-      } else{
+      } else {
         reaction-arrow(kind: kind)
       }
       full-reaction.push(a)
@@ -679,7 +674,7 @@
     }
 
     //TODO: revisit if this is not giving good results
-    if remaining.codepoints().at(0) == " "{
+    if remaining.codepoints().at(0) == " " {
       //flush current molecule
       if current-molecule-children.len() > 0 {
         full-reaction.push(
@@ -696,14 +691,14 @@
       //end flush current molecule
     }
     // if we have come this far, it means something random is between what we thought was a count and the coming stuff, so that means it probably wasn't a count but rather random content instead
-    // 
+    //
     // TODO: what
     // if current-molecule-count != 1{
     //   random-content += str(current-molecule-count)
     //   current-molecule-count = 1
     // }
     random-content += remaining.codepoints().at(0)
-    remaining = remaining.slice(remaining.codepoints().at(0).len())  
+    remaining = remaining.slice(remaining.codepoints().at(0).len())
   }
 
   //flush current molecule
@@ -720,7 +715,7 @@
     current-molecule-count = 1
   }
   //end flush current molecule
-  
+
   //flush random content
   if not is-default(random-content) and random-content != " " {
     if current-molecule-children.len() == 0 {

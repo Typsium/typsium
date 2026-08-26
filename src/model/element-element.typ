@@ -39,7 +39,7 @@
   if type(it.z) == int {
     atomic-number = [#it.z]
   }
-  
+
   let result = if it.spaced-charge and not is-default(it.charge) and not is-default(it.count) {
     customizable-attach(
       base,
@@ -54,15 +54,14 @@
       bl: atomic-number,
       affect-layout: it.affect-layout,
     )
-    math.attach(none, tr:charge-to-content(
-        it.charge,
-        radical: it.radical,
-        roman: it.roman-charge,
-        radical-symbol: it.radical-symbol,
-        negative-symbol: it.negative-symbol,
-        positive-symbol: it.positive-symbol,
-      )
-    )
+    math.attach(none, tr: charge-to-content(
+      it.charge,
+      radical: it.radical,
+      roman: it.roman-charge,
+      radical-symbol: it.radical-symbol,
+      negative-symbol: it.negative-symbol,
+      positive-symbol: it.positive-symbol,
+    ))
   } else {
     customizable-attach(
       base,

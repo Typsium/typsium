@@ -428,9 +428,9 @@
   charge,
   radical: false,
   roman: false,
-  radical-symbol: box(baseline: - 0.1em, sym.dot),
-  negative-symbol: box(baseline: - 0.1em, sym.minus),
-  positive-symbol: box(baseline: - 0.1em, sym.plus),
+  radical-symbol: box(baseline: -0.1em, sym.dot),
+  negative-symbol: box(baseline: -0.1em, sym.minus),
+  positive-symbol: box(baseline: -0.1em, sym.plus),
 ) = {
   // NOTE: This function intentionally returns `[]` (not `none`) for
   // "no charge" in many cases, because callers feed it into `math.attach`
@@ -465,10 +465,7 @@
       sign
     }
   } else if type(charge) == str {
-    charge
-      .replace(".", radical-symbol)
-      .replace("-", negative-symbol)
-      .replace("+", positive-symbol)
+    charge.replace(".", radical-symbol).replace("-", negative-symbol).replace("+", positive-symbol)
   } else if type(charge) == content {
     show ".": radical-symbol
     show "-": negative-symbol

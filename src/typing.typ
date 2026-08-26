@@ -136,21 +136,21 @@
   /// Vertical spacing between each bond line
   spacing: 0.15em,
   /// stroke settings used to draw the normal bonds
-/// ```example
-/// >>> #v(1em)
-/// #show: set-bond(
-///   stroke: stroke(paint:red, thickness:1pt, cap:"round", dash:"dotted")
-/// )
-/// #ce("H2C==CH2")
-/// ```
-  stroke:(thickness: 0.5pt,),
+  /// ```example
+  /// >>> #v(1em)
+  /// #show: set-bond(
+  ///   stroke: stroke(paint:red, thickness:1pt, cap:"round", dash:"dotted")
+  /// )
+  /// #ce("H2C==CH2")
+  /// ```
+  stroke: (thickness: 0.5pt),
   /// stroke settings used to draw the non covalent bonds
-  non-covalent-stroke:(thickness: 0.5pt,dash: ("dot",),),
+  non-covalent-stroke: (thickness: 0.5pt, dash: ("dot",)),
 ) = e.set_.with(bond)(
-  length:length,
-  spacing:spacing,
-  stroke:stroke,
-  non-covalent-stroke:non-covalent-stroke,
+  length: length,
+  spacing: spacing,
+  stroke: stroke,
+  non-covalent-stroke: non-covalent-stroke,
 )
 
 /// Use this to modify the way reactions get drawn
@@ -169,13 +169,13 @@
   /// spacing applied in front of and behind of reaction arrows
   arrow-spacing: h(0.4em, weak: true),
   /// spacing applied between molecules
-  molecule-spacing:sym.space.nobreak,
+  molecule-spacing: sym.space.nobreak,
   /// spacing applied so that groups don't have big empty space after them
   group-spacing-correction: h(-0.4em),
 ) = e.set_.with(reaction)(
   plus-spacing: plus-spacing,
   arrow-spacing: arrow-spacing,
-  molecule-spacing:molecule-spacing,
+  molecule-spacing: molecule-spacing,
   group-spacing-correction: group-spacing-correction,
 )
 
