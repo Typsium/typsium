@@ -1,5 +1,5 @@
 /// [max-delta: 100]
-#import "../../src/lib.typ" : ce
+#import "../../src/lib.typ": ce
 #import "@preview/alchemist:0.2.0": *
 // #import "../../src/typing.typ": e
 
@@ -45,10 +45,8 @@
 // #let iron = get-element(symbol:"Fe")
 
 $
-#ce[H2SO4 ->H2O + #math.overbrace[#alchemist-molecule][Hello World]]\
-
-#ce[#text(green)[He2]#math.cancel[S]O4^#text(blue)[#math.cancel[5]-]]
-
-#ce[A + B =>[PO4-3][Hello World] C + D]\
-// #ce[#sulfuric-acid + 2#iron]
+  #ce[H2SO4 ->H2O + #math.overbrace[#alchemist-molecule][Hello World]]\
+  #ce[#text(green)[He2]#math.cancel[S]O4^#text(blue)[#math.cancel[5]-]]
+  #ce[A + B =>[PO4-3][Hello World] C + D]\
+  // #ce[#sulfuric-acid + 2#iron]
 $
