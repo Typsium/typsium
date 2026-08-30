@@ -1,5 +1,5 @@
 // /// [max-delta: 50]
-#import "../../src/lib.typ": ce
+#import "/src/lib.typ": ce
 #import "../../src/model/element-element.typ": element
 #import "../../src/model/group-element.typ": group
 #import "../../src/model/molecule-element.typ": molecule
@@ -8,8 +8,8 @@
 #set page(width: auto, height: auto, margin: 1em)
 
 
-#let g = group((element("H"),[ello]),)
-#let m = molecule((element("H"),[ello]))
+#let g = group((element("H"), [ello]))
+#let m = molecule((element("H"), [ello]))
 
 // #reaction-arrow(kind:1, top:g, bottom:g)\
 // \

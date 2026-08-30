@@ -1,5 +1,5 @@
 // /// [max-delta: 100]
-#import "../../src/lib.typ": ce
+#import "/src/lib.typ": ce
 #import "../../src/model/bond-element.typ": bond
 #set page(width: auto, height: auto, margin: 1em)
 
@@ -35,7 +35,7 @@
 
 
 
-// $  
+// $
 //   ce("Zn^2+ <=>[+ 2 OH-][+ 2 H+]")
 //   limits(ce("Zn(OH)2 v"))_"amphoteres Hydroxid"
 //   ce("<=>[+ 2 OH-][+ 2H+]")

@@ -1,5 +1,5 @@
 /// [max-delta: 70]
-#import "../../src/lib.typ": ce
+#import "/src/lib.typ": ce
 // #import "../../src/ce.typ": reaction-localised
 
 #set page(width: auto, height: auto, margin: 0.5em)

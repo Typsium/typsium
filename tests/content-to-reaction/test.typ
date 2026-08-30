@@ -1,5 +1,5 @@
 /// [max-delta: 100]
-#import "../../src/lib.typ": ce
+#import "/src/lib.typ": ce
 #import "@preview/alchemist:0.2.0": *
 // #import "../../src/typing.typ": e
 

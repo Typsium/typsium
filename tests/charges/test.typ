@@ -1,4 +1,4 @@
-#import "../../src/lib.typ": ce, set-element
+#import "/src/lib.typ": ce, set-element
 #set page(width: auto, height: auto, margin: 0.5em)
 
 
@@ -40,5 +40,5 @@
 
 
 #ce("NH4+")
-#show :set-element(spaced-charge:true) 
+#show: set-element(spaced-charge: true)
 #ce("NH4+")

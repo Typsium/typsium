@@ -1,5 +1,5 @@
 /// [max-delta: 50]
-#import "../../src/lib.typ" : ce
+#import "/src/lib.typ": ce
 #set page(width: auto, height: auto, margin: 0.3em)
 
 // #ce("electron") #ce("e-") #ce("beta-")#ce("alpha") \
@@ -8,7 +8,7 @@
 // #ce("2alpha 2H2O")\
 // #ce("2H2O 2alpha")\
 // #ce("2H2O 2H2")\
-// 
+//
 #ce("electron") #ce("e-") #ce("beta-") \
 #ce("proton") #ce("p+") #ce("antiproton")\
 #ce("neutron") #ce("antineutron")\
