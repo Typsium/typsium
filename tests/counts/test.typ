@@ -4,8 +4,6 @@
 #set page(width: auto, height: auto, margin: 0.5em)
 
 $
-  #ce("Lu_(2(1-x)) Y_(2x) SiO5^(1-x)")\
-  #ce("(Lu)_(2(1-x)) [Y]_(2x) (SiO5)^(1-x)")\
-  // #ce[(Lu)\_(2(1-x)) [Y]\_(2x) (SiO5)^(1-x)]\
-  // #ce[(Lu)\_(2(1-x)) [Y]\_(2x) (SiO5)^(1-x)]\
+  #ce("&Lu_(2(1-x))Y_(2x)SiO5^(1-x)")\
+  #ce("&(Lu)_(2(1-x))[Y]_(2x)(SiO5)^(1-x)")\
 $

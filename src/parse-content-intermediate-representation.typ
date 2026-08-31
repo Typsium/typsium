@@ -9,7 +9,7 @@
   arrow-string-to-kind, get-all-children, is-default, is-kind, is-metadata, length, reconstruct-content-from-strings,
   reconstruct-nested-content, roman-to-number, typst-builtin-context, typst-builtin-styled, typst-builtin-symbol,
 )
-#import "parse-formula-intermediate-representation.typ": patterns
+#import "patterns.typ": patterns
 
 #let get-count-and-charge(count1, count2, charge1, charge2, full-string, templates, index) = {
   let radical = false
