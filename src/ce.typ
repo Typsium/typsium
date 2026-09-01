@@ -1,4 +1,4 @@
-#import "parse-formula-intermediate-representation.typ": string-to-reaction
+#import "reaction-builder.typ": string-to-reaction
 #import "parse-content-intermediate-representation.typ": content-to-reaction
 #import "model/reaction-element.typ": reaction
 

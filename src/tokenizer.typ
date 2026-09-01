@@ -54,7 +54,7 @@
       continue
     }
 
-    let group-match = lexer.match-group(remaining, parse)
+    let group-match = lexer.match-group(remaining)
     if group-match != none {
       tokens.push((kind: "group", node: group-match.node))
       remaining = remaining.slice(group-match.end)
@@ -75,7 +75,7 @@
       continue
     }
 
-    let arrow-match = lexer.match-arrow(remaining, parse)
+    let arrow-match = lexer.match-arrow(remaining)
     if arrow-match != none {
       tokens.push((kind: "arrow", node: arrow-match.node))
       remaining = remaining.slice(arrow-match.end)

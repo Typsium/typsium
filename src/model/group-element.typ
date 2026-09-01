@@ -48,7 +48,7 @@
   display: draw-group,
 
   fields: (
-    e.field("children", e.types.array(content), required: true),
+    e.field("children", e.types.array(content)),
     e.field("kind", int, default: 0),
     e.field("count", e.types.union(int, content), default: 1),
     e.field("charge", e.types.union(int, content), default: 0),

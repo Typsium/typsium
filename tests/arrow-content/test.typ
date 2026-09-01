@@ -3,13 +3,13 @@
 #import "../../src/model/element-element.typ": element
 #import "../../src/model/group-element.typ": group
 #import "../../src/model/molecule-element.typ": molecule
-#import "../../src/model/arrow-element.typ": reaction-arrow
+// #import "../../src/model/arrow-element.typ": reaction-arrow
 #import "@preview/unify:0.8.0": qty
 #set page(width: auto, height: auto, margin: 1em)
 
 
-#let g = group((element("H"), [ello]))
-#let m = molecule((element("H"), [ello]))
+#let g = group(children: (element(symbol: "H"), [ello]))
+#let m = molecule((element(symbol: "H"), [ello]))
 
 // #reaction-arrow(kind:1, top:g, bottom:g)\
 // \

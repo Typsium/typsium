@@ -1,5 +1,11 @@
 #import "model/molecule-element.typ": molecule
 #import "model/particle-element.typ": particle
+#import "model/bond-element.typ": bond
+#import "model/reaction-element.typ": reaction
+#import "model/element-element.typ": element
+#import "model/group-element.typ": group
+#import "model/arrow-element.typ": reaction-arrow
+#import "model/particle-element.typ": particle
 
 #import "tokenizer.typ"
 #import "utils.typ": is-default
@@ -34,16 +40,17 @@
   state
 }
 
-#let apply-token(state, token) = {
+#let apply-token(state, token, parse) = {
   if token.kind == "align" {
     state = flush-molecule(state)
     state.output.push($&$)
   } else if token.kind == "precipitation" {
     state = flush-molecule(state)
-    state.output.push(token.node)
+    state = flush-random(state)
+    state.output.push(if token.node == "v" { sym.arrow.b } else { sym.arrow.t })
   } else if token.kind == "bond" {
     state = flush-random(state)
-    state.children.push(token.node)
+    state.children.push(bond(..token.node))
   } else if token.kind == "math" {
     // a count in front of math isn't a molecule count
     if state.count != 1 {
@@ -60,14 +67,15 @@
     state.output.push(particle(token.symbol, charge: token.charge, count: applied-count))
   } else if token.kind == "element" {
     state = flush-random(state)
-    state.children.push(token.node)
+    state.children.push(element(..token.node))
   } else if token.kind == "aggregation" {
     state = flush-random(state)
     state.phase = token.phase
     state = flush-molecule(state)
   } else if token.kind == "group" {
     state = flush-random(state)
-    state.children.push(token.node)
+    token.node.children = parse(token.node.children)
+    state.children.push(group(..token.node))
   } else if token.kind == "count" {
     state = flush-random(state)
     state.count = token.value
@@ -78,7 +86,16 @@
   } else if token.kind == "arrow" {
     state = flush-molecule(state)
     state = flush-random(state)
-    state.output.push(token.node)
+    let node = (kind: token.node.kind)
+    let top = parse(token.node.top)
+    if top != () {
+      node.top = top.join()
+    }
+    let bottom = parse(token.node.bottom)
+    if bottom != () {
+      node.bottom = bottom.join()
+    }
+    state.output.push(reaction-arrow(..node))
   } else if token.kind == "char" {
     if token.is-space {
       state = flush-molecule(state)
@@ -88,10 +105,10 @@
   state
 }
 
-#let build-reaction(tokens) = {
+#let build-reaction(tokens, parse) = {
   let state = new-builder-state()
   for token in tokens {
-    state = apply-token(state, token)
+    state = apply-token(state, token, parse)
   }
   state = flush-molecule(state)
   state = flush-random(state)
@@ -101,9 +118,12 @@
 #let string-to-reaction(
   reaction-string,
 ) = {
+  if reaction-string == none {
+    return ()
+  }
   let normalized = reaction-string.replace("--", "——")
   if normalized.len() == 0 {
     return ()
   }
-  build-reaction(tokenizer.tokenize(normalized, string-to-reaction))
+  build-reaction(tokenizer.tokenize(normalized, string-to-reaction), string-to-reaction)
 }

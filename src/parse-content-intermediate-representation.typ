@@ -129,7 +129,7 @@
   return (
     true,
     element(
-      reconstruct-content-from-strings(
+      symbol: reconstruct-content-from-strings(
         full-string,
         templates,
         start: index,
@@ -590,7 +590,7 @@
         create-molecules: false,
       )
 
-      current-molecule-children.push(group(group-children, kind: kind, count: x.at(0), charge: x.at(1)))
+      current-molecule-children.push(group(children: group-children, kind: kind, count: x.at(0), charge: x.at(1)))
       remaining = remaining.slice(group-match.end)
       index += group-match.end
       continue

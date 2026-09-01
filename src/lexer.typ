@@ -1,9 +1,4 @@
-#import "model/bond-element.typ": bond
-#import "model/reaction-element.typ": reaction
-#import "model/element-element.typ": element
-#import "model/group-element.typ": group
-#import "model/arrow-element.typ": reaction-arrow
-#import "model/particle-element.typ": particle
+
 
 #import "patterns.typ": *
 #import "utils.typ": arrow-string-to-kind, is-default, roman-to-number
@@ -71,8 +66,8 @@
 
 #let match-precipitation(remaining) = {
   let m = remaining.match(patterns.precipitation)
-  if m == none { return none }
-  (node: if m.captures.at(0) == "v" { sym.arrow.b } else { sym.arrow.t }, end: m.end)
+  if m == none or not m.text.contains(" ") { return none }
+  (node: m.captures.at(0), end: m.end)
 }
 
 #let match-bond(remaining) = {
@@ -81,7 +76,7 @@
   let n = if m.text.contains("=") { 2 } else if m.text.contains("~") { 3 } else { 1 }
   let dotted-at = m.text.position("..")
   let kind = if dotted-at == none { 0 } else { dotted-at + 1 }
-  (node: bond(n: n, kind: kind), end: m.end)
+  (node: (n: n, kind: kind), end: m.end)
 }
 
 #let match-math(remaining) = {
@@ -160,7 +155,7 @@
     }
   }
 
-  let matched-random = (
+  let are-attachements-none = (
     parsed.count == none
       and parsed.charge == none
       and not parsed.radical
@@ -168,31 +163,22 @@
       and a == none
       and z == none
   )
-  if matched-random and remaining.at(m.end, default: "").match(regex("[a-z]")) != none {
+
+  if are-attachements-none and lower(m.text) == m.text {
     return none
   }
 
-  let node = if parsed.roman-charge {
-    element(
-      symbol,
-      count: parsed.count,
-      charge: parsed.charge,
-      radical: parsed.radical,
-      oxidation: oxidation-number,
-      roman-charge: true,
-      a: a,
-      z: z,
-    )
-  } else {
-    element(
-      symbol,
-      count: parsed.count,
-      charge: parsed.charge,
-      radical: parsed.radical,
-      oxidation: oxidation-number,
-      a: a,
-      z: z,
-    )
+  let node = (
+    symbol: symbol,
+    count: parsed.count,
+    charge: parsed.charge,
+    radical: parsed.radical,
+    oxidation: oxidation-number,
+    a: a,
+    z: z,
+  )
+  if parsed.roman-charge {
+    node.roman-charge = true
   }
 
   (node: node, end: m.end)
@@ -204,7 +190,7 @@
   (phase: m.text, end: m.end)
 }
 
-#let match-group(remaining, parse) = {
+#let match-group(remaining) = {
   let m = remaining.match(patterns.group)
   if m == none { return none }
 
@@ -227,10 +213,8 @@
     m.captures.at(group-capture.charge-b),
   )
 
-  let children = parse(group-content)
-
   (
-    node: group(children, kind: kind, count: parsed.count, charge: parsed.charge),
+    node: (children: group-content, kind: kind, count: parsed.count, charge: parsed.charge),
     end: m.end,
   )
 }
@@ -247,30 +231,17 @@
   (end: m.end)
 }
 
-#let match-arrow(remaining, parse) = {
+#let match-arrow(remaining) = {
   let m = remaining.match(patterns.reaction-arrow)
   if m == none { return none }
 
   let kind = arrow-string-to-kind(m.captures.at(arrow-capture.symbol))
 
-  let parse-condition(text) = {
-    if text == none { return none }
-    let parsed = parse(text)
-    if parsed.len() == 1 { parsed.at(0) } else { reaction(parsed) }
-  }
-
-  let top = parse-condition(m.captures.at(arrow-capture.top))
-  let bottom = parse-condition(m.captures.at(arrow-capture.bottom))
-
-  let node = if top != none and bottom != none {
-    reaction-arrow(kind: kind, top: top, bottom: bottom)
-  } else if top != none {
-    reaction-arrow(kind: kind, top: top)
-  } else if bottom != none {
-    reaction-arrow(kind: kind, bottom: bottom)
-  } else {
-    reaction-arrow(kind: kind)
-  }
+  let node = (
+    kind: kind,
+    top: m.captures.at(arrow-capture.top),
+    bottom: m.captures.at(arrow-capture.bottom),
+  )
 
   (node: node, end: m.end)
 }

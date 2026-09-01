@@ -98,7 +98,7 @@
   display: draw-element,
 
   fields: (
-    e.field("symbol", e.types.union(str, content), default: none, required: true),
+    e.field("symbol", e.types.union(str, content), default: none),
     e.field("count", e.types.union(int, content), default: 1),
     e.field("charge", e.types.union(int, content), default: 0),
     e.field("oxidation", e.types.union(int, content), default: none),
