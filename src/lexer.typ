@@ -1,7 +1,6 @@
-
-
+// lexer.typ
 #import "patterns.typ": *
-#import "utils.typ": arrow-string-to-kind, is-default, roman-to-number
+#import "utility.typ": arrow-string-to-kind, is-default, roman-to-number
 
 #let get-count-and-charge(count-a, count-b, charge-a, charge-b) = {
   let radical = false

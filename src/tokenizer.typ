@@ -1,4 +1,4 @@
-#import "utils.typ": arrow-string-to-kind, roman-to-number
+// tokenizer.typ
 #import "lexer.typ"
 
 #let tokenize(input, parse) = {

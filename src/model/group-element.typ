@@ -1,5 +1,5 @@
 #import "@preview/elembic:1.1.1" as e
-#import "../utils.typ": charge-to-content, count-to-content, customizable-attach, get-bracket
+#import "../utility.typ": charge-to-content, count-to-content, customizable-attach, get-bracket
 
 #let group(
   kind: 1,

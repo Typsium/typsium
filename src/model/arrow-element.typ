@@ -1,6 +1,6 @@
 #import "@preview/elembic:1.1.1" as e
 
-#import "../utils.typ": get-arrow
+#import "../utility.typ": get-arrow
 
 #let reaction-arrow(
   kind: 0,

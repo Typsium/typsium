@@ -1,4 +1,4 @@
-#import "/src/lib.typ": ce
+#import "/src/typsium.typ": ce
 #set page(width: auto, height: auto, margin: 0em)
 
 $

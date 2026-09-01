@@ -81,9 +81,11 @@
   }
   return none
 }
+
 #let roman-to-number(roman-number) = {
   return roman-numerals.position(x => x == roman-number)
 }
+
 #let show-roman(body, roman: true) = {
   if roman {
     show "1": "I"
@@ -107,6 +109,7 @@
     body
   }
 }
+
 #let oxidation-to-content(
   oxidation,
   roman: true,
@@ -132,26 +135,11 @@
   }
   return none
 }
+
 #let arrow-string-to-kind(arrow) = {
   arrow = arrow.trim()
   arrow-kinds.at(arrow, default: 1)
 }
-
-#let parser-config = (
-  arrow: (arrow_size: 120%, reversible_size: 120%),
-  conditions: (
-    bottom: (
-      symbols: (heating: ("Delta", "delta", "Δ", "δ", "fire", "heat", "hot", "heating")),
-      identifiers: (("T=", "t="), ("P=", "p=")),
-      units: ("°C", "K", "atm", "bar"),
-    ),
-  ),
-  match_order: (
-    basic: ("bracket", "element", "charge"),
-    full: ("bracket", "element", "plus", "arrow", "charge"),
-  ),
-)
-
 
 // Following utility methods are from:
 // https://github.com/touying-typ/touying/blob/6316aa90553f5d5d719150709aec1396e750da63/src/utils.typ#L157C1-L166C2
@@ -189,8 +177,6 @@
 #let is-heading(it, depth: 9999) = {
   type(it) == content and it.func() == heading and it.depth <= depth
 }
-
-
 
 // Following utility method is from:
 // https://github.com/typst-community/linguify/blob/b220a5993c7926b1d2edcc155cda00d2050da9ba/lib/utils.typ#L3
@@ -286,6 +272,7 @@
 
   return children.map(sequence-to-array).flatten()
 }
+
 #let to-string(content) = {
   if content.has("text") {
     if type(content.text) == str {

@@ -1,4 +1,4 @@
-
+// patterns.typ
 #let patterns = (
   element: regex(
     "^(\^\d+)?(_\d+)?"

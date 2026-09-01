@@ -1,5 +1,5 @@
 // /// [max-delta: 50]
-#import "/src/lib.typ": ce
+#import "/src/typsium.typ": ce
 #import "../../src/model/element-element.typ": element
 #import "../../src/model/group-element.typ": group
 #import "../../src/model/molecule-element.typ": molecule

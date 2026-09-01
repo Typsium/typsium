@@ -1,5 +1,5 @@
 /// [max-delta: 50]
-#import "/src/lib.typ": ce, set-group
+#import "/src/typsium.typ": ce, set-group
 
 #set page(width: auto, height: auto, margin: 0.5em)
 

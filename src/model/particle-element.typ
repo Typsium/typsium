@@ -1,5 +1,5 @@
 #import "@preview/elembic:1.1.1" as e
-#import "../utils.typ": charge-to-content, count-to-content, customizable-attach, is-default
+#import "../utility.typ": charge-to-content, count-to-content, customizable-attach, is-default
 
 #let symbols = (
   e: [e],

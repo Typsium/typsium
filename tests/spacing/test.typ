@@ -1,5 +1,5 @@
 /// [max-delta: 50]
-#import "/src/lib.typ": ce
+#import "/src/typsium.typ": ce
 #import "../../src/model/particle-element.typ": particle
 #set page(width: auto, height: auto, margin: 0.5em)
 

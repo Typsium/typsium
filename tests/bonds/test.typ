@@ -1,5 +1,5 @@
 // /// [max-delta: 100]
-#import "/src/lib.typ": ce
+#import "/src/typsium.typ": ce
 #import "../../src/model/bond-element.typ": bond
 #set page(width: auto, height: auto, margin: 1em)
 

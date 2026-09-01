@@ -1,5 +1,5 @@
 // /// [max-delta: 50]
-#import "/src/lib.typ": ce
+#import "/src/typsium.typ": ce
 #set page(width: auto, height: auto, margin: 1em)
 
 // #sym.arrow.t

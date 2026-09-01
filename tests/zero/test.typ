@@ -1,5 +1,5 @@
 #import "@preview/zero:0.7.0": *
-#import "/src/lib.typ": *
+#import "/src/typsium.typ": *
 
 #set page(width: auto, height: auto, margin: 0.5em)
 

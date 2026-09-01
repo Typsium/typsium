@@ -1,3 +1,4 @@
+// reaction-builder.typ
 #import "model/molecule-element.typ": molecule
 #import "model/particle-element.typ": particle
 #import "model/bond-element.typ": bond
@@ -8,7 +9,7 @@
 #import "model/particle-element.typ": particle
 
 #import "tokenizer.typ"
-#import "utils.typ": is-default
+#import "utility.typ": is-default
 
 #let new-builder-state() = (
   output: (),

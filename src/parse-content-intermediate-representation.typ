@@ -1,3 +1,4 @@
+// parse-content-intermediate-representation.typ
 #import "@preview/elembic:1.1.1" as e
 #import "model/molecule-element.typ": molecule
 #import "model/bond-element.typ": bond
@@ -5,7 +6,7 @@
 #import "model/element-element.typ": element
 #import "model/group-element.typ": group
 #import "model/arrow-element.typ": reaction-arrow
-#import "utils.typ": (
+#import "utility.typ": (
   arrow-string-to-kind, get-all-children, is-default, is-kind, is-metadata, length, reconstruct-content-from-strings,
   reconstruct-nested-content, roman-to-number, typst-builtin-context, typst-builtin-styled, typst-builtin-symbol,
 )
