@@ -6,5 +6,5 @@
 
 #ce("^235U^-2_30^^IV")\
 
+#ce[^17#text(red)[7]#strike[m]Lu]\
 #ce("^177mLu")\
-#ce["^177mLu"]\
